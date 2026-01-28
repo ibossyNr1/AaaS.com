@@ -15,10 +15,13 @@ The following commands are **STRICTLY PROHIBITED** without explicit "Turbo" manu
 - `userdelete`, `groupdelete` (Identity deletion)
 - `sudo` (Privilege escalation)
 - `mkfs`, `fdisk` (Partitioning/Formatting)
+- `dd` (Direct disk access/overwriting)
+- `chmod 777` (Unsafe permissive permissions)
 - `curl | bash` (Unverified remote execution)
 
 ### Policy Levels
 - **Review-Driven:** (DEFAULT) Every command that mutates the file system or sends data externally **must** be approved by the user.
+    - **Explicit Review Triggers:** `git push`, `kubectl apply`, accessing `.env` files.
 - **Turbo:** Reserved only for trusted, deterministic pipelines.
 
 ---

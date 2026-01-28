@@ -38,10 +38,10 @@ We separate concerns to maximize reliability. LLMs are probabilistic; business l
 
 ### 1. Skill Discovery Protocol (MANDATORY)
 Before writing ANY new code to solve a problem, the Lead Engineer must:
-1. **Scan:** Check `skills/` for an existing tool.
-2. **Read:** If a skill exists, read its `SKILL.md`.
-3. **Execute:** Call the skill's script.
-4. **Fallback:** ONLY if no skill exists, write a custom script.
+1.  **Search:** Run `python3 skills/find-skills/scripts/discover.py "[task]"` to find tools.
+2.  **Read:** If a local skill exists, read its `SKILL.md`.
+3.  **Execute:** Call the skill's script.
+4.  **Fallback:** ONLY if no skill exists (local or remote), write a custom script.
 
 ### 2. Guardrails & Context Injection
 Before starting any task, **SCAN** the `context/` and `directives/` folders:
