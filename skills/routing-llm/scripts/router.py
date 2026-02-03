@@ -19,6 +19,22 @@ def load_env():
 def select_model(strategy="reasoning"):
     load_env()
     api_key = os.getenv("GOOGLE_API_KEY")
+    open_router_key = os.getenv("OPEN_ROUTER")
+
+    if open_router_key:
+        # User requested Deepseek via OpenRouter
+        if strategy == "speed":
+            print("deepseek/deepseek-chat") # DeepSeek V3
+            return
+        elif strategy == "reasoning":
+            print("deepseek/deepseek-reasoner") # DeepSeek R1
+            return
+        elif strategy == "kimi": # Fallback/Stronger model option
+            # User requested Kimi (moonshotai/kimi-k2.5)
+            # NOTE: User requires confirmation before switching to non-Deepseek models for unstucking.
+            print("moonshotai/kimi-k2.5") 
+            return
+        # For 'vision', fall back to Gemini since DeepSeek is text-focused (mostly)
     
     # Fallback Defaults (Safe Base)
     defaults = {
@@ -75,7 +91,7 @@ def select_model(strategy="reasoning"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LLM Router")
-    parser.add_argument("--strategy", type=str, default="reasoning", choices=["speed", "reasoning", "vision"], help="Selection strategy")
+    parser.add_argument("--strategy", type=str, default="reasoning", choices=["speed", "reasoning", "vision", "kimi"], help="Selection strategy")
     args = parser.parse_args()
     
     select_model(args.strategy)
