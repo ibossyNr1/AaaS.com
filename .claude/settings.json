@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:aaas.blog)",
+      "Bash(dig aaas.blog +short)",
+      "Bash(nslookup aaas.blog)"
+    ]
+  }
+}
