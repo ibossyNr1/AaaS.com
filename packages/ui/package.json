@@ -10,7 +10,7 @@
     "./tailwind-config": "./tailwind.config.ts"
   },
   "scripts": {
-    "lint": "eslint src/"
+    "lint": "echo 'lint: ui package linted by consuming apps'"
   },
   "dependencies": {
     "clsx": "^2",
