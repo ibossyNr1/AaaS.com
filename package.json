@@ -1,0 +1,17 @@
+{
+  "name": "aaas",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:platform": "turbo dev --filter=platform",
+    "dev:blog": "turbo dev --filter=blog",
+    "build:platform": "turbo build --filter=platform",
+    "build:blog": "turbo build --filter=blog"
+  },
+  "devDependencies": {
+    "turbo": "^2"
+  }
+}

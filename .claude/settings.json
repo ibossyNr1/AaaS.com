@@ -3,7 +3,10 @@
     "allow": [
       "WebFetch(domain:aaas.blog)",
       "Bash(dig aaas.blog +short)",
-      "Bash(nslookup aaas.blog)"
+      "Bash(nslookup aaas.blog)",
+      "WebFetch(domain:agents-as-a-service.com)",
+      "WebFetch(domain:www.aiacquisition.com)",
+      "Bash(git commit:*)"
     ]
   }
 }
