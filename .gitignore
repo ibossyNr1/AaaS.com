@@ -2,6 +2,10 @@
 .DS_Store
 Thumbs.db
 
+# Dependencies
+node_modules/
+.turbo/
+
 # Environment and Secrets
 .env
 .env.local
