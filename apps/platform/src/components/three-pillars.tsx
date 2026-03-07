@@ -2,6 +2,30 @@ import { Card, Container, Section } from "@aaas/ui";
 import { FadeUp } from "./motion";
 import Link from "next/link";
 
+const accentBg: Record<string, string> = {
+  blue: "bg-blue-subtle",
+  purple: "bg-purple-subtle",
+  green: "bg-green-subtle",
+  pink: "bg-pink-subtle",
+  gold: "bg-gold-subtle",
+};
+
+const accentDot: Record<string, string> = {
+  blue: "bg-blue",
+  purple: "bg-purple",
+  green: "bg-green",
+  pink: "bg-pink",
+  gold: "bg-gold",
+};
+
+const accentText: Record<string, string> = {
+  blue: "text-blue",
+  purple: "text-purple",
+  green: "text-green",
+  pink: "text-pink",
+  gold: "text-gold",
+};
+
 const pillars = [
   {
     accent: "blue" as const,
@@ -35,10 +59,10 @@ export function ThreePillars() {
             <FadeUp key={pillar.title} delay={i * 0.1}>
               <Card accent={pillar.accent} className="h-full flex flex-col">
                 <div
-                  className={`w-10 h-10 rounded-lg mb-6 flex items-center justify-center bg-${pillar.accent}-subtle`}
+                  className={`w-10 h-10 rounded-lg mb-6 flex items-center justify-center ${accentBg[pillar.accent]}`}
                 >
                   <div
-                    className={`w-3 h-3 rounded-full bg-${pillar.accent}`}
+                    className={`w-3 h-3 rounded-full ${accentDot[pillar.accent]}`}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-text mb-3">
@@ -49,7 +73,7 @@ export function ThreePillars() {
                 </p>
                 <Link
                   href={pillar.link}
-                  className={`mt-6 text-sm font-medium text-${pillar.accent} hover:underline`}
+                  className={`mt-6 text-sm font-medium ${accentText[pillar.accent]} hover:underline`}
                 >
                   Learn more →
                 </Link>

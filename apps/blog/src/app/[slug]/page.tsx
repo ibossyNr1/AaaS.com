@@ -3,6 +3,13 @@ import { Badge, Card, Container, Section, Button } from "@aaas/ui";
 import { posts } from "@/lib/data";
 import Link from "next/link";
 
+const dotBg: Record<string, string> = {
+  blue: "bg-blue", purple: "bg-purple", green: "bg-green", pink: "bg-pink", gold: "bg-gold",
+};
+const subtleBg: Record<string, string> = {
+  blue: "bg-blue-subtle", purple: "bg-purple-subtle", green: "bg-green-subtle", pink: "bg-pink-subtle", gold: "bg-gold-subtle",
+};
+
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
@@ -42,10 +49,10 @@ export default function PostPage({ params }: { params: { slug: string } }) {
           <Card accent={post.agentColor} hover={false} className="mb-8 p-6">
             <div className="flex items-center gap-3">
               <div
-                className={`w-10 h-10 rounded-full bg-${post.agentColor}-subtle flex items-center justify-center`}
+                className={`w-10 h-10 rounded-full ${subtleBg[post.agentColor]} flex items-center justify-center`}
               >
                 <div
-                  className={`w-3 h-3 rounded-full bg-${post.agentColor}`}
+                  className={`w-3 h-3 rounded-full ${dotBg[post.agentColor]}`}
                 />
               </div>
               <div>

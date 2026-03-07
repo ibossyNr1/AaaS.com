@@ -7,6 +7,14 @@ import { CTABlock } from "@/components/cta-block";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
+const checkColor: Record<string, string> = {
+  blue: "text-blue",
+  purple: "text-purple",
+  green: "text-green",
+  pink: "text-pink",
+  gold: "text-gold",
+};
+
 const plans = [
   {
     name: "Retainer",
@@ -132,7 +140,7 @@ export default function PricingPage() {
                         key={f}
                         className="flex items-start gap-2 text-sm text-text-muted"
                       >
-                        <span className={`text-${plan.accent} mt-0.5`}>
+                        <span className={`${checkColor[plan.accent]} mt-0.5`}>
                           ✓
                         </span>
                         {f}

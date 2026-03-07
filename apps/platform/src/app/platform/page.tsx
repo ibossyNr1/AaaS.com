@@ -7,6 +7,14 @@ import { CTABlock } from "@/components/cta-block";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
+const accentStyles: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+  blue: { bg: "bg-blue-subtle", text: "text-blue", border: "border-blue/30", dot: "bg-blue" },
+  purple: { bg: "bg-purple-subtle", text: "text-purple", border: "border-purple/30", dot: "bg-purple" },
+  green: { bg: "bg-green-subtle", text: "text-green", border: "border-green/30", dot: "bg-green" },
+  pink: { bg: "bg-pink-subtle", text: "text-pink", border: "border-pink/30", dot: "bg-pink" },
+  gold: { bg: "bg-gold-subtle", text: "text-gold", border: "border-gold/30", dot: "bg-gold" },
+};
+
 const evolutionSteps = [
   {
     title: "Scout",
@@ -117,7 +125,7 @@ export default function PlatformPage() {
                 className={cn(
                   "px-6 py-3 rounded-xl text-sm font-medium transition-all border",
                   i === activeEvolution
-                    ? `bg-${step.accent}-subtle text-${step.accent} border-${step.accent}/30`
+                    ? `${accentStyles[step.accent].bg} ${accentStyles[step.accent].text} ${accentStyles[step.accent].border}`
                     : "bg-surface text-text-muted border-border hover:text-text"
                 )}
               >
@@ -155,10 +163,10 @@ export default function PlatformPage() {
               <FadeUp key={cap.title} delay={i * 0.08}>
                 <Card accent={cap.accent} className="h-full">
                   <div
-                    className={`w-10 h-10 rounded-lg mb-4 flex items-center justify-center bg-${cap.accent}-subtle`}
+                    className={`w-10 h-10 rounded-lg mb-4 flex items-center justify-center ${accentStyles[cap.accent].bg}`}
                   >
                     <div
-                      className={`w-3 h-3 rounded-full bg-${cap.accent}`}
+                      className={`w-3 h-3 rounded-full ${accentStyles[cap.accent].dot}`}
                     />
                   </div>
                   <h3 className="text-lg font-semibold text-text mb-2">

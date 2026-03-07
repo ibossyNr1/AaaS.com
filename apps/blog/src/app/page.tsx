@@ -2,6 +2,13 @@ import { Badge, Card, Container, Section } from "@aaas/ui";
 import { posts, channels } from "@/lib/data";
 import Link from "next/link";
 
+const dotBg: Record<string, string> = {
+  blue: "bg-blue", purple: "bg-purple", green: "bg-green", pink: "bg-pink", gold: "bg-gold",
+};
+const subtleBg: Record<string, string> = {
+  blue: "bg-blue-subtle", purple: "bg-purple-subtle", green: "bg-green-subtle", pink: "bg-pink-subtle", gold: "bg-gold-subtle",
+};
+
 const featured = posts.find((p) => p.featured);
 const latestPosts = posts.filter((p) => !p.featured);
 
@@ -46,10 +53,10 @@ export default function BlogHome() {
               <Link key={ch.slug} href={`/?channel=${ch.slug}`}>
                 <Card accent={ch.color} className="text-center py-6">
                   <div
-                    className={`w-8 h-8 rounded-full bg-${ch.color}-subtle mx-auto mb-3 flex items-center justify-center`}
+                    className={`w-8 h-8 rounded-full ${subtleBg[ch.color]} mx-auto mb-3 flex items-center justify-center`}
                   >
                     <div
-                      className={`w-2.5 h-2.5 rounded-full bg-${ch.color}`}
+                      className={`w-2.5 h-2.5 rounded-full ${dotBg[ch.color]}`}
                     />
                   </div>
                   <h3 className="text-sm font-semibold text-text">
