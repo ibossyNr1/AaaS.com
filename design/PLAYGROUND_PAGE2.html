@@ -378,10 +378,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
 
         .animate-fade-up {
             animation: fade-up 0.6s var(--liquid-ease) both;
@@ -573,10 +569,15 @@
         .status-dot {
             width: 8px;
             height: 8px;
-            background: var(--circuit-glow);
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--circuit-glow);
-            animation: pulse-dot 2s infinite;
+            animation: pulse-dot-dual 3s infinite;
+        }
+
+        @keyframes pulse-dot-dual {
+            0%, 100% { background: var(--circuit-glow); box-shadow: 0 0 12px var(--circuit-glow); opacity: 1; }
+            25% { opacity: 0.4; }
+            50% { background: var(--accent-red); box-shadow: 0 0 12px var(--accent-red-glow); opacity: 1; }
+            75% { opacity: 0.4; }
         }
 
         .nav-links {
@@ -1074,6 +1075,7 @@
     <nav class="page-nav">
         <a href="PLAYGROUND.html" class="page-dot" title="Page 1 — Landing"></a>
         <a href="#" class="page-dot active" title="Page 2 — Agentic Powerhouse"></a>
+        <a href="PLAYGROUND_PAGE3.html" class="page-dot" title="Page 3 — Pricing"></a>
     </nav>
 
     <!-- ═══════════════════════════════════════════
@@ -1307,17 +1309,25 @@ METABALLS: ACTIVE
                 : 'SYS: CARVED_LOGIC_V02\nPAGE: AGENTIC_POWERHOUSE\nMETABALLS: ACTIVE';
         }
 
+        // Toggle enables/disables scroll-based theme switching
+        let scrollThemeEnabled = true;
+
         themeToggle.addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            setTheme(next);
+            scrollThemeEnabled = !scrollThemeEnabled;
+            themeToggle.style.opacity = scrollThemeEnabled ? '1' : '0.4';
         });
 
-        // Scroll-direction theme switching
+        // Scroll-direction theme switching (only when enabled)
         let lastScrollY = window.scrollY;
         let scrollAccumulator = 0;
         const scrollThreshold = 80;
 
         window.addEventListener('scroll', () => {
+            if (!scrollThemeEnabled) {
+                lastScrollY = window.scrollY;
+                return;
+            }
+
             const currentY = window.scrollY;
             const delta = currentY - lastScrollY;
 
@@ -1333,10 +1343,10 @@ METABALLS: ACTIVE
             }
             scrollAccumulator += delta;
 
-            if (scrollAccumulator < -scrollThreshold) {
+            if (scrollAccumulator > scrollThreshold) {
                 setTheme('light');
                 scrollAccumulator = 0;
-            } else if (scrollAccumulator > scrollThreshold) {
+            } else if (scrollAccumulator < -scrollThreshold) {
                 setTheme('dark');
                 scrollAccumulator = 0;
             }

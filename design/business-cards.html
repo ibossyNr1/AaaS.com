@@ -1,153 +1,455 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superforge Business Card Concepts</title>
+    <title>SUPRA-FORGE — Business Card Concepts</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <style>
+        /* ═══════════════════════════════════════════
+           DESIGN TOKENS — Carved Logic System
+           (from PLAYGROUND_PAGE2)
+           ═══════════════════════════════════════════ */
         :root {
             --basalt-deep: #080809;
             --basalt-surface: #1a1a1c;
             --basalt-bright: #2a2a2e;
             --circuit-glow: #00f3ff;
             --circuit-dim: rgba(0, 243, 255, 0.15);
-            --accent-red: #ff2a6d;
-            --text: #e0e0e0;
+            --accent-red: #f4224b;
+            --accent-red-dim: rgba(244, 34, 75, 0.15);
+            --accent-red-glow: rgba(244, 34, 75, 0.4);
+            --forge-orange: #FF6B1A;
+            --forge-orange-bright: #FF8A3D;
+            --forge-orange-dim: rgba(255, 107, 26, 0.15);
+            --aaas-green: #00ffc2;
+            --aaas-green-dim: rgba(0, 255, 194, 0.15);
+            --light-bg: #f4f3f0;
+            --light-surface: #dddcd8;
+            --light-teal: #0088a0;
+            --light-red: #c91e42;
+            --text-main: #e0e0e0;
             --text-muted: rgba(224, 224, 224, 0.5);
             --border: rgba(255, 255, 255, 0.05);
-            --card-w: 630px; /* 3.5" at 180dpi scale */
-            --card-h: 360px; /* 2" at 180dpi scale */
+            --radius: 0.75rem;
+            --liquid-ease: cubic-bezier(0.23, 1, 0.32, 1);
+            --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            --card-w: 630px;
+            --card-h: 360px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: #050506;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
+            background-color: var(--basalt-deep);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, sans-serif;
             overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Page Layout */
-        .page-header {
-            text-align: center;
-            padding: 60px 40px 20px;
+        /* Grain texture overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--grain);
+            opacity: 0.015;
+            pointer-events: none;
+            z-index: -2;
         }
-        .page-header h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: 32px;
-            color: #fff;
-            letter-spacing: -0.5px;
+
+        /* ═══════════════════════════════════════════
+           BACKGROUND LAYERS (from Playground Page 2)
+           ═══════════════════════════════════════════ */
+        .chromium-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -3;
+            background: radial-gradient(circle at 50% 40%, #111 0%, var(--basalt-deep) 70%);
+            pointer-events: none;
         }
-        .page-header p {
-            font-family: 'Geist Mono', monospace;
-            font-size: 13px;
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                linear-gradient(90deg, var(--basalt-surface) 1px, transparent 1px) 0 0 / 100px 100px,
+                linear-gradient(var(--basalt-surface) 1px, transparent 1px) 0 0 / 100px 100px;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 70%);
+            z-index: -1;
+            opacity: 0.12;
+        }
+
+        /* Merging metaballs */
+        .merge-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            filter: url('#gooey-bg');
+            opacity: 0.06;
+            contain: layout style;
+        }
+
+        .merge-ball {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .merge-ball.orbit-a { animation: merge-orbit-a var(--dur, 20s) infinite linear; }
+        .merge-ball.orbit-b { animation: merge-orbit-b var(--dur, 25s) infinite linear; }
+        .merge-ball.orbit-c { animation: merge-orbit-c var(--dur, 18s) infinite linear; }
+        .merge-ball.drift { animation: merge-drift var(--dur, 30s) infinite alternate var(--liquid-ease); }
+
+        @keyframes merge-orbit-a {
+            from { transform: rotate(0deg) translateX(var(--radius, 150px)) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(var(--radius, 150px)) rotate(-360deg); }
+        }
+        @keyframes merge-orbit-b {
+            from { transform: rotate(120deg) translateX(var(--radius, 120px)) rotate(-120deg); }
+            to { transform: rotate(480deg) translateX(var(--radius, 120px)) rotate(-480deg); }
+        }
+        @keyframes merge-orbit-c {
+            from { transform: rotate(240deg) translateY(var(--radius, 100px)) rotate(-240deg); }
+            to { transform: rotate(600deg) translateY(var(--radius, 100px)) rotate(-600deg); }
+        }
+        @keyframes merge-drift {
+            0% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(15vw, -10vh) scale(1.1); }
+            50% { transform: translate(-10vw, 15vh) scale(0.9); }
+            75% { transform: translate(5vw, 5vh) scale(1.15); }
+            100% { transform: translate(-5vw, -5vh) scale(1); }
+        }
+
+        /* Viscous blobs */
+        .blob-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--basalt-bright) 50%, var(--basalt-surface) 100%);
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.12;
+            animation: blob-drift 20s infinite alternate var(--liquid-ease);
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .blob.accent-cyan {
+            background: radial-gradient(circle, var(--circuit-glow) 0%, transparent 70%);
+            opacity: 0.08;
+        }
+
+        .blob.accent-red {
+            background: radial-gradient(circle, var(--accent-red) 0%, transparent 70%);
+            opacity: 0.06;
+        }
+
+        @keyframes blob-drift {
+            0% { transform: translate(-10%, -10%) scale(1); }
+            33% { transform: translate(15%, 25%) scale(1.15) rotate(30deg); }
+            66% { transform: translate(-5%, 10%) scale(0.95) rotate(-15deg); }
+            100% { transform: translate(10%, -5%) scale(1.1) rotate(45deg); }
+        }
+
+        /* Click flash */
+        .click-flash {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--accent-red);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.08s ease-out;
+        }
+        .click-flash.active {
+            opacity: 0.06;
+            transition: opacity 0.01s;
+        }
+
+        /* Kinetic bar */
+        .kinetic-bar {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--basalt-bright), transparent);
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        .kinetic-bar::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            width: 120px;
+            height: 5px;
+            background: var(--circuit-glow);
+            filter: blur(3px);
+            animation: sweep 4s infinite var(--liquid-ease);
+        }
+        .kinetic-bar.red::after {
+            background: var(--accent-red);
+        }
+        @keyframes sweep {
+            0% { left: -5%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { left: 105%; opacity: 0; }
+        }
+
+        /* Shared animations */
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .animate-fade-up { animation: fade-up 0.6s var(--liquid-ease) both; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        /* Selection */
+        a::selection, button::selection, p::selection, h1::selection, h2::selection, h3::selection, span::selection, td::selection, th::selection, div::selection {
+            background: var(--accent-red-dim);
+            color: var(--text-main);
+        }
+
+        /* ═══════════════════════════════════════════
+           SECTION TOPIC LABELS (red accent bar)
+           ═══════════════════════════════════════════ */
+        .section-topic {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .section-topic::before {
+            content: "";
+            width: 24px;
+            height: 2px;
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red-glow);
+            flex-shrink: 0;
+        }
+        .section-topic::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-red-dim), transparent 60%);
+        }
+
+        /* Monolith title */
+        .monolith-title {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 0%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .mono-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .body-text {
+            font-size: 1rem;
+            font-weight: 300;
             color: var(--text-muted);
-            margin-top: 8px;
+            max-width: 700px;
+            line-height: 1.7;
         }
 
-        .approach-section {
+        /* ═══════════════════════════════════════════
+           SECTION DIVIDER
+           ═══════════════════════════════════════════ */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-red-dim), var(--circuit-dim), var(--accent-red-dim), transparent);
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+
+        /* ═══════════════════════════════════════════
+           LAYOUT
+           ═══════════════════════════════════════════ */
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 0 2.5rem;
         }
-        .approach-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: 22px;
-            color: #fff;
-            margin-bottom: 4px;
+
+        section {
+            padding: 5rem 0;
+            position: relative;
         }
-        .approach-subtitle {
-            font-family: 'Geist Mono', monospace;
-            font-size: 12px;
+
+        /* ═══════════════════════════════════════════
+           PAGE HEADER — Hero style
+           ═══════════════════════════════════════════ */
+        .page-hero {
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 4rem;
+            position: relative;
+        }
+
+        .page-hero .mono-label {
             color: var(--circuit-glow);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 6px;
         }
-        .approach-desc {
-            font-size: 14px;
+
+        .specs-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .spec-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
             color: var(--text-muted);
-            margin-bottom: 30px;
-            max-width: 700px;
-            line-height: 1.6;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.02);
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            transition: all 0.3s var(--liquid-ease);
         }
+        .spec-chip:hover {
+            border-color: rgba(0, 243, 255, 0.25);
+            background: rgba(0, 243, 255, 0.03);
+            color: var(--circuit-glow);
+        }
+        .spec-chip span {
+            color: var(--circuit-glow);
+        }
+
+        /* ═══════════════════════════════════════════
+           APPROACH SECTIONS
+           ═══════════════════════════════════════════ */
         .recommended-badge {
             display: inline-block;
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid rgba(0, 243, 255, 0.3);
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.25);
             color: var(--circuit-glow);
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 4px 12px;
+            letter-spacing: 0.2rem;
+            padding: 6px 16px;
             border-radius: 999px;
-            margin-bottom: 16px;
+            margin-bottom: 1.5rem;
         }
 
         .cards-row {
             display: flex;
             gap: 40px;
-            align-items: center;
+            align-items: flex-start;
             flex-wrap: wrap;
         }
+        .card-wrapper {
+            flex-shrink: 0;
+        }
         .side-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 0.2rem;
             margin-bottom: 12px;
         }
 
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0,243,255,0.15), transparent);
-            margin: 60px 0;
-        }
-
-        /* ─── Card Base ─── */
-        .card {
+        /* ═══════════════════════════════════════════
+           BUSINESS CARD BASE
+           ═══════════════════════════════════════════ */
+        .bcard {
             width: var(--card-w);
             height: var(--card-h);
             border-radius: 12px;
             position: relative;
             overflow: hidden;
             cursor: default;
-            /* Edge painting effect */
             box-shadow:
                 0 0 0 2px var(--circuit-glow),
                 0 0 20px rgba(0, 243, 255, 0.08),
                 0 8px 32px rgba(0,0,0,0.6);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.6s var(--liquid-ease);
         }
-        .card:hover {
-            transform: translateY(-4px) scale(1.01);
+        .bcard:hover {
+            transform: translateY(-8px) scale(1.02);
             box-shadow:
                 0 0 0 2px var(--circuit-glow),
-                0 0 30px rgba(0, 243, 255, 0.15),
-                0 12px 48px rgba(0,0,0,0.7);
+                0 0 40px rgba(0, 243, 255, 0.15),
+                0 16px 64px rgba(0,0,0,0.7);
         }
 
-        /* Grain texture overlay */
-        .card::before {
+        /* Grain on card */
+        .bcard::before {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-image: var(--grain);
             background-size: 128px 128px;
+            opacity: 0.04;
             pointer-events: none;
             z-index: 10;
         }
 
-        .card-inner {
+        .bcard-inner {
             width: 100%;
             height: 100%;
             background: var(--basalt-deep);
@@ -158,52 +460,38 @@
             position: relative;
         }
 
-        /* ─── Circuit Grid (Spot UV simulation) ─── */
+        /* Circuit grid (spot UV simulation) */
         .circuit-grid {
             position: absolute;
             inset: 0;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.6s var(--liquid-ease);
             pointer-events: none;
             z-index: 5;
         }
-        .card:hover .circuit-grid {
-            opacity: 1;
-        }
-        .circuit-grid svg {
-            width: 100%;
-            height: 100%;
-        }
+        .bcard:hover .circuit-grid { opacity: 1; }
+        .circuit-grid svg { width: 100%; height: 100%; }
 
-        /* ─── Spot UV shimmer ─── */
+        /* Spot UV shimmer */
         .spot-uv {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                transparent 30%,
-                rgba(0, 243, 255, 0.03) 45%,
-                rgba(0, 243, 255, 0.06) 50%,
-                rgba(0, 243, 255, 0.03) 55%,
-                transparent 70%
-            );
+            background: linear-gradient(135deg, transparent 30%, rgba(0,243,255,0.03) 45%, rgba(0,243,255,0.06) 50%, rgba(0,243,255,0.03) 55%, transparent 70%);
             background-size: 200% 200%;
             animation: shimmer 4s ease-in-out infinite;
             pointer-events: none;
             z-index: 6;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.6s var(--liquid-ease);
         }
-        .card:hover .spot-uv {
-            opacity: 1;
-        }
+        .bcard:hover .spot-uv { opacity: 1; }
         @keyframes shimmer {
             0% { background-position: -50% -50%; }
             50% { background-position: 150% 150%; }
             100% { background-position: -50% -50%; }
         }
 
-        /* ─── Typography ─── */
+        /* Card typography */
         .brand-name {
             font-family: 'Montserrat', sans-serif;
             font-weight: 800;
@@ -214,31 +502,29 @@
             position: relative;
             z-index: 8;
         }
-        .brand-name.large {
-            font-size: 44px;
-        }
+        .brand-name.large { font-size: 44px; }
         .tagline {
-            font-family: 'Geist Mono', monospace;
-            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
             font-weight: 400;
             color: var(--text-muted);
-            letter-spacing: 1px;
+            letter-spacing: 0.05rem;
             margin-top: 8px;
             position: relative;
             z-index: 8;
         }
         .superforge-anchor {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
             font-weight: 500;
             color: var(--circuit-glow);
-            letter-spacing: 3px;
+            letter-spacing: 0.25rem;
             text-transform: uppercase;
             position: relative;
             z-index: 8;
         }
 
-        /* ─── QR Placeholder ─── */
+        /* QR placeholder */
         .qr-block {
             width: 72px;
             height: 72px;
@@ -251,58 +537,41 @@
             z-index: 8;
             background: rgba(255,255,255,0.03);
         }
-        .qr-block svg {
-            width: 56px;
-            height: 56px;
-            opacity: 0.7;
-        }
+        .qr-block svg { width: 56px; height: 56px; opacity: 0.7; }
         .qr-label {
-            font-family: 'Geist Mono', monospace;
-            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
             color: var(--text-muted);
             margin-top: 4px;
             text-align: center;
             position: relative;
             z-index: 8;
+            letter-spacing: 0.05rem;
         }
 
-        /* ─── Layout helpers ─── */
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .card-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+        /* Layout helpers */
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
 
-        /* ─── Carved accent line ─── */
+        /* Carved accent line */
         .carved-accent {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
+            top: 0; left: 0;
+            width: 50px; height: 3px;
             background: var(--circuit-glow);
             z-index: 8;
             border-radius: 0 0 2px 0;
         }
         .carved-accent.bottom-right {
-            top: auto;
-            left: auto;
-            bottom: 0;
-            right: 0;
+            top: auto; left: auto;
+            bottom: 0; right: 0;
             border-radius: 2px 0 0 0;
         }
 
-        /* ─── Approach 2 specifics ─── */
+        /* Approach 2: split divider */
         .split-divider {
             position: absolute;
-            top: 20%;
-            bottom: 20%;
-            left: 50%;
+            top: 20%; bottom: 20%; left: 50%;
             width: 1px;
             background: linear-gradient(180deg, transparent, var(--circuit-glow), transparent);
             z-index: 8;
@@ -312,9 +581,7 @@
             position: relative;
             z-index: 8;
         }
-        .split-right {
-            text-align: right;
-        }
+        .split-right { text-align: right; }
         .product-name-sm {
             font-family: 'Montserrat', sans-serif;
             font-weight: 800;
@@ -323,33 +590,43 @@
             line-height: 1;
         }
         .product-tag-sm {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
             color: var(--text-muted);
             margin-top: 4px;
         }
         .qr-small {
-            width: 52px;
-            height: 52px;
+            width: 52px; height: 52px;
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 6px;
             background: rgba(255,255,255,0.02);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             margin-top: 10px;
         }
-        .qr-small.right-align {
-            margin-left: auto;
+        .qr-small.right-align { margin-left: auto; }
+        .qr-small svg { width: 40px; height: 40px; opacity: 0.6; }
+
+        /* Approach 2: diagonal */
+        .diagonal-slash {
+            position: absolute;
+            top: 0; bottom: 0; left: 50%;
+            width: 60px;
+            transform: translateX(-50%);
+            z-index: 7;
+            overflow: hidden;
         }
-        .qr-small svg {
-            width: 40px;
-            height: 40px;
-            opacity: 0.6;
+        .diagonal-slash::after {
+            content: '';
+            position: absolute;
+            top: -20%; bottom: -20%; left: 50%;
+            width: 1px;
+            background: linear-gradient(180deg, transparent 5%, var(--circuit-glow) 30%, var(--circuit-glow) 70%, transparent 95%);
+            transform: rotate(15deg);
+            transform-origin: center;
         }
 
-        /* ─── Approach 3 specifics ─── */
-        .circuit-art-side .card-inner {
+        /* Approach 3: circuit art */
+        .circuit-art-side .bcard-inner {
             padding: 0;
             display: flex;
             align-items: center;
@@ -360,10 +637,7 @@
             inset: 0;
             z-index: 2;
         }
-        .circuit-full-art svg {
-            width: 100%;
-            height: 100%;
-        }
+        .circuit-full-art svg { width: 100%; height: 100%; }
         .embossed-text {
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
@@ -376,13 +650,14 @@
             text-transform: uppercase;
             position: relative;
             z-index: 8;
-            transition: all 0.6s ease;
+            transition: all 0.6s var(--liquid-ease);
         }
-        .card:hover .embossed-text {
+        .bcard:hover .embossed-text {
             background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 100%);
             -webkit-background-clip: text;
             background-clip: text;
         }
+
         .two-qr-row {
             display: flex;
             gap: 40px;
@@ -403,46 +678,888 @@
             margin-bottom: 4px;
         }
         .qr-product-tag {
-            font-family: 'Geist Mono', monospace;
-            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
 
-        /* ─── Approach 2 Side A diagonal ─── */
-        .diagonal-slash {
+        /* ═══ Concept 3 Evolved: The Forge & The Field ═══ */
+
+        /* Side A: Light card */
+        .bcard-light {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: #f8f6f3;
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+        }
+        .bcard-light:hover { transform: scale(1.015); }
+        .bcard-light .bcard-inner-light {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        .bcard-light .forge-watermark {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(255,107,26,0.06) 0%, transparent 70%);
+            z-index: 1;
+        }
+        .bcard-light .forge-logo-light {
+            width: 72px;
+            height: 72px;
+            position: relative;
+            z-index: 5;
+        }
+        .bcard-light .forge-logo-light svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 12px rgba(255,107,26,0.25));
+        }
+        .bcard-light .forge-brand-light {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 26px;
+            color: #1a1a1a;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 5;
+        }
+        .bcard-light .forge-tagline-light {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: #666;
+            letter-spacing: 0.08rem;
+            position: relative;
+            z-index: 5;
+        }
+        .bcard-light .light-accent-line {
+            width: 40px;
+            height: 3px;
+            background: var(--forge-orange);
+            border-radius: 2px;
+            position: relative;
+            z-index: 5;
+        }
+        .bcard-light .corner-detail {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            z-index: 3;
+            opacity: 0.15;
+        }
+        .bcard-light .corner-detail.tl { top: 20px; left: 20px; border-top: 2px solid var(--forge-orange); border-left: 2px solid var(--forge-orange); }
+        .bcard-light .corner-detail.tr { top: 20px; right: 20px; border-top: 2px solid var(--forge-orange); border-right: 2px solid var(--forge-orange); }
+        .bcard-light .corner-detail.bl { bottom: 20px; left: 20px; border-bottom: 2px solid var(--forge-orange); border-left: 2px solid var(--forge-orange); }
+        .bcard-light .corner-detail.br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--forge-orange); border-right: 2px solid var(--forge-orange); }
+
+        /* Spot UV sim on light card */
+        .bcard-light .spot-uv-light {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,107,26,0.08) 0%, transparent 50%);
+            z-index: 4;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .bcard-light:hover .spot-uv-light { opacity: 1; }
+
+        /* Side B: Dark split card */
+        .bcard-split {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0b;
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+        }
+        .bcard-split:hover { transform: scale(1.015); }
+        .bcard-split-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+        .split-half {
+            flex: 1;
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            z-index: 5;
+        }
+        .split-half .product-name-split {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            line-height: 1;
+        }
+        .split-half .product-tag-split {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 400;
+            text-align: center;
+            line-height: 1.4;
+            max-width: 180px;
+        }
+        .split-half .qr-container {
+            width: 88px;
+            height: 88px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-top: 4px;
+        }
+        .split-half .qr-container canvas {
+            border-radius: 4px;
+        }
+        .split-half .qr-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.03rem;
+            margin-top: 2px;
+        }
+
+        /* AaaS side (left, cyan) */
+        .split-aaas {
+            background: linear-gradient(160deg, rgba(0,243,255,0.04) 0%, transparent 60%);
+        }
+        .split-aaas .product-name-split { color: var(--circuit-glow); }
+        .split-aaas .product-tag-split { color: rgba(0,243,255,0.5); }
+        .split-aaas .qr-container { border: 1px solid rgba(0,243,255,0.12); background: rgba(0,243,255,0.03); }
+        .split-aaas .qr-url { color: rgba(0,243,255,0.4); }
+
+        /* enora side (right, orange) */
+        .split-enora {
+            background: linear-gradient(200deg, rgba(255,107,26,0.04) 0%, transparent 60%);
+        }
+        .split-enora .product-name-split { color: var(--forge-orange); }
+        .split-enora .product-tag-split { color: rgba(255,107,26,0.5); }
+        .split-enora .qr-container { border: 1px solid rgba(255,107,26,0.12); background: rgba(255,107,26,0.03); }
+        .split-enora .qr-url { color: rgba(255,107,26,0.4); }
+
+        /* Center spark divider */
+        .spark-divider {
+            position: absolute;
+            top: 10%;
+            bottom: 10%;
+            left: 50%;
+            width: 1px;
+            z-index: 6;
+            overflow: visible;
+        }
+        .spark-divider::before {
+            content: '';
             position: absolute;
             top: 0;
             bottom: 0;
-            left: 50%;
-            width: 60px;
-            transform: translateX(-50%);
-            z-index: 7;
-            overflow: hidden;
+            left: 0;
+            width: 1px;
+            background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.06) 20%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 80%, transparent 100%);
         }
-        .diagonal-slash::after {
+        .spark-dot {
+            position: absolute;
+            left: -1.5px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            animation: sparkPulse 3s ease-in-out infinite;
+        }
+        .spark-dot:nth-child(2) { top: 20%; animation-delay: 0.5s; background: rgba(0,243,255,0.3); }
+        .spark-dot:nth-child(3) { top: 40%; animation-delay: 1s; background: rgba(255,255,255,0.15); }
+        .spark-dot:nth-child(4) { top: 60%; animation-delay: 1.5s; background: rgba(255,107,26,0.3); }
+        .spark-dot:nth-child(5) { top: 80%; animation-delay: 2s; background: rgba(255,255,255,0.15); }
+        @keyframes sparkPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* SUPRA-FORGE micro anchor on dark card */
+        .forge-micro-anchor {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 0.25rem;
+            text-transform: uppercase;
+            z-index: 8;
+        }
+
+        /* ═══ Approach 4: Carved Logic Card ═══ */
+        .bcard-carved-light {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: var(--light-bg);
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .bcard-carved-light:hover { transform: scale(1.015); }
+        .bcard-carved-light .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .bcard-carved-light .grain-light {
+            position: absolute;
+            inset: 0;
+            background-image: var(--grain);
+            opacity: 0.02;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+        .bcard-carved-light .accent-bar-top {
+            width: 40px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        .bcard-carved-light .brand-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .bcard-carved-light .brand-name-carved {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 28px;
+            color: #1a1a1c;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        .bcard-carved-light .brand-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 400;
+            color: rgba(26,26,28,0.45);
+            letter-spacing: 0.08rem;
+        }
+        .bcard-carved-light .logo-carved {
+            position: absolute;
+            right: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            opacity: 0.12;
+        }
+        .bcard-carved-light .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .bcard-carved-light .website-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: rgba(26,26,28,0.35);
+            letter-spacing: 0.05rem;
+        }
+        .bcard-carved-light .corner-marks {
+            position: absolute;
+            bottom: 40px;
+            right: 44px;
+            display: flex;
+            gap: 4px;
+        }
+        .bcard-carved-light .corner-mark {
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+        }
+
+        /* Dark side for Approach 4 */
+        .bcard-carved-dark {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: var(--basalt-deep);
+            border: 1px solid var(--border);
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+        }
+        .bcard-carved-dark:hover {
+            transform: scale(1.015);
+            border-color: rgba(0,255,194,0.15);
+        }
+        .bcard-carved-dark .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 36px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .bcard-carved-dark .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .bcard-carved-dark .product-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .bcard-carved-dark .product-name-carved {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            line-height: 1;
+        }
+        .bcard-carved-dark .product-tagline-carved {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .bcard-carved-dark .qr-carved {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bcard-carved-dark .qr-carved canvas {
+            border-radius: 4px;
+        }
+        .bcard-carved-dark .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .bcard-carved-dark .forge-whisper {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            color: rgba(255,255,255,0.12);
+            letter-spacing: 0.25rem;
+            text-transform: uppercase;
+        }
+        .bcard-carved-dark .url-carved {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.03rem;
+        }
+        .bcard-carved-dark .glow-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            border-radius: 0 0 2px 0;
+        }
+        .bcard-carved-dark .bg-gradient {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        /* ═══ Approach 5: Basalt Mono ═══ */
+        .bcard-basalt-light {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: #fafaf8;
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+        }
+        .bcard-basalt-light:hover { transform: scale(1.015); }
+        .bcard-basalt-light .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 44px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .bcard-basalt-light .brand-mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 13px;
+            color: #1a1a1c;
+            letter-spacing: 0.35rem;
+            text-transform: uppercase;
+        }
+        .bcard-basalt-light .tagline-mono {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 16px;
+            color: #666;
+            line-height: 1.5;
+            max-width: 380px;
+        }
+        .bcard-basalt-light .red-bar {
+            width: 24px;
+            height: 3px;
+            background: var(--light-red);
+            border-radius: 2px;
+        }
+        .bcard-basalt-light .logo-watermark {
+            position: absolute;
+            right: 48px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 120px;
+            opacity: 0.04;
+        }
+
+        /* Dark side for Approach 5 */
+        .bcard-basalt-dark {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0b;
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+        }
+        .bcard-basalt-dark:hover { transform: scale(1.015); }
+        .bcard-basalt-dark .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 36px 44px;
+            display: flex;
+            gap: 0;
+        }
+        .bcard-basalt-dark .product-plate {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            position: relative;
+        }
+        .bcard-basalt-dark .product-plate::after {
             content: '';
             position: absolute;
-            top: -20%;
-            bottom: -20%;
-            left: 50%;
+            top: 20%;
+            bottom: 20%;
+            right: 0;
             width: 1px;
-            background: linear-gradient(180deg, transparent 5%, var(--circuit-glow) 30%, var(--circuit-glow) 70%, transparent 95%);
-            transform: rotate(15deg);
-            transform-origin: center;
+        }
+        .bcard-basalt-dark .product-plate:last-child::after { display: none; }
+        .bcard-basalt-dark .plate-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1;
+        }
+        .bcard-basalt-dark .plate-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            text-align: center;
+            line-height: 1.4;
+            max-width: 160px;
+        }
+        .bcard-basalt-dark .plate-qr {
+            width: 76px;
+            height: 76px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 4px;
+        }
+        .bcard-basalt-dark .plate-qr canvas { border-radius: 3px; }
+        .bcard-basalt-dark .plate-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            letter-spacing: 0.03rem;
+        }
+        .bcard-basalt-dark .forge-bottom {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.4rem;
+            color: rgba(255,255,255,0.1);
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+        }
+
+        /* ═══ Approach 6: Edge Glow ═══ */
+        .bcard-edge-light {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: var(--light-bg);
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .bcard-edge-light:hover { transform: scale(1.015); }
+        .bcard-edge-light .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .bcard-edge-light .edge-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .bcard-edge-light .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .bcard-edge-light .logo-sm {
+            width: 36px;
+            height: 36px;
+        }
+        .bcard-edge-light .brand-edge {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 24px;
+            color: #1a1a1c;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .bcard-edge-light .tagline-edge {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 0.02rem;
+        }
+        .bcard-edge-light .bottom-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .bcard-edge-light .meta-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            color: rgba(26,26,28,0.3);
+            letter-spacing: 0.1rem;
+            text-transform: uppercase;
+        }
+
+        .bcard-edge-dark {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            background: #080809;
+            transition: transform 0.4s var(--liquid-ease);
+            cursor: default;
+        }
+        .bcard-edge-dark:hover { transform: scale(1.015); }
+        .bcard-edge-dark .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 28px;
+        }
+        .bcard-edge-dark .products-row {
+            display: flex;
+            gap: 60px;
+            align-items: flex-start;
+        }
+        .bcard-edge-dark .product-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .bcard-edge-dark .product-unit .p-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1;
+        }
+        .bcard-edge-dark .product-unit .p-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            text-align: center;
+            line-height: 1.4;
+            max-width: 170px;
+        }
+        .bcard-edge-dark .product-unit .p-qr {
+            width: 72px;
+            height: 72px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bcard-edge-dark .product-unit .p-qr canvas { border-radius: 3px; }
+        .bcard-edge-dark .product-unit .p-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            letter-spacing: 0.02rem;
+        }
+        .bcard-edge-dark .edge-bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .bcard-edge-dark .center-divider {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.08), transparent);
+            align-self: center;
+        }
+        .bcard-edge-dark .forge-badge {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.4rem;
+            color: rgba(255,255,255,0.12);
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
         }
 
         /* Hover hint */
         .hover-hint {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
-            color: rgba(0, 243, 255, 0.4);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: rgba(0, 243, 255, 0.3);
             text-align: center;
             margin-top: 8px;
-            letter-spacing: 1px;
+            letter-spacing: 0.1rem;
         }
 
-        /* ─── Responsive ─── */
+        /* Spec chips row under cards */
+        .spec-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* ═══════════════════════════════════════════
+           COMPARISON TABLE
+           ═══════════════════════════════════════════ */
+        .comparison-table {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 24px;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+        .comparison-table th {
+            text-align: center;
+            padding: 14px 16px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .comparison-table th:first-child { text-align: left; }
+        .comparison-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .comparison-table td:first-child { text-align: left; color: var(--text-muted); }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+        }
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            opacity: 0.4;
+        }
+
+        /* ═══════════════════════════════════════════
+           FORGE LOGO — Particle Emission
+           ═══════════════════════════════════════════ */
+        .forge-scene {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 2rem;
+        }
+
+        .forge-logo-wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .forge-logo-wrap svg {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.15))
+                    drop-shadow(0 0 60px rgba(0,243,255,0.08));
+            animation: forge-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes forge-pulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.15)) drop-shadow(0 0 60px rgba(0,243,255,0.08)); transform: translate(-50%, -50%) scale(1); }
+            50% { filter: drop-shadow(0 0 30px rgba(255,255,255,0.25)) drop-shadow(0 0 80px rgba(0,243,255,0.15)); transform: translate(-50%, -50%) scale(1.03); }
+        }
+
+        /* Glow ring behind logo */
+        .forge-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,243,255,0.08) 0%, rgba(0,243,255,0.02) 40%, transparent 70%);
+            animation: glow-breathe 4s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        @keyframes glow-breathe {
+            0%, 100% { width: 120px; height: 120px; opacity: 0.6; }
+            50% { width: 160px; height: 160px; opacity: 1; }
+        }
+
+        /* Particle canvas */
+        .forge-particles {
+            position: absolute;
+            inset: 0;
+            z-index: 8;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .forge-particle {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--circuit-glow);
+            opacity: 0;
+            white-space: nowrap;
+            pointer-events: none;
+            will-change: transform, opacity;
+            text-shadow: 0 0 6px rgba(0,243,255,0.4);
+        }
+
+        .forge-particle.spark {
+            width: 3px;
+            height: 3px;
+            background: var(--circuit-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--circuit-glow), 0 0 12px rgba(0,243,255,0.3);
+            font-size: 0;
+        }
+
+        .forge-particle.spark-red {
+            width: 2px;
+            height: 2px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 4px var(--accent-red), 0 0 10px var(--accent-red-glow);
+            font-size: 0;
+        }
+
+        .forge-particle.white {
+            color: rgba(255,255,255,0.6);
+            text-shadow: 0 0 4px rgba(255,255,255,0.2);
+        }
+
+        .forge-particle.dim {
+            color: rgba(0,243,255,0.3);
+            font-size: 8px;
+        }
+
+        /* Orbit rings */
+        .forge-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px solid rgba(0,243,255,0.04);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        .forge-orbit.ring-1 { width: 140px; height: 140px; animation: orbit-spin 20s linear infinite; }
+        .forge-orbit.ring-2 { width: 200px; height: 200px; animation: orbit-spin 30s linear infinite reverse; border-style: dashed; border-color: rgba(244,34,75,0.04); }
+        .forge-orbit.ring-3 { width: 260px; height: 260px; animation: orbit-spin 25s linear infinite; }
+
+        @keyframes orbit-spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
         @media (max-width: 1400px) {
             .cards-row { justify-content: center; }
         }
@@ -451,559 +1568,1009 @@
                 --card-w: 90vw;
                 --card-h: calc(90vw * 0.5714);
             }
-            .approach-section { padding: 20px; }
+            .container { padding: 0 1.5rem; }
+            section { padding: 3rem 0; }
             .brand-name { font-size: 28px; }
             .brand-name.large { font-size: 32px; }
-            .card-inner { padding: 24px 28px; }
-        }
-
-        /* Print specs info */
-        .specs-bar {
-            display: flex;
-            gap: 24px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .spec-item {
-            font-family: 'Geist Mono', monospace;
-            font-size: 10px;
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            background: rgba(255,255,255,0.02);
-        }
-        .spec-item span {
-            color: var(--circuit-glow);
+            .bcard-inner { padding: 24px 28px; }
+            .cards-row { gap: 24px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- PAGE HEADER -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="page-header">
-    <h1>Superforge — Business Card Concepts</h1>
-    <p>Carved Logic Design System · Premium Black Stock · Spot UV · Cyan Edge Paint</p>
-    <div class="specs-bar" style="justify-content: center; margin-top: 16px;">
-        <div class="spec-item"><span>SIZE</span> 3.5" × 2"</div>
-        <div class="spec-item"><span>STOCK</span> 600gsm Black</div>
-        <div class="spec-item"><span>FINISH</span> Matte + Spot UV</div>
-        <div class="spec-item"><span>EDGE</span> #00f3ff Cyan</div>
-        <div class="spec-item"><span>FONTS</span> Montserrat · Geist Mono</div>
-    </div>
+<!-- ═══════════════════════════════════════════ -->
+<!-- BACKGROUND LAYERS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="chromium-canvas"></div>
+<div class="bg-grid"></div>
+
+<!-- Gooey SVG filter -->
+<svg class="goo-filter" style="position:absolute;visibility:hidden">
+    <defs>
+        <filter id="gooey-bg">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur"/>
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10" result="goo"/>
+            <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+        </filter>
+    </defs>
+</svg>
+
+<!-- Merging metaballs -->
+<div class="merge-layer">
+    <div class="merge-ball orbit-a" style="top:30%;left:40%;width:200px;height:200px;--radius:180px;--dur:22s"></div>
+    <div class="merge-ball orbit-b" style="top:50%;left:55%;width:160px;height:160px;--radius:140px;--dur:28s"></div>
+    <div class="merge-ball orbit-c" style="top:45%;left:30%;width:120px;height:120px;--radius:100px;--dur:16s"></div>
+    <div class="merge-ball drift" style="top:20%;left:60%;width:180px;height:180px;--dur:35s"></div>
+    <div class="merge-ball drift" style="top:60%;left:25%;width:140px;height:140px;--dur:28s"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
+<!-- Viscous blobs -->
+<div class="blob-canvas">
+    <div class="blob" style="width:400px;height:400px;top:10%;left:60%;animation-duration:25s;animation-delay:-5s"></div>
+    <div class="blob accent-cyan" style="width:300px;height:300px;top:50%;left:20%;animation-duration:18s;animation-delay:-8s"></div>
+    <div class="blob accent-red" style="width:250px;height:250px;top:70%;left:70%;animation-duration:22s;animation-delay:-3s"></div>
+    <div class="blob" style="width:200px;height:200px;top:30%;left:10%;animation-duration:30s;animation-delay:-12s"></div>
+</div>
+
+<!-- Click flash overlay -->
+<div class="click-flash" id="clickFlash"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HERO HEADER -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="page-hero">
+    <div class="container" style="text-align:center">
+        <!-- Forge Logo with particle emission -->
+        <div class="forge-scene animate-fade-up">
+            <!-- Orbit rings -->
+            <div class="forge-orbit ring-1"></div>
+            <div class="forge-orbit ring-2"></div>
+            <div class="forge-orbit ring-3"></div>
+
+            <!-- Glow -->
+            <div class="forge-glow"></div>
+
+            <!-- Supra-Forge logo (monochrome white) -->
+            <div class="forge-logo-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+                    <path d="M18 2 L32 9 L32 23 L18 34 L4 23 L4 9 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <path d="M18 8 L26 14 L18 28 L10 14 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+                    <path d="M12 16 L16 20 L24 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- Particle container (populated by JS) -->
+            <div class="forge-particles" id="forgeParticles"></div>
+        </div>
+
+        <div class="mono-label animate-fade-up delay-1" style="color:var(--circuit-glow)">Business Card Concepts</div>
+        <h1 class="monolith-title animate-fade-up delay-2">SUPRA-FORGE</h1>
+        <p class="body-text animate-fade-up delay-3" style="margin:1.5rem auto 0;text-align:center;max-width:560px">
+            Three concept directions for premium dual-brand business cards. Hover over cards to preview the spot UV circuit grid effect.
+        </p>
+        <div class="specs-row animate-fade-up delay-3">
+            <div class="spec-chip"><span>Size</span> 3.5" × 2"</div>
+            <div class="spec-chip"><span>Stock</span> 600gsm Black</div>
+            <div class="spec-chip"><span>Finish</span> Matte + Spot UV</div>
+            <div class="spec-chip"><span>Edge</span> #00f3ff Cyan</div>
+            <div class="spec-chip"><span>Fonts</span> Montserrat · JetBrains Mono</div>
+        </div>
+    </div>
+</section>
+
+<div class="kinetic-bar" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
 <!-- APPROACH 1: THE MONOLITH SPLIT -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="approach-section">
-    <div class="recommended-badge">★ Recommended</div>
-    <div class="approach-subtitle">Approach 1</div>
-    <div class="approach-title">The Monolith Split</div>
-    <p class="approach-desc">
-        Each side is a self-contained product identity. The circuit grid is printed in spot UV — invisible on matte black until it catches light. Superforge anchors both sides as a subtle parent brand.
-    </p>
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="recommended-badge animate-fade-up">★ Recommended</div>
+        <div class="section-topic animate-fade-up delay-1">Approach 1</div>
+        <h2 class="section-title animate-fade-up delay-2">The Monolith Split</h2>
+        <p class="body-text animate-fade-up delay-3">
+            Each side is a self-contained product identity. The circuit grid is printed in spot UV — invisible on matte black until it catches light. SUPRA-FORGE anchors both sides as a subtle parent brand.
+        </p>
 
-    <div class="cards-row">
-        <!-- Side A: AaaS -->
-        <div>
-            <div class="side-label">Side A — Agents as a Service</div>
-            <div class="card" id="monolith-a">
-                <div class="card-inner">
-                    <div class="carved-accent"></div>
-                    <div class="carved-accent bottom-right"></div>
-
-                    <!-- Circuit grid (spot UV) -->
-                    <div class="circuit-grid">
-                        <svg viewBox="0 0 630 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Horizontal lines -->
-                            <line x1="0" y1="60" x2="630" y2="60" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="0" y1="120" x2="630" y2="120" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="0" y1="240" x2="630" y2="240" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="0" y1="300" x2="630" y2="300" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <!-- Vertical lines -->
-                            <line x1="100" y1="0" x2="100" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="200" y1="0" x2="200" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="315" y1="0" x2="315" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="430" y1="0" x2="430" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="530" y1="0" x2="530" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <!-- Circuit nodes -->
-                            <circle cx="200" cy="120" r="2" fill="rgba(0,243,255,0.12)"/>
-                            <circle cx="430" cy="180" r="2" fill="rgba(0,243,255,0.12)"/>
-                            <circle cx="315" cy="300" r="2" fill="rgba(0,243,255,0.12)"/>
-                            <circle cx="100" cy="240" r="3" fill="rgba(0,243,255,0.08)"/>
-                            <circle cx="530" cy="60" r="2" fill="rgba(0,243,255,0.1)"/>
-                            <!-- Circuit paths -->
-                            <path d="M200 120 L315 120 L315 180 L430 180" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M100 240 L200 240 L200 300 L315 300" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="spot-uv"></div>
-
-                    <div class="card-top">
-                        <div>
-                            <div class="brand-name large">AaaS</div>
-                            <div class="tagline">Your autonomous workforce</div>
-                        </div>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="superforge-anchor">Superforge</div>
-                        <div>
-                            <div class="qr-block">
-                                <svg viewBox="0 0 64 64" fill="none">
-                                    <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="28" y="4" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="28" y="28" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                    <rect x="40" y="28" width="4" height="8" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="48" y="40" width="12" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="28" y="44" width="8" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
-                                    <rect x="40" y="52" width="20" height="8" rx="1" fill="rgba(255,255,255,0.08)"/>
-                                </svg>
-                            </div>
-                            <div class="qr-label">agents-as-a-service.com</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hover-hint">↑ Hover to reveal spot UV circuit grid</div>
-        </div>
-
-        <!-- Side B: enora.ai -->
-        <div>
-            <div class="side-label">Side B — enora.ai</div>
-            <div class="card" id="monolith-b">
-                <div class="card-inner">
-                    <div class="carved-accent"></div>
-                    <div class="carved-accent bottom-right"></div>
-
-                    <!-- Circuit grid (mirrored/rotated) -->
-                    <div class="circuit-grid">
-                        <svg viewBox="0 0 630 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <line x1="0" y1="72" x2="630" y2="72" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="0" y1="144" x2="630" y2="144" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="0" y1="216" x2="630" y2="216" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="0" y1="288" x2="630" y2="288" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="126" y1="0" x2="126" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="252" y1="0" x2="252" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="378" y1="0" x2="378" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="504" y1="0" x2="504" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <circle cx="378" cy="144" r="2" fill="rgba(0,243,255,0.12)"/>
-                            <circle cx="126" cy="216" r="2" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="504" cy="288" r="2" fill="rgba(0,243,255,0.12)"/>
-                            <circle cx="252" cy="72" r="3" fill="rgba(0,243,255,0.08)"/>
-                            <path d="M378 144 L504 144 L504 288" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M126 216 L252 216 L252 72" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="spot-uv"></div>
-
-                    <div class="card-top">
-                        <div>
-                            <div class="brand-name large">enora.ai</div>
-                            <div class="tagline">Manufacturing intelligence</div>
-                        </div>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="superforge-anchor">Superforge</div>
-                        <div>
-                            <div class="qr-block">
-                                <svg viewBox="0 0 64 64" fill="none">
-                                    <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="28" y="12" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="28" y="32" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                    <rect x="44" y="28" width="4" height="8" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="44" y="44" width="16" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="32" y="48" width="8" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
-                                    <rect x="44" y="52" width="16" height="8" rx="1" fill="rgba(255,255,255,0.08)"/>
-                                </svg>
-                            </div>
-                            <div class="qr-label">enora.ai</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hover-hint">↑ Hover to reveal spot UV circuit grid</div>
-        </div>
-    </div>
-
-    <div class="specs-bar">
-        <div class="spec-item"><span>SPOT UV</span> Circuit grid + accent bars</div>
-        <div class="spec-item"><span>LAYOUT</span> Symmetrical mirror</div>
-        <div class="spec-item"><span>STRATEGY</span> Show relevant side per conversation</div>
-    </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- ═══════════════════════════════════════════════ -->
-<!-- APPROACH 2: THE FORGE CARD -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="approach-section">
-    <div class="approach-subtitle">Approach 2</div>
-    <div class="approach-title">The Forge Card</div>
-    <p class="approach-desc">
-        Superforge takes a more prominent narrative role. Side A presents the studio with both products. Side B splits into a portfolio view with two QR codes connected by a circuit line.
-    </p>
-
-    <div class="cards-row">
-        <!-- Side A: The Forge -->
-        <div>
-            <div class="side-label">Side A — The Studio</div>
-            <div class="card" id="forge-a">
-                <div class="card-inner">
-                    <div class="carved-accent"></div>
-
-                    <div class="circuit-grid">
-                        <svg viewBox="0 0 630 360" fill="none">
-                            <line x1="0" y1="90" x2="630" y2="90" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="0" y1="270" x2="630" y2="270" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="210" y1="0" x2="210" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="420" y1="0" x2="420" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                        </svg>
-                    </div>
-                    <div class="spot-uv"></div>
-
-                    <div style="position: relative; z-index: 8;">
-                        <div class="superforge-anchor" style="font-size: 13px; letter-spacing: 4px; margin-bottom: 20px;">Superforge</div>
-                        <div style="display: flex; gap: 48px; align-items: flex-start; margin-top: 12px;">
-                            <div>
-                                <div class="product-name-sm" style="font-size: 24px;">AaaS</div>
-                                <div class="product-tag-sm" style="margin-top: 6px;">Autonomous agent<br>workforce platform</div>
-                            </div>
-                            <div>
-                                <div class="product-name-sm" style="font-size: 24px;">enora.ai</div>
-                                <div class="product-tag-sm" style="margin-top: 6px;">Manufacturing<br>intelligence</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-bottom">
-                        <div class="tagline" style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase;">Building AI-native companies</div>
-                    </div>
-
-                    <!-- Diagonal connector -->
-                    <div class="diagonal-slash"></div>
-                </div>
-            </div>
-            <div class="hover-hint">↑ Hover to reveal spot UV</div>
-        </div>
-
-        <!-- Side B: Portfolio Split -->
-        <div>
-            <div class="side-label">Side B — The Portfolio</div>
-            <div class="card" id="forge-b">
-                <div class="card-inner" style="padding: 32px 36px;">
-                    <!-- Connecting circuit line -->
-                    <div class="split-divider"></div>
-
-                    <div class="circuit-grid">
-                        <svg viewBox="0 0 630 360" fill="none">
-                            <line x1="0" y1="90" x2="630" y2="90" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="0" y1="270" x2="630" y2="270" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                        </svg>
-                    </div>
-                    <div class="spot-uv"></div>
-
-                    <div style="display: flex; justify-content: space-between; height: 100%; position: relative; z-index: 8;">
-                        <!-- Left: AaaS -->
-                        <div class="split-left" style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <div>
-                                <div class="product-name-sm">AaaS</div>
-                                <div class="product-tag-sm">Your autonomous<br>workforce</div>
-                            </div>
-                            <div>
-                                <div class="qr-small">
-                                    <svg viewBox="0 0 48 48" fill="none">
-                                        <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="5" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="30" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="33" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="2" y="30" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="5" y="33" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="22" y="22" width="6" height="6" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    </svg>
-                                </div>
-                                <div class="qr-label" style="text-align: left;">agents-as-a-service.com</div>
-                            </div>
-                        </div>
-
-                        <!-- Right: enora.ai -->
-                        <div class="split-right" style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <div>
-                                <div class="product-name-sm">enora.ai</div>
-                                <div class="product-tag-sm">Manufacturing<br>intelligence</div>
-                            </div>
-                            <div>
-                                <div class="qr-small right-align">
-                                    <svg viewBox="0 0 48 48" fill="none">
-                                        <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="5" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="30" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="33" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="2" y="30" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
-                                        <rect x="5" y="33" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                        <rect x="22" y="24" width="6" height="6" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    </svg>
-                                </div>
-                                <div class="qr-label" style="text-align: right;">enora.ai</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom center anchor -->
-                    <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 8;">
-                        <div class="superforge-anchor" style="font-size: 9px;">Superforge</div>
-                    </div>
-                </div>
-            </div>
-            <div class="hover-hint">↑ Hover to reveal spot UV</div>
-        </div>
-    </div>
-
-    <div class="specs-bar">
-        <div class="spec-item"><span>SPOT UV</span> Grid + divider line</div>
-        <div class="spec-item"><span>LAYOUT</span> Studio → Portfolio narrative</div>
-        <div class="spec-item"><span>STRATEGY</span> Tell the full story on one card</div>
-    </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- ═══════════════════════════════════════════════ -->
-<!-- APPROACH 3: THE CIRCUIT BOARD -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="approach-section">
-    <div class="approach-subtitle">Approach 3</div>
-    <div class="approach-title">The Circuit Board</div>
-    <p class="approach-desc">
-        Maximum visual impact. Side A is a full-bleed circuit board artwork in spot UV with an embossed Superforge wordmark — a conversation starter. Side B is the functional side with both products and QR codes.
-    </p>
-
-    <div class="cards-row">
-        <!-- Side A: Full Art -->
-        <div>
-            <div class="side-label">Side A — The Art Piece</div>
-            <div class="card circuit-art-side" id="circuit-a">
-                <div class="card-inner">
-                    <!-- Full circuit board art -->
-                    <div class="circuit-full-art">
-                        <svg viewBox="0 0 630 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Dense circuit pattern -->
-                            <!-- Main horizontal traces -->
-                            <line x1="0" y1="45" x2="180" y2="45" stroke="rgba(0,243,255,0.07)" stroke-width="1"/>
-                            <line x1="220" y1="45" x2="630" y2="45" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="0" y1="90" x2="400" y2="90" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="440" y1="90" x2="630" y2="90" stroke="rgba(0,243,255,0.08)" stroke-width="1"/>
-                            <line x1="50" y1="135" x2="300" y2="135" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="340" y1="135" x2="580" y2="135" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="100" y1="225" x2="530" y2="225" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="0" y1="270" x2="260" y2="270" stroke="rgba(0,243,255,0.07)" stroke-width="1"/>
-                            <line x1="300" y1="270" x2="630" y2="270" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="80" y1="315" x2="550" y2="315" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-
-                            <!-- Main vertical traces -->
-                            <line x1="90" y1="0" x2="90" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="180" y1="0" x2="180" y2="200" stroke="rgba(0,243,255,0.07)" stroke-width="1"/>
-                            <line x1="180" y1="240" x2="180" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="270" y1="30" x2="270" y2="330" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                            <line x1="360" y1="0" x2="360" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-                            <line x1="450" y1="0" x2="450" y2="160" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
-                            <line x1="450" y1="200" x2="450" y2="360" stroke="rgba(0,243,255,0.07)" stroke-width="1"/>
-                            <line x1="540" y1="50" x2="540" y2="310" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
-
-                            <!-- Circuit junction nodes -->
-                            <circle cx="180" cy="45" r="4" fill="rgba(0,243,255,0.12)" stroke="rgba(0,243,255,0.2)" stroke-width="0.5"/>
-                            <circle cx="180" cy="90" r="3" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="90" cy="135" r="3" fill="rgba(0,243,255,0.08)"/>
-                            <circle cx="270" cy="90" r="2.5" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="360" cy="135" r="4" fill="rgba(0,243,255,0.12)" stroke="rgba(0,243,255,0.2)" stroke-width="0.5"/>
-                            <circle cx="450" cy="90" r="3" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="540" cy="135" r="2.5" fill="rgba(0,243,255,0.08)"/>
-                            <circle cx="90" cy="225" r="3" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="180" cy="270" r="4" fill="rgba(0,243,255,0.12)" stroke="rgba(0,243,255,0.2)" stroke-width="0.5"/>
-                            <circle cx="270" cy="225" r="2.5" fill="rgba(0,243,255,0.08)"/>
-                            <circle cx="360" cy="270" r="3" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="450" cy="225" r="4" fill="rgba(0,243,255,0.12)" stroke="rgba(0,243,255,0.2)" stroke-width="0.5"/>
-                            <circle cx="540" cy="270" r="3" fill="rgba(0,243,255,0.1)"/>
-                            <circle cx="360" cy="315" r="2.5" fill="rgba(0,243,255,0.08)"/>
-
-                            <!-- Diagonal traces -->
-                            <path d="M180 45 L220 90 L270 90" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M360 135 L400 90 L450 90" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M90 225 L140 270 L180 270" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M450 225 L500 270 L540 270" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
-                            <path d="M270 225 L310 270 L360 270" stroke="rgba(0,243,255,0.06)" stroke-width="0.5" fill="none"/>
-
-                            <!-- IC chip outlines -->
-                            <rect x="155" y="158" width="50" height="44" rx="3" stroke="rgba(0,243,255,0.1)" stroke-width="0.5" fill="rgba(0,243,255,0.02)"/>
-                            <rect x="425" y="158" width="50" height="44" rx="3" stroke="rgba(0,243,255,0.1)" stroke-width="0.5" fill="rgba(0,243,255,0.02)"/>
-                            <!-- IC pins -->
-                            <line x1="165" y1="155" x2="165" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="175" y1="155" x2="175" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="185" y1="155" x2="185" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="195" y1="155" x2="195" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="435" y1="155" x2="435" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="445" y1="155" x2="445" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="455" y1="155" x2="455" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-                            <line x1="465" y1="155" x2="465" y2="158" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/>
-
-                            <!-- Radial glow center -->
-                            <radialGradient id="centerGlow">
-                                <stop offset="0%" stop-color="rgba(0,243,255,0.06)"/>
-                                <stop offset="100%" stop-color="transparent"/>
-                            </radialGradient>
-                            <circle cx="315" cy="180" r="120" fill="url(#centerGlow)"/>
-                        </svg>
-                    </div>
-
-                    <div class="spot-uv" style="opacity: 0.6;"></div>
-
-                    <!-- Embossed Superforge -->
-                    <div class="embossed-text">Superforge</div>
-                </div>
-            </div>
-            <div class="hover-hint">↑ Hover to see UV shine effect</div>
-        </div>
-
-        <!-- Side B: Functional -->
-        <div>
-            <div class="side-label">Side B — The Details</div>
-            <div class="card" id="circuit-b">
-                <div class="card-inner" style="justify-content: center; gap: 28px;">
-                    <div class="carved-accent"></div>
-
-                    <div class="circuit-grid" style="opacity: 0.4;">
-                        <svg viewBox="0 0 630 360" fill="none">
-                            <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
-                        </svg>
-                    </div>
-                    <div class="spot-uv"></div>
-
-                    <!-- Two products with QR codes -->
-                    <div class="two-qr-row" style="justify-content: center;">
-                        <div class="qr-with-label">
-                            <div class="qr-product-name">AaaS</div>
-                            <div class="qr-product-tag">Your autonomous workforce</div>
-                            <div class="qr-block" style="width: 80px; height: 80px;">
-                                <svg viewBox="0 0 64 64" fill="none">
-                                    <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="28" y="4" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="28" y="28" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                </svg>
-                            </div>
-                            <div class="qr-label">agents-as-a-service.com</div>
-                        </div>
-
-                        <!-- Connecting line between QRs -->
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 30px;">
-                            <svg width="60" height="2" viewBox="0 0 60 2">
-                                <line x1="0" y1="1" x2="60" y2="1" stroke="rgba(0,243,255,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: AaaS -->
+            <div class="card-wrapper animate-fade-up delay-3">
+                <div class="side-label">Side A — Agents as a Service</div>
+                <div class="bcard">
+                    <div class="bcard-inner">
+                        <div class="carved-accent"></div>
+                        <div class="carved-accent bottom-right"></div>
+                        <div class="circuit-grid">
+                            <svg viewBox="0 0 630 360" fill="none">
+                                <line x1="0" y1="60" x2="630" y2="60" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="0" y1="120" x2="630" y2="120" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="0" y1="240" x2="630" y2="240" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="300" x2="630" y2="300" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="100" y1="0" x2="100" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="200" y1="0" x2="200" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="315" y1="0" x2="315" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="430" y1="0" x2="430" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="530" y1="0" x2="530" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <circle cx="200" cy="120" r="2" fill="rgba(0,243,255,0.12)"/>
+                                <circle cx="430" cy="180" r="2" fill="rgba(0,243,255,0.12)"/>
+                                <circle cx="315" cy="300" r="2" fill="rgba(0,243,255,0.12)"/>
+                                <circle cx="100" cy="240" r="3" fill="rgba(0,243,255,0.08)"/>
+                                <circle cx="530" cy="60" r="2" fill="rgba(0,243,255,0.1)"/>
+                                <path d="M200 120 L315 120 L315 180 L430 180" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
+                                <path d="M100 240 L200 240 L200 300 L315 300" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
                             </svg>
-                            <div class="superforge-anchor" style="margin-top: 12px; font-size: 9px;">Superforge</div>
+                        </div>
+                        <div class="spot-uv"></div>
+                        <div class="card-top">
+                            <div>
+                                <div class="brand-name large">AaaS</div>
+                                <div class="tagline">Your autonomous workforce</div>
+                            </div>
+                        </div>
+                        <div class="card-bottom">
+                            <div class="superforge-anchor">SUPRA-FORGE</div>
+                            <div>
+                                <div class="qr-block">
+                                    <svg viewBox="0 0 64 64" fill="none">
+                                        <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="28" y="4" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="28" y="28" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                        <rect x="40" y="28" width="4" height="8" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="48" y="40" width="12" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="28" y="44" width="8" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
+                                        <rect x="40" y="52" width="20" height="8" rx="1" fill="rgba(255,255,255,0.08)"/>
+                                    </svg>
+                                </div>
+                                <div class="qr-label">agents-as-a-service.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hover-hint">↑ Hover to reveal spot UV circuit grid</div>
+            </div>
+
+            <!-- Side B: enora.ai -->
+            <div class="card-wrapper animate-fade-up delay-4">
+                <div class="side-label">Side B — enora.ai</div>
+                <div class="bcard">
+                    <div class="bcard-inner">
+                        <div class="carved-accent"></div>
+                        <div class="carved-accent bottom-right"></div>
+                        <div class="circuit-grid">
+                            <svg viewBox="0 0 630 360" fill="none">
+                                <line x1="0" y1="72" x2="630" y2="72" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
+                                <line x1="0" y1="144" x2="630" y2="144" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="0" y1="216" x2="630" y2="216" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="288" x2="630" y2="288" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="126" y1="0" x2="126" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
+                                <line x1="252" y1="0" x2="252" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="378" y1="0" x2="378" y2="360" stroke="rgba(0,243,255,0.06)" stroke-width="0.5"/>
+                                <line x1="504" y1="0" x2="504" y2="360" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
+                                <circle cx="378" cy="144" r="2" fill="rgba(0,243,255,0.12)"/>
+                                <circle cx="126" cy="216" r="2" fill="rgba(0,243,255,0.1)"/>
+                                <circle cx="504" cy="288" r="2" fill="rgba(0,243,255,0.12)"/>
+                                <circle cx="252" cy="72" r="3" fill="rgba(0,243,255,0.08)"/>
+                                <path d="M378 144 L504 144 L504 288" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
+                                <path d="M126 216 L252 216 L252 72" stroke="rgba(0,243,255,0.08)" stroke-width="0.5" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="spot-uv"></div>
+                        <div class="card-top">
+                            <div>
+                                <div class="brand-name large">enora.ai</div>
+                                <div class="tagline">Manufacturing intelligence</div>
+                            </div>
+                        </div>
+                        <div class="card-bottom">
+                            <div class="superforge-anchor">SUPRA-FORGE</div>
+                            <div>
+                                <div class="qr-block">
+                                    <svg viewBox="0 0 64 64" fill="none">
+                                        <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                                        <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
+                                        <rect x="28" y="12" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="28" y="32" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                        <rect x="44" y="28" width="4" height="8" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="44" y="44" width="16" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        <rect x="32" y="48" width="8" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
+                                        <rect x="44" y="52" width="16" height="8" rx="1" fill="rgba(255,255,255,0.08)"/>
+                                    </svg>
+                                </div>
+                                <div class="qr-label">enora.ai</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hover-hint">↑ Hover to reveal spot UV circuit grid</div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Spot UV</span> Circuit grid + accent bars</div>
+            <div class="spec-chip"><span>Layout</span> Symmetrical mirror</div>
+            <div class="spec-chip"><span>Strategy</span> Show relevant side per conversation</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="kinetic-bar red" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- APPROACH 2: THE FORGE CARD -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Approach 2</div>
+        <h2 class="section-title">The Forge Card</h2>
+        <p class="body-text">
+            SUPRA-FORGE takes a more prominent narrative role. Side A presents the studio with both products. Side B splits into a portfolio view with two QR codes connected by a circuit line.
+        </p>
+
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: The Forge -->
+            <div class="card-wrapper">
+                <div class="side-label">Side A — The Studio</div>
+                <div class="bcard">
+                    <div class="bcard-inner">
+                        <div class="carved-accent"></div>
+                        <div class="circuit-grid">
+                            <svg viewBox="0 0 630 360" fill="none">
+                                <line x1="0" y1="90" x2="630" y2="90" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="180" x2="630" y2="180" stroke="rgba(0,243,255,0.05)" stroke-width="0.5"/>
+                                <line x1="0" y1="270" x2="630" y2="270" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="210" y1="0" x2="210" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="420" y1="0" x2="420" y2="360" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="spot-uv"></div>
+                        <div style="position:relative;z-index:8;">
+                            <div class="superforge-anchor" style="font-size:0.75rem;letter-spacing:0.35rem;margin-bottom:20px;">SUPRA-FORGE</div>
+                            <div style="display:flex;gap:48px;align-items:flex-start;margin-top:12px;">
+                                <div>
+                                    <div class="product-name-sm" style="font-size:24px;">AaaS</div>
+                                    <div class="product-tag-sm" style="margin-top:6px;">Autonomous agent<br>workforce platform</div>
+                                </div>
+                                <div>
+                                    <div class="product-name-sm" style="font-size:24px;">enora.ai</div>
+                                    <div class="product-tag-sm" style="margin-top:6px;">Manufacturing<br>intelligence</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-bottom">
+                            <div class="tagline" style="font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;">Building AI-native companies</div>
+                        </div>
+                        <div class="diagonal-slash"></div>
+                    </div>
+                </div>
+                <div class="hover-hint">↑ Hover to reveal spot UV</div>
+            </div>
+
+            <!-- Side B: Portfolio Split -->
+            <div class="card-wrapper">
+                <div class="side-label">Side B — The Portfolio</div>
+                <div class="bcard">
+                    <div class="bcard-inner" style="padding:32px 36px;">
+                        <div class="split-divider"></div>
+                        <div class="circuit-grid">
+                            <svg viewBox="0 0 630 360" fill="none">
+                                <line x1="0" y1="90" x2="630" y2="90" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="270" x2="630" y2="270" stroke="rgba(0,243,255,0.04)" stroke-width="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="spot-uv"></div>
+                        <div style="display:flex;justify-content:space-between;height:100%;position:relative;z-index:8;">
+                            <div class="split-left" style="display:flex;flex-direction:column;justify-content:space-between;">
+                                <div>
+                                    <div class="product-name-sm">AaaS</div>
+                                    <div class="product-tag-sm">Your autonomous<br>workforce</div>
+                                </div>
+                                <div>
+                                    <div class="qr-small">
+                                        <svg viewBox="0 0 48 48" fill="none">
+                                            <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="5" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="30" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="33" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="2" y="30" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="5" y="33" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="22" y="22" width="6" height="6" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        </svg>
+                                    </div>
+                                    <div class="qr-label" style="text-align:left;">agents-as-a-service.com</div>
+                                </div>
+                            </div>
+                            <div class="split-right" style="display:flex;flex-direction:column;justify-content:space-between;">
+                                <div>
+                                    <div class="product-name-sm">enora.ai</div>
+                                    <div class="product-tag-sm">Manufacturing<br>intelligence</div>
+                                </div>
+                                <div>
+                                    <div class="qr-small right-align">
+                                        <svg viewBox="0 0 48 48" fill="none">
+                                            <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="5" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="30" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="33" y="5" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="2" y="30" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+                                            <rect x="5" y="33" width="10" height="10" rx="1" fill="rgba(255,255,255,0.12)"/>
+                                            <rect x="22" y="24" width="6" height="6" rx="1" fill="rgba(255,255,255,0.1)"/>
+                                        </svg>
+                                    </div>
+                                    <div class="qr-label" style="text-align:right;">enora.ai</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:8;">
+                            <div class="superforge-anchor" style="font-size:0.55rem;">SUPRA-FORGE</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hover-hint">↑ Hover to reveal spot UV</div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Spot UV</span> Grid + divider line</div>
+            <div class="spec-chip"><span>Layout</span> Studio → Portfolio narrative</div>
+            <div class="spec-chip"><span>Strategy</span> Tell the full story on one card</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="kinetic-bar" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- APPROACH 3: THE FORGE & THE FIELD -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Approach 3</div>
+        <h2 class="section-title">The Forge & The Field</h2>
+        <p class="body-text">
+            Two worlds on one card. Side A is warm and light — SUPRA-FORGE as the origin of invention, the creative furnace. Side B flips to matte black, split between two products: AaaS in electric cyan and enora.ai in forge orange. Real scannable QR codes link directly to each product.
+        </p>
+
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: The Forge (Light) -->
+            <div class="card-wrapper">
+                <div class="side-label">Side A — The Forge</div>
+                <div class="bcard-light">
+                    <div class="bcard-inner-light">
+                        <div class="forge-watermark"></div>
+                        <div class="spot-uv-light"></div>
+                        <div class="corner-detail tl"></div>
+                        <div class="corner-detail tr"></div>
+                        <div class="corner-detail bl"></div>
+                        <div class="corner-detail br"></div>
+
+                        <!-- SUPRA-FORGE logo in saturated orange -->
+                        <div class="forge-logo-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+                                <path d="M18 2 L32 9 L32 23 L18 34 L4 23 L4 9 Z" fill="rgba(255,107,26,0.12)" stroke="rgba(255,107,26,0.4)" stroke-width="0.5"/>
+                                <path d="M18 8 L26 14 L18 28 L10 14 Z" fill="rgba(255,107,26,0.08)" stroke="rgba(255,107,26,0.25)" stroke-width="0.5"/>
+                                <path d="M12 16 L16 20 L24 12" stroke="#FF6B1A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
                         </div>
 
-                        <div class="qr-with-label">
-                            <div class="qr-product-name">enora.ai</div>
-                            <div class="qr-product-tag">Manufacturing intelligence</div>
-                            <div class="qr-block" style="width: 80px; height: 80px;">
-                                <svg viewBox="0 0 64 64" fill="none">
-                                    <rect x="4" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="40" y="4" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="44" y="8" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="4" y="40" width="20" height="20" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-                                    <rect x="8" y="44" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                    <rect x="28" y="12" width="8" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-                                    <rect x="28" y="32" width="8" height="8" rx="1" fill="rgba(255,255,255,0.12)"/>
-                                </svg>
+                        <div class="light-accent-line"></div>
+                        <div class="forge-brand-light">SUPRA-FORGE</div>
+                        <div class="forge-tagline-light">Venture studio for autonomous intelligence</div>
+                    </div>
+                </div>
+                <div class="hover-hint">↑ Hover for spot UV warmth</div>
+            </div>
+
+            <!-- Side B: The Field (Dark Split) -->
+            <div class="card-wrapper">
+                <div class="side-label">Side B — The Field</div>
+                <div class="bcard-split">
+                    <div class="bcard-split-inner">
+                        <!-- AaaS half (cyan) -->
+                        <div class="split-half split-aaas">
+                            <div class="product-name-split">AaaS</div>
+                            <div class="product-tag-split">From Zero to Agentic Hero</div>
+                            <div class="qr-container" id="qr-aaas"></div>
+                            <div class="qr-url">agents-as-a-service.com</div>
+                        </div>
+
+                        <!-- Spark divider -->
+                        <div class="spark-divider">
+                            <div class="spark-dot" style="top:10%"></div>
+                            <div class="spark-dot"></div>
+                            <div class="spark-dot"></div>
+                            <div class="spark-dot"></div>
+                            <div class="spark-dot"></div>
+                        </div>
+
+                        <!-- enora.ai half (orange) -->
+                        <div class="split-half split-enora">
+                            <div class="product-name-split">enora.ai</div>
+                            <div class="product-tag-split">Find issues before they find you</div>
+                            <div class="qr-container" id="qr-enora"></div>
+                            <div class="qr-url">enora.ai</div>
+                        </div>
+                    </div>
+                    <div class="forge-micro-anchor">SUPRA-FORGE</div>
+                </div>
+                <div class="hover-hint">↑ Scannable QR codes</div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Side A</span> White 600gsm, spot UV on logo, orange edge painting</div>
+            <div class="spec-chip"><span>Side B</span> Matte black, dual QR, cyan + orange spot UV</div>
+            <div class="spec-chip"><span>Strategy</span> Dual personality — invention meets execution</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="kinetic-bar" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- APPROACH 4: CARVED LOGIC CARD -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Approach 4</div>
+        <h2 class="section-title">Carved Logic Card</h2>
+        <p class="body-text">
+            Directly channeling the Playground Page 2 design system. Side A uses the light mode palette — warm off-white with dark teal accents and a red signal bar. Side B flips to the dark basalt with the AaaS green for one product and red for the other. Clean, editorial, brand-native.
+        </p>
+
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: Light Carved -->
+            <div class="card-wrapper">
+                <div class="side-label">Side A — Light Mode</div>
+                <div class="bcard-carved-light">
+                    <div class="inner">
+                        <div class="grain-light"></div>
+                        <div class="logo-carved">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+                                <path d="M18 2 L32 9 L32 23 L18 34 L4 23 L4 9 Z" fill="rgba(0,136,160,0.08)" stroke="rgba(0,136,160,0.2)" stroke-width="0.5"/>
+                                <path d="M18 8 L26 14 L18 28 L10 14 Z" fill="rgba(0,136,160,0.05)" stroke="rgba(0,136,160,0.12)" stroke-width="0.5"/>
+                                <path d="M12 16 L16 20 L24 12" stroke="rgba(0,136,160,0.2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="accent-bar-top" style="background:var(--light-red);"></div>
+                        </div>
+                        <div class="brand-block" style="margin-top:auto;">
+                            <div class="brand-name-carved">SUPRA-FORGE</div>
+                            <div class="brand-sub">Venture studio for autonomous intelligence</div>
+                        </div>
+                        <div class="bottom-row">
+                            <div class="website-label">supra-forge.com</div>
+                            <div class="corner-marks">
+                                <div class="corner-mark" style="background:var(--aaas-green);"></div>
+                                <div class="corner-mark" style="background:var(--light-red);"></div>
                             </div>
-                            <div class="qr-label">enora.ai</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="hover-hint">↑ Hover to reveal spot UV</div>
+
+            <!-- Side B: Dark Carved — AaaS -->
+            <div class="card-wrapper">
+                <div class="side-label">Side B · Option 1 — AaaS</div>
+                <div class="bcard-carved-dark">
+                    <div class="inner">
+                        <div class="glow-line" style="background:var(--aaas-green);"></div>
+                        <div class="bg-gradient" style="background:radial-gradient(ellipse at 20% 30%, rgba(0,255,194,0.04) 0%, transparent 60%);"></div>
+                        <div class="top-section">
+                            <div class="product-col">
+                                <div class="product-name-carved" style="color:var(--aaas-green);">AaaS</div>
+                                <div class="product-tagline-carved" style="color:rgba(0,255,194,0.45);">From Zero to Agentic Hero</div>
+                            </div>
+                            <div class="qr-carved" id="qr-carved-aaas" style="border:1px solid rgba(0,255,194,0.12);background:rgba(0,255,194,0.03);"></div>
+                        </div>
+                        <div class="bottom-section">
+                            <div class="forge-whisper">SUPRA-FORGE</div>
+                            <div class="url-carved" style="color:rgba(0,255,194,0.35);">agents-as-a-service.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second row: Side B for enora -->
+        <div class="cards-row" style="margin-top:1.5rem;">
+            <div class="card-wrapper" style="margin-left:auto;">
+                <div class="side-label">Side B · Option 2 — enora.ai</div>
+                <div class="bcard-carved-dark">
+                    <div class="inner">
+                        <div class="glow-line" style="background:var(--accent-red);"></div>
+                        <div class="bg-gradient" style="background:radial-gradient(ellipse at 20% 30%, rgba(244,34,75,0.04) 0%, transparent 60%);"></div>
+                        <div class="top-section">
+                            <div class="product-col">
+                                <div class="product-name-carved" style="color:var(--accent-red);">enora.ai</div>
+                                <div class="product-tagline-carved" style="color:rgba(244,34,75,0.45);">Find issues before they find you</div>
+                            </div>
+                            <div class="qr-carved" id="qr-carved-enora" style="border:1px solid rgba(244,34,75,0.12);background:rgba(244,34,75,0.03);"></div>
+                        </div>
+                        <div class="bottom-section">
+                            <div class="forge-whisper">SUPRA-FORGE</div>
+                            <div class="url-carved" style="color:rgba(244,34,75,0.35);">enora.ai</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Side A</span> Light — warm off-white, teal logo, red signal bar</div>
+            <div class="spec-chip"><span>Side B</span> Dark — one product per card, green or red accent</div>
+            <div class="spec-chip"><span>Strategy</span> Brand-native, two card variants per product</div>
         </div>
     </div>
+</section>
 
-    <div class="specs-bar">
-        <div class="spec-item"><span>SPOT UV</span> Full circuit board artwork</div>
-        <div class="spec-item"><span>EMBOSS</span> Superforge wordmark</div>
-        <div class="spec-item"><span>STRATEGY</span> Maximum wow factor, conversation starter</div>
+<div class="section-divider"></div>
+<div class="kinetic-bar" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- APPROACH 5: BASALT MONO -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Approach 5</div>
+        <h2 class="section-title">Basalt Mono</h2>
+        <p class="body-text">
+            Ultra-minimal. Side A is a whisper — monospaced brand name on near-white with a single red bar. The SUPRA-FORGE logo barely visible as a watermark. Side B is a dark tectonic plate split evenly between both products with their QR codes. No decoration, pure function.
+        </p>
+
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: Basalt Light -->
+            <div class="card-wrapper">
+                <div class="side-label">Side A — The Whisper</div>
+                <div class="bcard-basalt-light">
+                    <div class="inner">
+                        <div class="logo-watermark">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+                                <path d="M18 2 L32 9 L32 23 L18 34 L4 23 L4 9 Z" fill="rgba(0,0,0,0.03)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+                                <path d="M18 8 L26 14 L18 28 L10 14 Z" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.04)" stroke-width="0.5"/>
+                                <path d="M12 16 L16 20 L24 12" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="red-bar"></div>
+                        <div class="brand-mono">SUPRA-FORGE</div>
+                        <div class="tagline-mono">Venture studio for<br>autonomous intelligence</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side B: Basalt Dark -->
+            <div class="card-wrapper">
+                <div class="side-label">Side B — The Plate</div>
+                <div class="bcard-basalt-dark">
+                    <div class="inner">
+                        <!-- AaaS plate -->
+                        <div class="product-plate" style="border-right:none;">
+                            <div style="position:absolute;top:20%;bottom:20%;right:0;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.06),transparent);"></div>
+                            <div class="plate-name" style="color:var(--aaas-green);">AaaS</div>
+                            <div class="plate-tag" style="color:rgba(0,255,194,0.4);">From Zero to<br>Agentic Hero</div>
+                            <div class="plate-qr" id="qr-basalt-aaas" style="border:1px solid rgba(0,255,194,0.1);background:rgba(0,255,194,0.02);"></div>
+                            <div class="plate-url" style="color:rgba(0,255,194,0.3);">agents-as-a-service.com</div>
+                        </div>
+
+                        <!-- enora plate -->
+                        <div class="product-plate">
+                            <div class="plate-name" style="color:var(--accent-red);">enora.ai</div>
+                            <div class="plate-tag" style="color:rgba(244,34,75,0.4);">Find issues before<br>they find you</div>
+                            <div class="plate-qr" id="qr-basalt-enora" style="border:1px solid rgba(244,34,75,0.1);background:rgba(244,34,75,0.02);"></div>
+                            <div class="plate-url" style="color:rgba(244,34,75,0.3);">enora.ai</div>
+                        </div>
+                    </div>
+                    <div class="forge-bottom">SUPRA-FORGE</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Side A</span> Near-white, monospace type, single red accent</div>
+            <div class="spec-chip"><span>Side B</span> Basalt black, symmetric product plates</div>
+            <div class="spec-chip"><span>Strategy</span> Maximum restraint, lets the brand breathe</div>
+        </div>
     </div>
-</div>
+</section>
 
-<div class="divider"></div>
+<div class="section-divider"></div>
+<div class="kinetic-bar red" style="max-width:1400px;margin:0 auto"></div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- COMPARISON FOOTER -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="approach-section" style="padding-bottom: 80px;">
-    <div class="approach-subtitle">Comparison</div>
-    <div class="approach-title">At a Glance</div>
-    <table style="width: 100%; max-width: 800px; margin-top: 24px; border-collapse: collapse; font-family: 'Geist Mono', monospace; font-size: 12px;">
-        <thead>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <th style="text-align: left; padding: 12px 16px; color: var(--text-muted); font-weight: 500;">Criteria</th>
-                <th style="text-align: center; padding: 12px 16px; color: var(--circuit-glow); font-weight: 500;">1. Monolith Split ★</th>
-                <th style="text-align: center; padding: 12px 16px; color: var(--text-muted); font-weight: 500;">2. Forge Card</th>
-                <th style="text-align: center; padding: 12px 16px; color: var(--text-muted); font-weight: 500;">3. Circuit Board</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 10px 16px; color: var(--text-muted);">Clarity</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●●●</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●○○</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●○○○</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 10px 16px; color: var(--text-muted);">Visual Impact</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●●○</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●○○</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●●●</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 10px 16px; color: var(--text-muted);">Versatility</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●●●</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●●○</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">●●●○○</td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 10px 16px; color: var(--text-muted);">Print Complexity</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">Medium</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">Medium</td>
-                <td style="padding: 10px 16px; text-align: center; color: #fff;">High</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px 16px; color: var(--text-muted);">Best For</td>
-                <td style="padding: 10px 16px; text-align: center; color: var(--circuit-glow); font-size: 11px;">Targeted pitches</td>
-                <td style="padding: 10px 16px; text-align: center; color: var(--text-muted); font-size: 11px;">Full story telling</td>
-                <td style="padding: 10px 16px; text-align: center; color: var(--text-muted); font-size: 11px;">Conversation starter</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<!-- ═══════════════════════════════════════════ -->
+<!-- APPROACH 6: EDGE GLOW -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Approach 6</div>
+        <h2 class="section-title">Edge Glow</h2>
+        <p class="body-text">
+            A gradient edge strip runs across the top of the light side and bottom of the dark side — green fading to red, representing the SUPRA-FORGE spectrum. Side A is the studio card. Side B presents both products side by side. The edge glow simulates the physical edge painting.
+        </p>
+
+        <div class="cards-row" style="margin-top:2.5rem;">
+            <!-- Side A: Edge Light -->
+            <div class="card-wrapper">
+                <div class="side-label">Side A — Studio Identity</div>
+                <div class="bcard-edge-light">
+                    <div class="inner">
+                        <div class="edge-accent" style="background:linear-gradient(90deg, var(--aaas-green), var(--light-teal), var(--light-red));"></div>
+                        <div class="top-row">
+                            <div>
+                                <div class="brand-edge">SUPRA-FORGE</div>
+                                <div class="tagline-edge" style="margin-top:6px;">Venture studio for autonomous intelligence</div>
+                            </div>
+                            <div class="logo-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+                                    <path d="M18 2 L32 9 L32 23 L18 34 L4 23 L4 9 Z" fill="rgba(0,136,160,0.1)" stroke="rgba(0,136,160,0.3)" stroke-width="0.5"/>
+                                    <path d="M18 8 L26 14 L18 28 L10 14 Z" fill="rgba(0,136,160,0.06)" stroke="rgba(0,136,160,0.15)" stroke-width="0.5"/>
+                                    <path d="M12 16 L16 20 L24 12" stroke="var(--light-teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bottom-meta">
+                            <div class="meta-label">supra-forge.com</div>
+                            <div class="meta-label">Est. 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side B: Edge Dark -->
+            <div class="card-wrapper">
+                <div class="side-label">Side B — The Products</div>
+                <div class="bcard-edge-dark">
+                    <div class="inner">
+                        <div class="forge-badge">SUPRA-FORGE</div>
+                        <div class="products-row">
+                            <!-- AaaS -->
+                            <div class="product-unit">
+                                <div class="p-name" style="color:var(--aaas-green);">AaaS</div>
+                                <div class="p-tag" style="color:rgba(0,255,194,0.45);">From Zero to Agentic Hero</div>
+                                <div class="p-qr" id="qr-edge-aaas" style="border:1px solid rgba(0,255,194,0.12);background:rgba(0,255,194,0.03);"></div>
+                                <div class="p-url" style="color:rgba(0,255,194,0.3);">agents-as-a-service.com</div>
+                            </div>
+
+                            <div class="center-divider"></div>
+
+                            <!-- enora.ai -->
+                            <div class="product-unit">
+                                <div class="p-name" style="color:var(--accent-red);">enora.ai</div>
+                                <div class="p-tag" style="color:rgba(244,34,75,0.45);">Find issues before they find you</div>
+                                <div class="p-qr" id="qr-edge-enora" style="border:1px solid rgba(244,34,75,0.12);background:rgba(244,34,75,0.03);"></div>
+                                <div class="p-url" style="color:rgba(244,34,75,0.3);">enora.ai</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edge-bottom-bar" style="background:linear-gradient(90deg, var(--aaas-green), var(--circuit-glow), var(--accent-red));"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="spec-row">
+            <div class="spec-chip"><span>Edge</span> Gradient green→teal→red edge painting</div>
+            <div class="spec-chip"><span>Side A</span> Light studio card with edge accent top</div>
+            <div class="spec-chip"><span>Strategy</span> The edge IS the brand — visible in a card stack</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+<div class="kinetic-bar red" style="max-width:1400px;margin:0 auto"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- COMPARISON TABLE -->
+<!-- ═══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <div class="section-topic">Comparison</div>
+        <h2 class="section-title">At a Glance</h2>
+
+        <div style="overflow-x:auto;">
+        <table class="comparison-table" style="max-width:1200px;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;color:var(--text-muted);">Criteria</th>
+                    <th style="color:var(--text-muted);">1. Monolith</th>
+                    <th style="color:var(--text-muted);">2. Forge</th>
+                    <th style="color:var(--forge-orange);">3. Forge & Field</th>
+                    <th style="color:var(--aaas-green);">4. Carved Logic</th>
+                    <th style="color:var(--text-muted);">5. Basalt Mono</th>
+                    <th style="color:var(--accent-red);">6. Edge Glow</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Light/Dark</td>
+                    <td style="color:#fff;">Dark only</td>
+                    <td style="color:#fff;">Dark only</td>
+                    <td style="color:#fff;">Light + Dark</td>
+                    <td style="color:#fff;">Light + Dark</td>
+                    <td style="color:#fff;">Light + Dark</td>
+                    <td style="color:#fff;">Light + Dark</td>
+                </tr>
+                <tr>
+                    <td>Brand Colors</td>
+                    <td style="color:#fff;">Cyan</td>
+                    <td style="color:#fff;">Cyan</td>
+                    <td style="color:#fff;">Orange + Cyan</td>
+                    <td style="color:var(--aaas-green);">Green + Red</td>
+                    <td style="color:var(--accent-red);">Green + Red</td>
+                    <td style="color:var(--aaas-green);">Green + Red</td>
+                </tr>
+                <tr>
+                    <td>QR Codes</td>
+                    <td style="color:#fff;">Placeholder</td>
+                    <td style="color:#fff;">Placeholder</td>
+                    <td style="color:#fff;">Real ✓</td>
+                    <td style="color:#fff;">Real ✓</td>
+                    <td style="color:#fff;">Real ✓</td>
+                    <td style="color:#fff;">Real ✓</td>
+                </tr>
+                <tr>
+                    <td>Clarity</td>
+                    <td style="color:#fff;">●●●●●</td>
+                    <td style="color:#fff;">●●●○○</td>
+                    <td style="color:#fff;">●●●●○</td>
+                    <td style="color:#fff;">●●●●●</td>
+                    <td style="color:#fff;">●●●●●</td>
+                    <td style="color:#fff;">●●●●○</td>
+                </tr>
+                <tr>
+                    <td>Visual Impact</td>
+                    <td style="color:#fff;">●●●●○</td>
+                    <td style="color:#fff;">●●●○○</td>
+                    <td style="color:#fff;">●●●●●</td>
+                    <td style="color:#fff;">●●●●○</td>
+                    <td style="color:#fff;">●●●○○</td>
+                    <td style="color:#fff;">●●●●○</td>
+                </tr>
+                <tr>
+                    <td>Best For</td>
+                    <td style="color:var(--text-muted);font-size:0.6rem;">Targeted pitches</td>
+                    <td style="color:var(--text-muted);font-size:0.6rem;">Story telling</td>
+                    <td style="color:var(--forge-orange);font-size:0.6rem;">Dual personality</td>
+                    <td style="color:var(--aaas-green);font-size:0.6rem;">Brand-native</td>
+                    <td style="color:var(--text-muted);font-size:0.6rem;">Restraint</td>
+                    <td style="color:var(--accent-red);font-size:0.6rem;">Card stack presence</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-divider"></div>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">SUPRA-FORGE © 2026</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--text-muted);letter-spacing:0.1rem;">
+                Business Card Concepts · Carved Logic Design System
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCRIPTS -->
+<!-- ═══════════════════════════════════════════ -->
+<script>
+    // Click flash effect
+    document.addEventListener('mousedown', () => {
+        const flash = document.getElementById('clickFlash');
+        flash.classList.add('active');
+        setTimeout(() => flash.classList.remove('active'), 100);
+    });
+
+    // Card mouse tracking for spotlight (dark cards + light cards)
+    document.querySelectorAll('.bcard, .bcard-light').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width * 100);
+            const y = ((e.clientY - rect.top) / rect.height * 100);
+            card.style.setProperty('--x', x + '%');
+            card.style.setProperty('--y', y + '%');
+        });
+    });
+
+    // ═══════════════════════════════════════════
+    // QR CODE GENERATION (real scannable codes)
+    // ═══════════════════════════════════════════
+    (function() {
+        function generateQR(containerId, url, fgColor) {
+            const container = document.getElementById(containerId);
+            if (!container || typeof qrcode === 'undefined') return;
+
+            const qr = qrcode(0, 'M');
+            qr.addData(url);
+            qr.make();
+
+            const moduleCount = qr.getModuleCount();
+            const cellSize = 3;
+            const size = moduleCount * cellSize;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.width = '80px';
+            canvas.style.height = '80px';
+            canvas.style.imageRendering = 'pixelated';
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background
+            ctx.clearRect(0, 0, size, size);
+
+            // Draw modules
+            ctx.fillStyle = fgColor;
+            for (let r = 0; r < moduleCount; r++) {
+                for (let c = 0; c < moduleCount; c++) {
+                    if (qr.isDark(r, c)) {
+                        ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+
+            container.appendChild(canvas);
+        }
+
+        // Approach 3: Forge & Field
+        generateQR('qr-aaas', 'https://agents-as-a-service.com', '#00f3ff');
+        generateQR('qr-enora', 'https://enora.ai', '#FF6B1A');
+
+        // Approach 4: Carved Logic
+        generateQR('qr-carved-aaas', 'https://agents-as-a-service.com', '#00ffc2');
+        generateQR('qr-carved-enora', 'https://enora.ai', '#f4224b');
+
+        // Approach 5: Basalt Mono
+        generateQR('qr-basalt-aaas', 'https://agents-as-a-service.com', '#00ffc2');
+        generateQR('qr-basalt-enora', 'https://enora.ai', '#f4224b');
+
+        // Approach 6: Edge Glow
+        generateQR('qr-edge-aaas', 'https://agents-as-a-service.com', '#00ffc2');
+        generateQR('qr-edge-enora', 'https://enora.ai', '#f4224b');
+    })();
+
+    // Intersection observer for fade-up animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fade-up');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    // Observe elements not in the hero (hero animates on load)
+    document.querySelectorAll('section:not(.page-hero) .card-wrapper, section:not(.page-hero) .section-topic, section:not(.page-hero) .section-title, section:not(.page-hero) .body-text').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(24px)';
+        observer.observe(el);
+    });
+
+    // ═══════════════════════════════════════════
+    // FORGE PARTICLE SYSTEM
+    // Sparks, code, math, matrix text erupting from the logo
+    // ═══════════════════════════════════════════
+    (function() {
+        const container = document.getElementById('forgeParticles');
+        if (!container) return;
+
+        const codeFragments = [
+            'async', 'await', 'fn()', '=>', '{}', '[]', '&&', '||',
+            'import', 'class', 'yield', 'pipe()', '.map', '.run',
+            'ctx', 'emit', 'spawn', 'agent', 'skill', 'task',
+            'forge()', 'build', 'deploy', 'init', 'exec',
+            'MCP', 'LLM', 'API', 'SDK', 'CLI', 'RAG',
+        ];
+
+        const mathFragments = [
+            '∑', '∫', '∂', '∇', 'λ', 'Δ', 'θ', 'Ω', 'π', 'μ',
+            '∞', '≈', '≠', '⊕', '⊗', '√', '∈', '∀', '∃',
+            'f(x)', 'P(A|B)', 'E[X]', 'σ²', 'O(n)',
+        ];
+
+        const matrixFragments = [
+            '01101', '10010', '11001', '00110', '10101',
+            '0xFF', '0x3A', '0b101', '<<', '>>',
+        ];
+
+        const allFragments = [
+            ...codeFragments.map(t => ({ text: t, type: '' })),
+            ...mathFragments.map(t => ({ text: t, type: 'white' })),
+            ...matrixFragments.map(t => ({ text: t, type: 'dim' })),
+        ];
+
+        const center = 140; // half of 280px scene
+
+        function emitParticle() {
+            const el = document.createElement('div');
+            el.classList.add('forge-particle');
+
+            // 40% sparks, 60% text
+            const isSpark = Math.random() < 0.4;
+
+            if (isSpark) {
+                el.classList.add(Math.random() < 0.7 ? 'spark' : 'spark-red');
+            } else {
+                const frag = allFragments[Math.floor(Math.random() * allFragments.length)];
+                el.textContent = frag.text;
+                if (frag.type) el.classList.add(frag.type);
+            }
+
+            // Start from center with slight randomness
+            const startX = center + (Math.random() - 0.5) * 20;
+            const startY = center + (Math.random() - 0.5) * 20;
+            el.style.left = startX + 'px';
+            el.style.top = startY + 'px';
+
+            container.appendChild(el);
+
+            // Random direction outward
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 80 + Math.random() * 120;
+            const duration = 1500 + Math.random() * 2500;
+            const endX = startX + Math.cos(angle) * distance;
+            const endY = startY + Math.sin(angle) * distance;
+
+            // Animate
+            const anim = el.animate([
+                {
+                    transform: 'translate(0, 0) scale(0.3)',
+                    opacity: 0,
+                },
+                {
+                    transform: `translate(0, 0) scale(1)`,
+                    opacity: isSpark ? 0.9 : 0.7,
+                    offset: 0.1,
+                },
+                {
+                    transform: `translate(${endX - startX}px, ${endY - startY}px) scale(${isSpark ? 0.2 : 0.6})`,
+                    opacity: 0,
+                }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+                fill: 'forwards',
+            });
+
+            anim.onfinish = () => el.remove();
+        }
+
+        // Emit particles in bursts
+        function emitBurst() {
+            const count = 2 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < count; i++) {
+                setTimeout(emitParticle, i * 80);
+            }
+        }
+
+        // Initial burst
+        setTimeout(() => {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(emitParticle, i * 120);
+            }
+        }, 600);
+
+        // Continuous emission
+        setInterval(emitBurst, 400);
+    })();
+</script>
 
 </body>
 </html>

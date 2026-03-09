@@ -451,15 +451,15 @@
         .status-dot {
             width: 8px;
             height: 8px;
-            background: var(--circuit-glow);
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--circuit-glow);
-            animation: pulse-dot 2s infinite;
+            animation: pulse-dot-dual 3s infinite;
         }
 
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        @keyframes pulse-dot-dual {
+            0%, 100% { background: var(--circuit-glow); box-shadow: 0 0 12px var(--circuit-glow); opacity: 1; }
+            25% { opacity: 0.4; }
+            50% { background: var(--accent-red); box-shadow: 0 0 12px var(--accent-red-glow); opacity: 1; }
+            75% { opacity: 0.4; }
         }
 
         .nav-links {
@@ -1113,6 +1113,7 @@
     <nav class="page-nav">
         <a href="#" class="page-dot active" title="Page 1 — Landing"></a>
         <a href="PLAYGROUND_PAGE2.html" class="page-dot" title="Page 2 — Agentic Powerhouse"></a>
+        <a href="PLAYGROUND_PAGE3.html" class="page-dot" title="Page 3 — Pricing"></a>
     </nav>
 
     <!-- Click flash overlay -->
@@ -1431,22 +1432,28 @@
             streamEl.textContent = theme === 'light' ? lightStreamText : darkStreamText;
         }
 
-        // Manual toggle still works as override
+        // Toggle enables/disables scroll-based theme switching
+        let scrollThemeEnabled = true;
+
         themeToggle.addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            setTheme(next);
+            scrollThemeEnabled = !scrollThemeEnabled;
+            themeToggle.style.opacity = scrollThemeEnabled ? '1' : '0.4';
         });
 
-        // Scroll-direction theme switching
+        // Scroll-direction theme switching (only when enabled)
         let lastScrollY = window.scrollY;
         let scrollAccumulator = 0;
-        const scrollThreshold = 80; // px of consistent scroll before switching
+        const scrollThreshold = 80;
 
         window.addEventListener('scroll', () => {
+            if (!scrollThemeEnabled) {
+                lastScrollY = window.scrollY;
+                return;
+            }
+
             const currentY = window.scrollY;
             const delta = currentY - lastScrollY;
 
-            // At the very top, always dark
             if (currentY <= 10) {
                 scrollAccumulator = 0;
                 setTheme('dark');
@@ -1454,16 +1461,15 @@
                 return;
             }
 
-            // Accumulate scroll direction — resets if direction changes
             if ((delta > 0 && scrollAccumulator < 0) || (delta < 0 && scrollAccumulator > 0)) {
                 scrollAccumulator = 0;
             }
             scrollAccumulator += delta;
 
-            if (scrollAccumulator < -scrollThreshold) {
+            if (scrollAccumulator > scrollThreshold) {
                 setTheme('light');
                 scrollAccumulator = 0;
-            } else if (scrollAccumulator > scrollThreshold) {
+            } else if (scrollAccumulator < -scrollThreshold) {
                 setTheme('dark');
                 scrollAccumulator = 0;
             }

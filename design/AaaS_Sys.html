@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AaaS | Tectonic Agentic Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --basalt-900: #0a0a0b;
+            --basalt-800: #121214;
+            --basalt-700: #1a1a1d;
+            --basalt-600: #26262b;
+            --accent-glow: rgba(0, 255, 194, 0.4);
+            --accent-solid: #00ffc2;
+            --magma-glow: rgba(255, 69, 0, 0.2);
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --plate-shadow: 20px 20px 40px rgba(0,0,0,0.6);
+            --plate-border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--basalt-900);
+            color: #e0e0e0;
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Tectonic Background Texture */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 0.04;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Layout Structure */
+        .tectonic-container {
+            position: relative;
+            padding: 8vw 10vw;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Nav */
+        nav {
+            position: absolute;
+            top: 40px;
+            left: 10vw;
+            right: 10vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            letter-spacing: -2px;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Typography */
+        h1 {
+            font-weight: 900;
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.85;
+            letter-spacing: -0.05em;
+            color: #fff;
+            margin-bottom: 2rem;
+            grid-column: 1 / 10;
+        }
+
+        .mono-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-solid);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Tectonic Plates */
+        .plate {
+            background: var(--basalt-800);
+            border: var(--plate-border);
+            position: relative;
+            box-shadow: var(--plate-shadow);
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease;
+            overflow: hidden;
+        }
+
+        .plate:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            border-color: rgba(0, 255, 194, 0.2);
+        }
+
+        /* Hero Section Styling */
+        .hero-desc {
+            grid-column: 7 / 13;
+            padding-top: 4rem;
+        }
+
+        .hero-desc p {
+            font-size: 1.25rem;
+            color: #888;
+            max-width: 400px;
+            margin-bottom: 2rem;
+        }
+
+        /* The Overlapping Logic */
+        .main-plate {
+            grid-column: 1 / 9;
+            grid-row: 2 / 5;
+            min-height: 600px;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+        }
+
+        .side-plate {
+            grid-column: 8 / 13;
+            grid-row: 3 / 6;
+            background: var(--basalt-700);
+            padding: 3rem;
+            z-index: 3;
+            margin-top: -100px;
+            border-left: 4px solid var(--accent-solid);
+        }
+
+        .data-plate {
+            grid-column: 2 / 6;
+            grid-row: 5 / 7;
+            background: var(--basalt-600);
+            padding: 2rem;
+            z-index: 4;
+            margin-top: -50px;
+        }
+
+        /* Agent Selection Matrix */
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .agent-item:last-child { border: none; }
+
+        .agent-name {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .agent-cost {
+            font-family: var(--font-mono);
+            color: var(--accent-solid);
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 1.2rem 2.5rem;
+            background: var(--accent-solid);
+            color: var(--basalt-900);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.9rem;
+            clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 0% 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            padding-right: 3.5rem;
+            background: #fff;
+        }
+
+        /* Visual Accents */
+        .geometric-acc {
+            position: absolute;
+            background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.05) 50%);
+            width: 200px;
+            height: 200px;
+            top: 0; right: 0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-solid);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--accent-glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .results-ticker {
+            font-family: var(--font-mono);
+            font-size: 4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tectonic-container { grid-template-columns: 1fr; display: block; padding: 2rem; }
+            .plate { margin: 2rem 0 !important; width: 100% !important; }
+            h1 { font-size: 4rem; }
+            .hero-desc { padding-top: 1rem; }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+
+<nav>
+    <div class="logo">AaaS//SYS</div>
+    <div class="nav-links">
+        <span>Network Status: Optimal</span>
+        <a href="#" style="color: #fff; text-decoration: none;">Documentation</a>
+    </div>
+</nav>
+
+<div class="tectonic-container">
+    
+    <span class="mono-label reveal">Agentic Infrastructure v4.02</span>
+    <h1 class="reveal">PAY PER <br>OUTCOME.</h1>
+
+    <div class="hero-desc reveal">
+        <p>Cease paying for idle GPUs and token chunks. We deploy tectonic-grade autonomous agents that only bill your ledger when the objective is verified as COMPLETE.</p>
+        <a href="#" class="btn">INITIALIZE AGENT</a>
+    </div>
+
+    <!-- Main Plate: Agent Selection -->
+    <section class="plate main-plate reveal">
+        <div class="geometric-acc"></div>
+        <div>
+            <span class="mono-label">Active Capabilities</span>
+            <div class="agent-item">
+                <div class="agent-name">Market Arbitrageur</div>
+                <div class="agent-cost">$4.20 / SUCCESS</div>
+            </div>
+            <div class="agent-item">
+                <div class="agent-name">Strategic Lead-Gen</div>
+                <div class="agent-cost">$12.00 / CONVERSION</div>
+            </div>
+            <div class="agent-item">
+                <div class="agent-name">Neural QA Engineer</div>
+                <div class="agent-cost">$1.50 / BUG-FIX</div>
+            </div>
+            <div class="agent-item">
+                <div class="agent-name">Autonomous Outreach</div>
+                <div class="agent-cost">$0.85 / MEETING</div>
+            </div>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: #555;">
+            LATENCY: 14ms // UPTIME: 99.999% // PROTOCOL: TECTONIC-V3
+        </div>
+    </section>
+
+    <!-- Side Plate: Real Time Metrics -->
+    <section class="plate side-plate reveal">
+        <span class="mono-label" style="color: #fff;">Network Output</span>
+        <div class="results-ticker" id="results-counter">14,209</div>
+        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem;">
+            Verified results delivered in the last 24 hours across the Basalt Mesh. No overhead. No waste.
+        </p>
+        <div style="display: flex; align-items: center; font-family: var(--font-mono); font-size: 0.8rem;">
+            <span class="status-dot"></span> 842 Agents Active
+        </div>
+    </section>
+
+    <!-- Data Plate: Trustless Billing -->
+    <section class="plate data-plate reveal">
+        <span class="mono-label">Trustless Escrow</span>
+        <h3 style="margin: 1rem 0; font-size: 1.2rem;">Atomic Billing Cycle</h3>
+        <p style="font-size: 0.85rem; color: #aaa; font-family: var(--font-mono);">
+            Funds are locked in a basalt-grade smart contract. Release only occurs upon cryptographic proof of agent objective completion.
+        </p>
+    </section>
+
+</div>
+
+<script>
+    // Intersection Observer for Reveal
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Simple Counter Animation
+    const counterEl = document.getElementById('results-counter');
+    let count = 14209;
+    
+    setInterval(() => {
+        count += Math.floor(Math.random() * 3);
+        counterEl.innerText = count.toLocaleString();
+    }, 3000);
+
+    // Subtle Parallax on Mouse Move
+    document.addEventListener('mousemove', (e) => {
+        const plates = document.querySelectorAll('.plate');
+        const x = (window.innerWidth / 2 - e.pageX) / 50;
+        const y = (window.innerHeight / 2 - e.pageY) / 50;
+
+        plates.forEach((plate, index) => {
+            const speed = (index + 1) * 0.5;
+            plate.style.transform = `translateX(${x * speed}px) translateY(${y * speed}px)`;
+        });
+    });
+</script>
+
+</body>
+</html>

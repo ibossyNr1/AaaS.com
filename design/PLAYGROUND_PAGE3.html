@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLAYGROUND — Page 3 | Pricing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           DESIGN TOKENS — Carved Logic System
+           (shared across all playground pages)
+           ═══════════════════════════════════════════ */
+        :root {
+            --basalt-deep: #080809;
+            --basalt-surface: #1a1a1c;
+            --basalt-bright: #2a2a2e;
+            --circuit-glow: #00f3ff;
+            --circuit-dim: rgba(0, 243, 255, 0.15);
+            --accent-red: #f4224b;
+            --accent-red-dim: rgba(244, 34, 75, 0.15);
+            --accent-red-glow: rgba(244, 34, 75, 0.4);
+            --text-main: #e0e0e0;
+            --text-muted: rgba(224, 224, 224, 0.5);
+            --border: rgba(255, 255, 255, 0.05);
+            --border-strong: rgba(255, 255, 255, 0.1);
+            --radius: 0.75rem;
+            --liquid-ease: cubic-bezier(0.23, 1, 0.32, 1);
+            --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ═══════════════════════════════════════════
+           LIGHT MODE
+           ═══════════════════════════════════════════ */
+        [data-theme="light"] {
+            --basalt-deep: #f4f3f0;
+            --basalt-surface: #dddcd8;
+            --basalt-bright: #c8c7c3;
+            --circuit-glow: #0088a0;
+            --circuit-dim: rgba(0, 136, 160, 0.12);
+            --accent-red: #c91e42;
+            --accent-red-dim: rgba(201, 30, 66, 0.1);
+            --accent-red-glow: rgba(201, 30, 66, 0.3);
+            --text-main: #1a1a1c;
+            --text-muted: rgba(26, 26, 28, 0.5);
+            --border: rgba(0, 0, 0, 0.06);
+            --border-strong: rgba(0, 0, 0, 0.12);
+        }
+
+        [data-theme="light"] body::before {
+            opacity: 0.01;
+            mix-blend-mode: multiply;
+        }
+
+        [data-theme="light"] .monolith-title {
+            background: linear-gradient(180deg, #1a1a1c 0%, #888 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        [data-theme="light"] .navbar {
+            background: rgba(244, 243, 240, 0.85);
+        }
+
+        [data-theme="light"] .chromium-canvas {
+            background: radial-gradient(circle at 50% 40%, #fff 0%, var(--basalt-deep) 70%);
+        }
+
+        [data-theme="light"] .module {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="light"] .module:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] .module::before {
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(0, 136, 160, 0.06) 0%, transparent 50%);
+        }
+
+        [data-theme="light"] .pricing-card.featured {
+            border-color: var(--circuit-glow);
+        }
+
+        [data-theme="light"] .modular-grid {
+            background-color: var(--basalt-bright);
+        }
+
+        [data-theme="light"] .metric-card {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        [data-theme="light"] .metric-card:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] .feed-item {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        [data-theme="light"] .feed-item:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] .btn-primary:hover {
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="light"] .click-flash {
+            background: var(--accent-red);
+        }
+
+        [data-theme="light"] .click-flash.active {
+            opacity: 0.08;
+        }
+
+        [data-theme="light"] a::selection,
+        [data-theme="light"] button::selection,
+        [data-theme="light"] p::selection,
+        [data-theme="light"] h1::selection,
+        [data-theme="light"] h2::selection,
+        [data-theme="light"] h3::selection,
+        [data-theme="light"] span::selection {
+            background: var(--accent-red-dim);
+            color: var(--text-main);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--basalt-deep);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Grain texture overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--grain);
+            opacity: 0.015;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        /* Brushed metal sheen — from AAAS_co */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg,
+                transparent 0%,
+                rgba(255,255,255,0.015) 25%,
+                transparent 50%,
+                rgba(255,255,255,0.015) 75%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ═══════════════════════════════════════════
+           BACKGROUND — Chromium Canvas + Grid
+           (no animated effects — lightweight page)
+           ═══════════════════════════════════════════ */
+        .chromium-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -3;
+            background: radial-gradient(circle at 50% 40%, #111 0%, var(--basalt-deep) 70%);
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                linear-gradient(90deg, var(--basalt-surface) 1px, transparent 1px) 0 0 / 100px 100px,
+                linear-gradient(var(--basalt-surface) 1px, transparent 1px) 0 0 / 100px 100px;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 70%);
+            z-index: -1;
+            opacity: 0.12;
+        }
+
+        /* ═══════════════════════════════════════════
+           CLICK FLASH
+           ═══════════════════════════════════════════ */
+        .click-flash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: var(--accent-red);
+            pointer-events: none;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.08s ease;
+        }
+
+        .click-flash.active {
+            opacity: 0.12;
+        }
+
+        /* ═══════════════════════════════════════════
+           NAVBAR
+           ═══════════════════════════════════════════ */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(8, 8, 9, 0.7);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.4rem;
+            text-transform: uppercase;
+            border-left: 2px solid var(--circuit-glow);
+            padding-left: 1rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse-dot-dual 3s infinite;
+        }
+
+        @keyframes pulse-dot-dual {
+            0%, 100% { background: var(--circuit-glow); box-shadow: 0 0 12px var(--circuit-glow); opacity: 1; }
+            25% { opacity: 0.4; }
+            50% { background: var(--accent-red); box-shadow: 0 0 12px var(--accent-red-glow); opacity: 1; }
+            75% { opacity: 0.4; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            color: var(--text-main);
+            text-decoration: none;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--circuit-glow);
+            text-shadow: 0 0 10px var(--circuit-glow);
+        }
+
+        .nav-links a:active {
+            color: var(--accent-red);
+            text-shadow: 0 0 10px var(--accent-red-glow);
+        }
+
+        .nav-cta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--text-main);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: var(--text-main);
+            color: var(--basalt-deep);
+        }
+
+        .nav-cta:active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        /* ═══════════════════════════════════════════
+           COMMON ELEMENTS
+           ═══════════════════════════════════════════ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4rem;
+        }
+
+        .section-topic {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            color: var(--accent-red);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-topic::before {
+            content: "";
+            width: 24px;
+            height: 2px;
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red-glow);
+        }
+
+        .mono-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--circuit-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            background: linear-gradient(180deg, #fff 0%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .body-text {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 550px;
+            line-height: 1.7;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 1px solid var(--text-main);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s var(--liquid-ease);
+        }
+
+        .btn-primary:hover {
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary:active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        /* Text selection */
+        ::selection {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        /* ═══════════════════════════════════════════
+           TECTONIC PLATES — from AaaS_Sys.html
+           Overlapping depth-layered panels
+           ═══════════════════════════════════════════ */
+        .tectonic-section {
+            position: relative;
+            padding: 8rem 0 4rem;
+            margin-top: 4.5rem; /* clear fixed navbar */
+        }
+
+        .tectonic-container {
+            position: relative;
+            padding: 0 4rem;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tectonic-label {
+            grid-column: 1 / -1;
+        }
+
+        .tectonic-title {
+            grid-column: 1 / 10;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 0%, #444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="light"] .tectonic-title {
+            background: linear-gradient(180deg, #1a1a1c 0%, #888 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .tectonic-desc {
+            grid-column: 7 / 13;
+            padding-top: 2rem;
+        }
+
+        .tectonic-desc p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 420px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        /* Tectonic Plate base */
+        .plate {
+            background: var(--basalt-surface);
+            border: 1px solid var(--border-strong);
+            position: relative;
+            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.6s var(--liquid-ease), box-shadow 0.6s ease, border-color 0.3s;
+            overflow: hidden;
+        }
+
+        .plate::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .plate:hover {
+            transform: translateY(-8px) scale(1.005);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            border-color: var(--circuit-dim);
+        }
+
+        [data-theme="light"] .plate {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="light"] .plate:hover {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+            border-color: rgba(0, 136, 160, 0.3);
+        }
+
+        [data-theme="light"] .plate::before {
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(0, 136, 160, 0.06) 0%, transparent 50%);
+        }
+
+        /* Geometric accent triangle */
+        .geometric-acc {
+            position: absolute;
+            background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.03) 50%);
+            width: 180px;
+            height: 180px;
+            top: 0;
+            right: 0;
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .geometric-acc {
+            background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.02) 50%);
+        }
+
+        /* Main plate — agent capabilities */
+        .main-plate {
+            grid-column: 1 / 9;
+            grid-row: 2 / 5;
+            min-height: 500px;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+        }
+
+        /* Side plate — real-time metrics */
+        .side-plate {
+            grid-column: 8 / 13;
+            grid-row: 3 / 6;
+            padding: 3rem;
+            z-index: 3;
+            margin-top: -80px;
+            border-left: 3px solid var(--circuit-glow);
+        }
+
+        [data-theme="light"] .side-plate {
+            border-left-color: var(--circuit-glow);
+        }
+
+        /* Data plate — billing info */
+        .data-plate {
+            grid-column: 2 / 6;
+            grid-row: 5 / 7;
+            background: var(--basalt-bright);
+            padding: 2rem;
+            z-index: 4;
+            margin-top: -40px;
+        }
+
+        [data-theme="light"] .data-plate {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Agent item rows */
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .agent-item:last-child { border: none; }
+
+        .agent-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .agent-cost {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--circuit-glow);
+            font-size: 0.8rem;
+        }
+
+        /* Tectonic CTA button — clipped shape */
+        .btn-tectonic {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            clip-path: polygon(0% 0%, 100% 0%, 92% 100%, 0% 100%);
+            transition: all 0.3s var(--liquid-ease);
+        }
+
+        .btn-tectonic:hover {
+            padding-right: 3.5rem;
+            background: var(--circuit-glow);
+            color: var(--basalt-deep);
+        }
+
+        .btn-tectonic:active {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        /* Results ticker */
+        .results-ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0.75rem 0;
+            background: linear-gradient(180deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .results-ticker {
+            background: linear-gradient(180deg, #1a1a1c 0%, #888 100%);
+            -webkit-background-clip: text;
+        }
+
+        /* Plate footer text */
+        .plate-footer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Section divider */
+        .section-divider {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+        }
+
+        /* Reveal animation for tectonic plates */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.8s var(--liquid-ease);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════
+           MODULAR GRID — parallax panel layout
+           Adapted from AAAS_co.html
+           ═══════════════════════════════════════════ */
+        .modular-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto;
+            gap: 1px;
+            background-color: var(--border-strong);
+            border-bottom: 1px solid var(--border-strong);
+            min-height: 100vh;
+        }
+
+        .module {
+            background-color: var(--basalt-deep);
+            position: relative;
+            padding: 2.5rem;
+            overflow: hidden;
+            transition: background 0.3s var(--liquid-ease);
+        }
+
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .module:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        [data-theme="light"] .module {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .module:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] .module::before {
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(0, 136, 160, 0.06) 0%, transparent 50%);
+        }
+
+        [data-theme="light"] .modular-grid {
+            background-color: var(--basalt-bright);
+        }
+
+        /* Hero panel — 8 columns, spans 2 rows */
+        .hero-panel {
+            grid-column: span 8;
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            border-right: 1px solid var(--border-strong);
+        }
+
+        .hero-panel .section-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            letter-spacing: -0.04em;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-panel .body-text {
+            margin-bottom: 0;
+        }
+
+        /* Metrics sidebar — 4 columns, stacked cards */
+        .metrics-sidebar {
+            grid-column: span 4;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background-color: var(--border-strong);
+            padding: 0;
+        }
+
+        .metrics-sidebar .module {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .sidebar-metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-metric-sub {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Control panel — 4 columns, bottom-aligned CTA */
+        .control-panel {
+            grid-column: span 4;
+            background: radial-gradient(circle at top right, rgba(0, 243, 255, 0.05), var(--basalt-deep));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+        }
+
+        [data-theme="light"] .control-panel {
+            background: radial-gradient(circle at top right, rgba(0, 136, 160, 0.08), rgba(255, 255, 255, 0.5));
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1.5rem;
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            cursor: pointer;
+            transition: all 0.3s var(--liquid-ease);
+        }
+
+        .cta-button::after {
+            content: " →";
+        }
+
+        .cta-button:hover {
+            background: var(--circuit-glow);
+            color: var(--basalt-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px var(--circuit-dim);
+        }
+
+        .cta-button:active {
+            background: var(--accent-red);
+            color: #fff;
+            box-shadow: 0 10px 30px var(--accent-red-dim);
+        }
+
+        /* Status module — full-width bottom strip */
+        .status-module {
+            grid-column: span 8;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            padding: 1.5rem 2.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            color: var(--text-muted);
+        }
+
+        .status-module .status-indicator {
+            color: var(--circuit-glow);
+        }
+
+        /* ═══════════════════════════════════════════
+           HERO — Pricing headline (below grid)
+           ═══════════════════════════════════════════ */
+        .hero {
+            padding: 6rem 0 5rem;
+            text-align: center;
+        }
+
+        .hero .section-topic {
+            justify-content: center;
+        }
+
+        .hero .section-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+        }
+
+        .hero .body-text {
+            margin: 1.5rem auto 0;
+            text-align: center;
+        }
+
+        /* ═══════════════════════════════════════════
+           PRICE TOGGLE — monthly / annual switch
+           ═══════════════════════════════════════════ */
+        .price-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .toggle-option {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            color: var(--text-muted);
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .toggle-option.active {
+            color: var(--circuit-glow);
+        }
+
+        .machined-switch {
+            width: 50px;
+            height: 26px;
+            background: var(--basalt-bright);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border-strong);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s;
+        }
+
+        .machined-switch:hover {
+            border-color: var(--circuit-glow);
+        }
+
+        .switch-toggle {
+            width: 20px;
+            height: 20px;
+            background: var(--text-main);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            transition: left 0.3s var(--liquid-ease), background 0.3s;
+        }
+
+        .machined-switch.annual .switch-toggle {
+            left: 25px;
+            background: var(--circuit-glow);
+        }
+
+        .save-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            background: var(--accent-red);
+            color: #fff;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2px;
+            letter-spacing: 0.05rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           PRICING GRID — modular panel layout
+           Adapted from AAAS_co modular-grid
+           ═══════════════════════════════════════════ */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border-strong);
+            border: 1px solid var(--border-strong);
+            margin-top: 2rem;
+        }
+
+        .pricing-card {
+            background: var(--basalt-deep);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--liquid-ease);
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .pricing-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .pricing-card.featured {
+            border-top: 2px solid var(--circuit-glow);
+            background: rgba(0, 243, 255, 0.02);
+        }
+
+        .pricing-card.featured:hover {
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* Chamfered corner accent — from AAAS_co */
+        .chamfer {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--border-strong);
+            top: -6px;
+            left: -6px;
+            transform: rotate(45deg);
+        }
+
+        .pricing-card.featured .chamfer {
+            background: var(--circuit-glow);
+            box-shadow: 0 0 8px var(--circuit-dim);
+        }
+
+        .plan-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card.featured .plan-name {
+            color: var(--circuit-glow);
+        }
+
+        .plan-price {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(180deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .plan-period {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .plan-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .plan-features li {
+            padding: 0.6rem 0;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .plan-features li::before {
+            content: "→";
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--circuit-glow);
+        }
+
+        .pricing-card.featured .plan-features li::before {
+            color: var(--accent-red);
+        }
+
+        .plan-cta {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            cursor: pointer;
+            transition: all 0.3s var(--liquid-ease);
+        }
+
+        .plan-cta:hover {
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-cta:active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        .pricing-card.featured .plan-cta {
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            border-color: var(--text-main);
+        }
+
+        .pricing-card.featured .plan-cta:hover {
+            background: var(--circuit-glow);
+            border-color: var(--circuit-glow);
+            color: var(--basalt-deep);
+            box-shadow: 0 0 30px var(--circuit-dim);
+        }
+
+        .pricing-card.featured .plan-cta:active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        /* ═══════════════════════════════════════════
+           METRICS STRIP — horizontal stats
+           ═══════════════════════════════════════════ */
+        .metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border-strong);
+            border: 1px solid var(--border-strong);
+            margin: 5rem 0;
+        }
+
+        .metric-card {
+            background: var(--basalt-deep);
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-sub {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           PRICE ENGINE — idle vs result cost
+           ═══════════════════════════════════════════ */
+        .price-engine {
+            display: inline-flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem 2rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: 2.5rem;
+        }
+
+        .price-engine-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════
+           LIVE FEED — scrolling agent results
+           ═══════════════════════════════════════════ */
+        .feed-section {
+            margin-bottom: 5rem;
+        }
+
+        .feed-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 1px;
+            background: var(--border-strong);
+            border: 1px solid var(--border-strong);
+            margin-top: 2rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--basalt-bright) transparent;
+        }
+
+        .feed-item {
+            min-width: 280px;
+            flex-shrink: 0;
+            background: var(--basalt-deep);
+            padding: 2rem;
+            border-top: 3px solid var(--border-strong);
+            transition: all 0.3s var(--liquid-ease);
+        }
+
+        .feed-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-top-color: var(--circuit-glow);
+        }
+
+        .agent-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05rem;
+        }
+
+        .feed-task {
+            font-weight: 500;
+            margin: 0.75rem 0;
+        }
+
+        .feed-result {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--circuit-glow);
+        }
+
+        .feed-result .fee {
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════
+           CTA SECTION
+           ═══════════════════════════════════════════ */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 0 4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section .section-topic {
+            justify-content: center;
+        }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        footer {
+            padding: 3rem 4rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        footer ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: var(--circuit-glow);
+        }
+
+        /* ═══════════════════════════════════════════
+           PAGE NAV DOTS
+           ═══════════════════════════════════════════ */
+        .page-nav {
+            position: fixed;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 60;
+        }
+
+        .page-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid var(--text-muted);
+            background: transparent;
+            transition: all 0.3s;
+        }
+
+        .page-dot.active {
+            background: var(--circuit-glow);
+            border-color: var(--circuit-glow);
+            box-shadow: 0 0 8px var(--circuit-dim);
+        }
+
+        .page-dot:hover:not(.active) {
+            border-color: var(--text-main);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ═══════════════════════════════════════════
+           THEME TOGGLE
+           ═══════════════════════════════════════════ */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-track {
+            width: 44px;
+            height: 22px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .toggle-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .toggle-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--circuit-glow);
+            box-shadow: 0 0 8px var(--circuit-dim);
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s var(--liquid-ease);
+        }
+
+        [data-theme="light"] .toggle-thumb {
+            left: 24px;
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red-dim);
+        }
+
+        .toggle-label-dark,
+        .toggle-label-light {
+            transition: opacity 0.3s;
+        }
+
+        .toggle-label-light {
+            opacity: 0.3;
+        }
+
+        [data-theme="light"] .toggle-label-dark {
+            opacity: 0.3;
+        }
+
+        [data-theme="light"] .toggle-label-light {
+            opacity: 1;
+        }
+
+        /* ═══════════════════════════════════════════
+           DATA STREAM
+           ═══════════════════════════════════════════ */
+        .data-stream {
+            position: fixed;
+            bottom: 2rem;
+            right: 4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--circuit-glow);
+            text-align: right;
+            opacity: 0.5;
+            pointer-events: none;
+            white-space: pre-line;
+            z-index: 60;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCROLL-TRIGGERED ANIMATIONS
+           ═══════════════════════════════════════════ */
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-up {
+            opacity: 0;
+            animation: fade-up 0.6s var(--liquid-ease) both;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .container { padding: 0 2rem; }
+            .navbar { padding: 1rem 2rem; }
+            .nav-links { display: none; }
+            .tectonic-container { display: block; padding: 0 2rem; }
+            .tectonic-title { font-size: 3.5rem; }
+            .plate { margin: 1.5rem 0 !important; width: 100% !important; }
+            .side-plate { margin-top: 0; border-left: none; border-top: 3px solid var(--circuit-glow); }
+            .data-plate { margin-top: 0; }
+            .modular-grid { grid-template-columns: 1fr; }
+            .hero-panel { grid-column: span 1; grid-row: span 1; border-right: none; }
+            .metrics-sidebar { grid-column: span 1; }
+            .control-panel { grid-column: span 1; }
+            .status-module { grid-column: span 1; flex-wrap: wrap; gap: 1rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .metrics-strip { grid-template-columns: repeat(2, 1fr); }
+            .page-nav { display: none; }
+        }
+
+        @media (max-width: 640px) {
+            .hero { padding-top: 7rem; }
+            .metrics-strip { grid-template-columns: 1fr; }
+            footer { flex-direction: column; gap: 1rem; }
+            footer ul { flex-wrap: wrap; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Click flash overlay -->
+    <div class="click-flash" id="clickFlash"></div>
+
+    <!-- Static backgrounds only — no animated effects -->
+    <div class="chromium-canvas"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Page navigation dots -->
+    <nav class="page-nav">
+        <a href="PLAYGROUND.html" class="page-dot" title="Page 1 — Landing"></a>
+        <a href="PLAYGROUND_PAGE2.html" class="page-dot" title="Page 2 — Agentic Powerhouse"></a>
+        <a href="#" class="page-dot active" title="Page 3 — Pricing"></a>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         NAVBAR
+         ═══════════════════════════════════════════ -->
+    <nav class="navbar">
+        <div class="brand">
+            <span class="status-dot"></span>
+            SYSTEM://AAAS.V02
+        </div>
+        <ul class="nav-links">
+            <li><a href="PLAYGROUND.html">Home</a></li>
+            <li><a href="PLAYGROUND_PAGE2.html">Agents</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#deploy">Deploy</a></li>
+        </ul>
+        <button class="nav-cta">Start Free</button>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         TECTONIC PLATES — from AaaS_Sys.html
+         Overlapping depth-layered panels with parallax
+         ═══════════════════════════════════════════ -->
+    <section class="tectonic-section">
+        <div class="tectonic-container">
+            <div class="tectonic-label">
+                <div class="section-topic reveal">Agentic Infrastructure v4.02</div>
+            </div>
+
+            <h1 class="tectonic-title reveal">PAY PER<br>OUTCOME.</h1>
+
+            <div class="tectonic-desc reveal">
+                <p>Cease paying for idle GPUs and token chunks. We deploy tectonic-grade autonomous agents that only bill your ledger when the objective is verified as COMPLETE.</p>
+                <a href="#pricing" class="btn-tectonic">Initialize Agent →</a>
+            </div>
+
+            <!-- Main Plate: Agent Capabilities -->
+            <section class="plate main-plate reveal" data-card data-plate>
+                <div class="geometric-acc"></div>
+                <div>
+                    <span class="mono-label">Active Capabilities</span>
+                    <div class="agent-item">
+                        <div class="agent-name">Market Arbitrageur</div>
+                        <div class="agent-cost">$4.20 / SUCCESS</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-name">Strategic Lead-Gen</div>
+                        <div class="agent-cost">$12.00 / CONVERSION</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-name">Neural QA Engineer</div>
+                        <div class="agent-cost">$1.50 / BUG-FIX</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-name">Autonomous Outreach</div>
+                        <div class="agent-cost">$0.85 / MEETING</div>
+                    </div>
+                </div>
+                <div class="plate-footer">
+                    LATENCY: 14ms // UPTIME: 99.999% // PROTOCOL: TECTONIC-V3
+                </div>
+            </section>
+
+            <!-- Side Plate: Real-Time Metrics -->
+            <section class="plate side-plate reveal" data-card data-plate>
+                <span class="mono-label" style="color: var(--text-main);">Network Output</span>
+                <div class="results-ticker" id="results-counter">14,209</div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+                    Verified results delivered in the last 24 hours across the Basalt Mesh. No overhead. No waste.
+                </p>
+                <div style="display: flex; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; gap: 0.5rem;">
+                    <span class="status-dot" style="margin: 0;"></span> 842 Agents Active
+                </div>
+            </section>
+
+            <!-- Data Plate: Trustless Billing -->
+            <section class="plate data-plate reveal" data-card data-plate>
+                <span class="mono-label">Trustless Escrow</span>
+                <h3 style="margin: 0.75rem 0; font-size: 1.1rem;">Atomic Billing Cycle</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; line-height: 1.6;">
+                    Funds locked in basalt-grade smart contract. Release only upon cryptographic proof of agent objective completion.
+                </p>
+            </section>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══════════════════════════════════════════
+         MODULAR GRID — parallax panel layout
+         from AAAS_co.html
+         ═══════════════════════════════════════════ -->
+    <div class="modular-grid">
+        <!-- Hero Panel — 8 cols, 2 rows -->
+        <section class="module hero-panel" data-card>
+            <div class="chamfer"></div>
+            <div class="section-topic">Precision Infrastructure</div>
+            <h1 class="section-title">PAY PER<br>SUCCESS.</h1>
+            <p class="body-text">
+                Stop paying for uptime. Deploy autonomous agents that only charge
+                when objectives are finalized. Engineered for high-throughput
+                enterprise logic.
+            </p>
+            <div class="price-engine" style="margin-top: 2rem;">
+                <div class="machined-switch" id="costSwitch">
+                    <div class="switch-toggle"></div>
+                </div>
+                <div class="price-engine-text">
+                    <span style="color: var(--text-muted)">IDLE COST:</span> $0.00/HR<br>
+                    <span style="color: var(--circuit-glow)">RESULT COST:</span> $0.42/AVG
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Sidebar — 4 cols, stacked -->
+        <aside class="metrics-sidebar">
+            <div class="module" data-card>
+                <div class="chamfer"></div>
+                <span class="mono-label">Active Agents</span>
+                <span class="sidebar-metric-value" data-scramble>12,842</span>
+                <span class="sidebar-metric-sub">Across 42 clusters</span>
+            </div>
+            <div class="module" data-card>
+                <span class="mono-label">Success Rate</span>
+                <span class="sidebar-metric-value" data-scramble>99.82%</span>
+                <span class="sidebar-metric-sub">Validated by Proof-of-Task</span>
+            </div>
+            <div class="module" data-card>
+                <span class="mono-label">Cumulative Savings</span>
+                <span class="sidebar-metric-value" data-scramble style="color: var(--circuit-glow);">$4.2M</span>
+                <span class="sidebar-metric-sub">Vs. Traditional SaaS</span>
+            </div>
+        </aside>
+
+        <!-- Status strip — 8 cols -->
+        <div class="module status-module" data-card>
+            <span>NETWORK: <span class="status-indicator">OPTIMAL</span></span>
+            <span>CLUSTERS: 42 ACTIVE</span>
+            <span>LATENCY: 0.003ms</span>
+            <span>UPTIME: 99.9999%</span>
+        </div>
+
+        <!-- Control Panel — 4 cols -->
+        <section class="module control-panel" data-card>
+            <div style="margin-bottom: 2rem;">
+                <span class="mono-label">Deployment Console</span>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Ignite Agentic Workflow</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">Define your objective, set your bounty, and let the swarm resolve the rest.</p>
+            </div>
+            <button class="cta-button">Initiate Cluster</button>
+        </section>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         PRICING TIERS — below the modular grid
+         ═══════════════════════════════════════════ -->
+    <section class="hero" id="tiers" style="padding-top: 6rem;">
+        <div class="container">
+            <div class="section-topic animate-fade-up">Select Your Tier</div>
+
+            <h2 class="section-title animate-fade-up delay-1" style="font-size: clamp(2.5rem, 6vw, 4rem);">
+                CHOOSE YOUR<br>DEPLOYMENT
+            </h2>
+
+            <p class="body-text animate-fade-up delay-2">
+                Scale from prototype to sovereign infrastructure.
+                Every tier includes pay-per-result billing with zero idle costs.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PRICING TIERS — modular panel grid
+         ═══════════════════════════════════════════ -->
+    <section>
+        <div class="container">
+            <div class="price-toggle-container">
+                <span class="toggle-option active" id="monthlyLabel">Monthly</span>
+                <div class="machined-switch" id="billingSwitch">
+                    <div class="switch-toggle"></div>
+                </div>
+                <span class="toggle-option" id="annualLabel">Annual</span>
+                <span class="save-badge">SAVE 20%</span>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Tier 1: Scout -->
+                <div class="pricing-card" data-card>
+                    <div class="chamfer"></div>
+                    <div class="plan-name">Scout</div>
+                    <div class="plan-price" data-monthly="$0" data-annual="$0">$0</div>
+                    <div class="plan-period" data-monthly="Free forever" data-annual="Free forever">Free forever</div>
+                    <p class="plan-desc">For solo builders exploring autonomous workflows. Start without commitment.</p>
+                    <ul class="plan-features">
+                        <li>3 active agents</li>
+                        <li>1,000 tasks / month</li>
+                        <li>Community support</li>
+                        <li>Standard latency</li>
+                    </ul>
+                    <button class="plan-cta">Deploy Scout</button>
+                </div>
+
+                <!-- Tier 2: Operator (Featured) -->
+                <div class="pricing-card featured" data-card>
+                    <div class="chamfer"></div>
+                    <div class="plan-name">Operator</div>
+                    <div class="plan-price" data-monthly="$49" data-annual="$39">$49</div>
+                    <div class="plan-period" data-monthly="per seat / month" data-annual="per seat / month — billed annually">per seat / month</div>
+                    <p class="plan-desc">For teams deploying production-grade autonomous agents across enterprise workflows.</p>
+                    <ul class="plan-features">
+                        <li>Unlimited agents</li>
+                        <li>50,000 tasks / month</li>
+                        <li>Priority neural routing</li>
+                        <li>Custom tool integrations</li>
+                        <li>Dedicated support channel</li>
+                    </ul>
+                    <button class="plan-cta">Initialize Operator</button>
+                </div>
+
+                <!-- Tier 3: Sovereign -->
+                <div class="pricing-card" data-card>
+                    <div class="chamfer"></div>
+                    <div class="plan-name">Sovereign</div>
+                    <div class="plan-price" data-monthly="Custom" data-annual="Custom">Custom</div>
+                    <div class="plan-period" data-monthly="Enterprise agreement" data-annual="Enterprise agreement">Enterprise agreement</div>
+                    <p class="plan-desc">For organizations requiring sovereign infrastructure, dedicated clusters, and SLA guarantees.</p>
+                    <ul class="plan-features">
+                        <li>Private cloud deployment</li>
+                        <li>Unlimited everything</li>
+                        <li>Custom model fine-tuning</li>
+                        <li>Hardware-level encryption</li>
+                        <li>99.999% SLA guarantee</li>
+                        <li>Dedicated solutions architect</li>
+                    </ul>
+                    <button class="plan-cta">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         METRICS STRIP — platform stats
+         ═══════════════════════════════════════════ -->
+    <div class="container">
+        <div class="metrics-strip">
+            <div class="metric-card" data-card>
+                <span class="mono-label">Active Agents</span>
+                <span class="metric-value" data-scramble>12,842</span>
+                <span class="metric-sub">Across 42 clusters</span>
+            </div>
+            <div class="metric-card" data-card>
+                <span class="mono-label">Success Rate</span>
+                <span class="metric-value" data-scramble>99.82%</span>
+                <span class="metric-sub">Validated by Proof-of-Task</span>
+            </div>
+            <div class="metric-card" data-card>
+                <span class="mono-label">Cumulative Savings</span>
+                <span class="metric-value" data-scramble style="color: var(--circuit-glow);">$4.2M</span>
+                <span class="metric-sub">Vs. Traditional SaaS</span>
+            </div>
+            <div class="metric-card" data-card>
+                <span class="mono-label">Avg Latency</span>
+                <span class="metric-value" data-scramble>0.003ms</span>
+                <span class="metric-sub">Neural bridge response</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         LIVE FEED — agent results
+         ═══════════════════════════════════════════ -->
+    <section class="feed-section">
+        <div class="container">
+            <div class="section-topic">Live Network</div>
+            <h2 class="section-title" style="font-size: 2rem; margin-bottom: 0.5rem;">Agent Results Feed</h2>
+            <p class="body-text">Real-time task completions across the AaaS network.</p>
+
+            <div class="feed-container">
+                <div class="feed-item">
+                    <div class="agent-id">AGENT_772-X // BRAVO</div>
+                    <div class="feed-task">Market Arbitrage Execution</div>
+                    <div class="feed-result">SUCCESS: +$142.20 <span class="fee">[Fee: $1.42]</span></div>
+                </div>
+                <div class="feed-item">
+                    <div class="agent-id">AGENT_109-A // KILO</div>
+                    <div class="feed-task">Lead Generation Scrape</div>
+                    <div class="feed-result">SUCCESS: 50 Verified <span class="fee">[Fee: $5.00]</span></div>
+                </div>
+                <div class="feed-item">
+                    <div class="agent-id">AGENT_993-Z // OMEGA</div>
+                    <div class="feed-task">Code Refactor Cycle</div>
+                    <div class="feed-result">SUCCESS: 12 PRs Merged <span class="fee">[Fee: $24.00]</span></div>
+                </div>
+                <div class="feed-item">
+                    <div class="agent-id">AGENT_042-C // DELTA</div>
+                    <div class="feed-task">Social Sentiment Monitor</div>
+                    <div class="feed-result">SUCCESS: Signal Detected <span class="fee">[Fee: $0.10]</span></div>
+                </div>
+                <div class="feed-item">
+                    <div class="agent-id">AGENT_815-F // ECHO</div>
+                    <div class="feed-task">Document Classification</div>
+                    <div class="feed-result">SUCCESS: 2,400 Tagged <span class="fee">[Fee: $12.00]</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         CTA
+         ═══════════════════════════════════════════ -->
+    <section class="cta-section" id="deploy">
+        <div class="container">
+            <div class="section-topic">Deployment Console</div>
+            <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1.5rem;">Ready to Deploy?</h2>
+            <p class="body-text" style="margin: 0 auto 2.5rem; text-align: center;">
+                Define your objective, set your bounty, and let the swarm resolve the rest.
+            </p>
+            <a href="#" class="btn-primary">Initiate Cluster →</a>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════ -->
+    <footer>
+        <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-main); margin-bottom: 0.5rem;">
+                SYSTEM://AAAS.V02
+            </div>
+            <div>Autonomous agents. Pay-per-result.</div>
+        </div>
+        <div>
+            <ul>
+                <li><a href="PLAYGROUND.html">Home</a></li>
+                <li><a href="PLAYGROUND_PAGE2.html">Agents</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Theme toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <span class="toggle-label-dark">Dark</span>
+        <div class="toggle-track">
+            <div class="toggle-thumb"></div>
+        </div>
+        <span class="toggle-label-light">Light</span>
+    </div>
+
+    <!-- Data stream -->
+    <div class="data-stream">SYS: CARVED_LOGIC_V02
+PAGE: PRICING_ENGINE
+MODE: PAY_PER_RESULT</div>
+
+    <!-- ═══════════════════════════════════════════
+         SCRIPTS
+         ═══════════════════════════════════════════ -->
+    <script>
+        // Theme system
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const streamEl = document.querySelector('.data-stream');
+
+        function setTheme(theme) {
+            if (html.getAttribute('data-theme') === theme) return;
+            html.setAttribute('data-theme', theme);
+            streamEl.textContent = theme === 'light'
+                ? 'SYS: CARVED_LOGIC_V02\nPAGE: PRICING_ENGINE\nMODE: ETCHED_STONE'
+                : 'SYS: CARVED_LOGIC_V02\nPAGE: PRICING_ENGINE\nMODE: PAY_PER_RESULT';
+        }
+
+        // Toggle enables/disables scroll-based theme switching
+        let scrollThemeEnabled = true;
+
+        themeToggle.addEventListener('click', () => {
+            scrollThemeEnabled = !scrollThemeEnabled;
+            themeToggle.style.opacity = scrollThemeEnabled ? '1' : '0.4';
+        });
+
+        // Scroll-direction theme switching (only when enabled)
+        let lastScrollY = window.scrollY;
+        let scrollAccumulator = 0;
+        const scrollThreshold = 80;
+
+        window.addEventListener('scroll', () => {
+            if (!scrollThemeEnabled) {
+                lastScrollY = window.scrollY;
+                return;
+            }
+
+            const currentY = window.scrollY;
+            const delta = currentY - lastScrollY;
+
+            if (currentY <= 10) {
+                scrollAccumulator = 0;
+                setTheme('dark');
+                lastScrollY = currentY;
+                return;
+            }
+
+            if ((delta > 0 && scrollAccumulator < 0) || (delta < 0 && scrollAccumulator > 0)) {
+                scrollAccumulator = 0;
+            }
+            scrollAccumulator += delta;
+
+            if (scrollAccumulator > scrollThreshold) {
+                setTheme('light');
+                scrollAccumulator = 0;
+            } else if (scrollAccumulator < -scrollThreshold) {
+                setTheme('dark');
+                scrollAccumulator = 0;
+            }
+
+            lastScrollY = currentY;
+        }, { passive: true });
+
+        // Click flash
+        const flash = document.getElementById('clickFlash');
+        document.addEventListener('mousedown', () => {
+            flash.classList.add('active');
+        });
+        document.addEventListener('mouseup', () => {
+            setTimeout(() => flash.classList.remove('active'), 80);
+        });
+
+        // Card / module mouse-tracking spotlight
+        document.querySelectorAll('[data-card]').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--x', x + '%');
+                card.style.setProperty('--y', y + '%');
+            });
+        });
+
+        // Metric value scramble on hover — from AAAS_co
+        document.querySelectorAll('[data-scramble]').forEach(val => {
+            const original = val.textContent;
+            val.addEventListener('mouseenter', () => {
+                let iterations = 0;
+                const interval = setInterval(() => {
+                    val.textContent = original.split('')
+                        .map((char, index) => {
+                            if (index < iterations) return original[index];
+                            if (char === ' ' || char === '.' || char === ',' || char === '$' || char === '%') return char;
+                            return String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                        })
+                        .join('');
+                    if (iterations >= original.length) clearInterval(interval);
+                    iterations += 1 / 3;
+                }, 30);
+            });
+        });
+
+        // Billing toggle — monthly / annual
+        const billingSwitch = document.getElementById('billingSwitch');
+        const monthlyLabel = document.getElementById('monthlyLabel');
+        const annualLabel = document.getElementById('annualLabel');
+        let isAnnual = false;
+
+        billingSwitch.addEventListener('click', () => {
+            isAnnual = !isAnnual;
+            billingSwitch.classList.toggle('annual', isAnnual);
+            monthlyLabel.classList.toggle('active', !isAnnual);
+            annualLabel.classList.toggle('active', isAnnual);
+
+            const mode = isAnnual ? 'annual' : 'monthly';
+            document.querySelectorAll('.plan-price[data-monthly]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + mode);
+            });
+            document.querySelectorAll('.plan-period[data-monthly]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + mode);
+            });
+        });
+
+        // Cost switch in hero
+        const costSwitch = document.getElementById('costSwitch');
+        let costActive = false;
+        costSwitch.addEventListener('click', () => {
+            costActive = !costActive;
+            costSwitch.classList.toggle('annual', costActive);
+        });
+
+        // Scroll-triggered fade-in
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-fade-up').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Tectonic: reveal on scroll
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // Tectonic: results counter animation
+        const counterEl = document.getElementById('results-counter');
+        if (counterEl) {
+            let count = 14209;
+            setInterval(() => {
+                count += Math.floor(Math.random() * 3);
+                counterEl.textContent = count.toLocaleString();
+            }, 3000);
+        }
+
+        // Tectonic: subtle parallax on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const plates = document.querySelectorAll('[data-plate]');
+            const x = (window.innerWidth / 2 - e.clientX) / 60;
+            const y = (window.innerHeight / 2 - e.clientY) / 60;
+
+            plates.forEach((plate, index) => {
+                const speed = (index + 1) * 0.4;
+                plate.style.transform = `translateX(${x * speed}px) translateY(${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
