@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "@aaas/ui/globals.css";
 
 /* Circuit grid background */
 .circuit-grid {
