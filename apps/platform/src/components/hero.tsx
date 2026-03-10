@@ -1,24 +1,25 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Button, Card, Container, Section } from "@aaas/ui";
+import { Button, Card, Container, Section, Badge } from "@aaas/ui";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
 const statusCards = [
-  { label: "Extract", value: "Strategic Fundamentals" },
-  { label: "Map", value: "Context into AI Workflows" },
-  { label: "Deploy", value: "Proprietary Tools & Agents" },
+  { label: "Extract", value: "Strategic Fundamentals", icon: "01" },
+  { label: "Map", value: "Context into AI Workflows", icon: "02" },
+  { label: "Deploy", value: "Proprietary Tools & Agents", icon: "03" },
 ];
 
 export function Hero() {
   const orbRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!orbRef.current) return;
-      const x = (e.clientX - window.innerWidth / 2) / 50;
-      const y = (e.clientY - window.innerHeight / 2) / 50;
+      const x = (e.clientX - window.innerWidth / 2) / 40;
+      const y = (e.clientY - window.innerHeight / 2) / 40;
       orbRef.current.style.transform = `translate(${x}px, ${y}px)`;
     };
     document.addEventListener("mousemove", handleMouseMove);
@@ -27,29 +28,54 @@ export function Hero() {
 
   return (
     <Section className="relative pt-32 pb-24 overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-circuit/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      {/* Dual accent glows */}
+      <div className="absolute top-0 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-circuit/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-accent-red/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
 
       <Container className="relative z-10 max-w-[1600px]">
         <div className="relative">
+          {/* System status badge */}
+          <Badge className="mb-6 animate-fade-up">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot inline-block mr-2" />
+            System Online — 12 Agents Active
+          </Badge>
+
           {/* Monolith Title */}
           <h1 className="monolith-title text-[clamp(4rem,12vw,10rem)] font-black leading-[0.85] tracking-[-0.04em] uppercase mb-8">
             CONTEXT<br />IS KING
           </h1>
 
-          <p className="max-w-lg text-lg text-text/70 font-light leading-relaxed">
-            Contextualize Strategy to Accelerate with AI.{" "}
-            <span className="text-text/50">Turn business context into structured data to perfect any AI request.</span>
+          <p className="max-w-lg text-lg text-text/70 font-light leading-relaxed mb-4">
+            Your business context, structured for machines.{" "}
+            <span className="text-text/50">
+              Deploy autonomous AI agents that truly understand your strategy,
+              brand, market, and operations — then execute with surgical precision.
+            </span>
           </p>
 
-          {/* Status Cards */}
-          <div className="flex flex-col sm:flex-row gap-6 lg:gap-16 mt-16">
+          {/* Outline accent text */}
+          <p className="outline-text text-[clamp(1.5rem,4vw,3rem)] font-black uppercase tracking-tight mb-12 opacity-30">
+            Autonomous Digital Workforce
+          </p>
+
+          {/* Status Cards — Glass variant */}
+          <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 mt-8">
             {statusCards.map((card) => (
-              <Card key={card.label} carved className="flex-1">
-                <span className="font-mono text-[0.65rem] text-circuit uppercase tracking-wider block mb-4">
-                  {card.label}
-                </span>
-                <span className="text-2xl font-medium text-text">
+              <Card
+                key={card.label}
+                variant="glass"
+                spotlight
+                className="flex-1 group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <span className="font-mono text-[0.65rem] text-circuit uppercase tracking-wider">
+                    {card.label}
+                  </span>
+                  <span className="font-mono text-[0.55rem] text-text-muted">
+                    {card.icon}
+                  </span>
+                </div>
+                <span className="text-xl font-medium text-text leading-tight">
                   {card.value}
                 </span>
               </Card>
@@ -59,7 +85,7 @@ export function Hero() {
           {/* CTA */}
           <div className="mt-16 flex flex-wrap gap-4">
             <a href={BOOKING_LINK} target="_blank" rel="noopener noreferrer">
-              <Button size="lg">Initialize System</Button>
+              <Button variant="red" size="lg">Initialize System</Button>
             </a>
             <a href="/platform">
               <Button variant="secondary" size="lg">
@@ -68,19 +94,41 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Node Map — Pulsing Orb */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[400px] h-[600px] hidden lg:flex items-center justify-center pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,243,255,0.15)_0%,transparent_70%)]" />
+          {/* Orbital Orb — Enhanced */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[700px] hidden lg:flex items-center justify-center pointer-events-none">
+            {/* Background aura */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,243,255,0.1)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_40%,var(--accent-red-dim),transparent_50%)]" />
+
+            {/* Orbital rings */}
+            <div ref={ringRef} className="absolute w-[300px] h-[300px] animate-orbit" style={{ animationDuration: "25s" }}>
+              <svg className="w-full h-full" viewBox="0 0 300 300" aria-hidden="true">
+                <circle cx="150" cy="150" r="140" stroke="rgba(0,243,255,0.08)" fill="none" strokeDasharray="8 6" />
+              </svg>
+              {/* Orbiting dot */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-circuit animate-pulse-dot" />
+            </div>
+
+            <div className="absolute w-[220px] h-[220px] animate-orbit" style={{ animationDuration: "18s", animationDirection: "reverse" }}>
+              <svg className="w-full h-full" viewBox="0 0 220 220" aria-hidden="true">
+                <circle cx="110" cy="110" r="100" stroke="rgba(244,63,108,0.08)" fill="none" strokeDasharray="4 8" />
+              </svg>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent-red" />
+            </div>
+
+            {/* Core orb */}
             <div
               ref={orbRef}
-              className="relative w-20 h-20 rounded-full bg-base border border-circuit animate-orb-pulse flex items-center justify-center"
-              style={{ boxShadow: "0 0 30px rgba(0,243,255,0.15), inset 0 0 20px rgba(0,243,255,0.15)" }}
+              className="relative w-24 h-24 rounded-full bg-base border border-circuit/30 animate-orb-pulse flex items-center justify-center transition-transform duration-700 ease-liquid"
+              style={{ boxShadow: "0 0 40px rgba(0,243,255,0.15), inset 0 0 30px rgba(0,243,255,0.1)" }}
             >
-              <div className="w-1 h-1 rounded-full bg-circuit" />
+              <div className="w-1.5 h-1.5 rounded-full bg-circuit" />
+              <div className="absolute w-3 h-3 rounded-full bg-accent-red/40 blur-sm top-3 right-4" />
             </div>
+
+            {/* Static outer ring */}
             <svg className="absolute w-full h-full" aria-hidden="true">
-              <circle cx="50%" cy="50%" r="120" stroke="rgba(0,243,255,0.1)" fill="none" strokeDasharray="10 5" />
-              <circle cx="50%" cy="50%" r="180" stroke="rgba(255,255,255,0.05)" fill="none" />
+              <circle cx="50%" cy="50%" r="200" stroke="rgba(255,255,255,0.03)" fill="none" />
             </svg>
           </div>
         </div>

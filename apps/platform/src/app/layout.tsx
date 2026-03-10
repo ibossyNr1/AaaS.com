@@ -1,29 +1,31 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { CircuitBackground } from "@/components/circuit-background";
 import { DataStream } from "@/components/data-stream";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Agent-as-a-Service | Carved Logic",
+  title: "Agent-as-a-Service | AaaS Framework",
   description:
-    "High-fidelity autonomous agents forged in basalt-grade reliability. Deploy scalable intelligence across private circuitry.",
+    "Deploy autonomous AI agents that learn, adapt, and operate your business. Context-engineered intelligence forged in basalt-grade reliability.",
   openGraph: {
-    title: "Agent-as-a-Service",
-    description: "Your Autonomous Digital Workforce",
+    title: "Agent-as-a-Service | AaaS Framework",
+    description:
+      "Your Autonomous Digital Workforce — Context Is King",
     url: "https://agents-as-a-service.com",
     siteName: "Agent-as-a-Service",
     type: "website",
@@ -38,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <CircuitBackground />
         <Navbar />

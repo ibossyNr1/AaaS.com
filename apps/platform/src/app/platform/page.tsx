@@ -1,66 +1,104 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Badge, Container, Section, cn } from "@aaas/ui";
+import { Card, Container, Section, KineticBar, AgentRoster, cn } from "@aaas/ui";
 import { FadeUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
+import { MetaballField } from "@/components/metaball-field";
+import { MergeBackground } from "@/components/merge-background";
+import { ClickFlash } from "@/components/click-flash";
+import { SectionTopic } from "@/components/section-topic";
+import { SectionDivider } from "@/components/section-divider";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
 const evolutionSteps = [
   {
     title: "Scout",
+    icon: "⟐",
     description:
-      "Agents continuously scan markets, competitors, and opportunities using your strategic context as a filter.",
+      "Agents continuously scan markets, competitors, and opportunities using your strategic context as a filter. They don't just search — they search with purpose, guided by your business DNA.",
   },
   {
     title: "Evaluate",
+    icon: "◈",
     description:
-      "Findings are analyzed against your business goals, risk tolerance, and competitive positioning.",
+      "Findings are analyzed against your business goals, risk tolerance, and competitive positioning. Multi-model evaluation ensures no signal is missed, no noise gets through.",
   },
   {
     title: "Integrate",
+    icon: "⬡",
     description:
-      "Validated insights are woven into your context layer, making every future agent action smarter.",
+      "Validated insights are woven into your context layer, making every future agent action smarter. The system literally learns from its own discoveries.",
   },
   {
     title: "Optimize",
+    icon: "◉",
     description:
-      "Agents refine their own workflows based on outcomes, continuously improving execution quality.",
+      "Agents refine their own workflows based on outcomes, continuously improving execution quality. What took 10 steps becomes 3. What took hours becomes minutes.",
   },
 ];
 
 const capabilities = [
   {
-    title: "Research",
+    title: "Research & Intelligence",
     description:
-      "Market analysis, competitor tracking, trend identification, and deep-dive reports — all contextualized to your industry.",
+      "Market analysis, competitor tracking, trend identification, and deep-dive reports — all contextualized to your industry. Agents synthesize across hundreds of sources in minutes.",
+    badge: "claude-opus-4-6",
+    accent: "circuit" as const,
   },
   {
-    title: "Marketing",
+    title: "Marketing & Content",
     description:
-      "Content creation, campaign strategy, social media management, and brand voice consistency at scale.",
+      "Content creation, campaign strategy, social media management, and brand voice consistency at scale. Every piece sounds like you because agents know your brand matrix.",
+    badge: "multi-model",
+    accent: "red" as const,
   },
   {
-    title: "Analytics",
+    title: "Analytics & Insights",
     description:
-      "Data synthesis, performance dashboards, insight extraction, and predictive modeling from your business data.",
+      "Data synthesis, performance dashboards, insight extraction, and predictive modeling from your business data. Agents don't just report — they recommend.",
+    badge: "gpt-4o",
+    accent: "circuit" as const,
   },
   {
-    title: "Sales",
+    title: "Sales & Outreach",
     description:
-      "Lead research, outreach sequences, proposal generation, and CRM management — personalized to each prospect.",
+      "Lead research, outreach sequences, proposal generation, and CRM management — personalized to each prospect using your full context layer.",
+    badge: "claude-sonnet-4-6",
+    accent: "red" as const,
   },
   {
-    title: "Operations",
+    title: "Operations & Compliance",
     description:
-      "Workflow automation, compliance monitoring, process documentation, and operational intelligence.",
+      "Workflow automation, compliance monitoring (ISO 9001+), process documentation, and operational intelligence. The nervous system of your business.",
+    badge: "multi-model",
+    accent: "circuit" as const,
   },
   {
-    title: "Development",
+    title: "Development & DevOps",
     description:
-      "Code generation, architecture planning, documentation, testing, and DevOps automation.",
+      "Code generation, architecture planning, documentation, testing, and deployment automation. Agents ship production-grade code with your conventions baked in.",
+    badge: "claude-opus-4-6",
+    accent: "red" as const,
   },
+];
+
+const models = [
+  { name: "Claude Opus 4.6", provider: "Anthropic", use: "Complex reasoning & strategy" },
+  { name: "Claude Sonnet 4.6", provider: "Anthropic", use: "Fast execution & content" },
+  { name: "GPT-4o", provider: "OpenAI", use: "Analysis & data synthesis" },
+  { name: "Gemini 2.5 Pro", provider: "Google", use: "Multi-modal & research" },
+  { name: "Llama 3.3", provider: "Meta", use: "Open-source workflows" },
+  { name: "Mistral Large", provider: "Mistral", use: "European compliance tasks" },
+];
+
+const sampleAgents = [
+  { name: "ctx-engine", role: "Context vectorization & retrieval", status: "active" as const, model: "opus" },
+  { name: "mkt-writer", role: "Marketing content generation", status: "active" as const, model: "sonnet" },
+  { name: "lead-scout", role: "Lead research & qualification", status: "learning" as const, model: "gpt-4o" },
+  { name: "audit-bot", role: "ISO 9001 compliance scanning", status: "active" as const, model: "opus" },
+  { name: "data-synth", role: "Analytics & report generation", status: "idle" as const, model: "gemini" },
 ];
 
 export default function PlatformPage() {
@@ -68,46 +106,93 @@ export default function PlatformPage() {
 
   return (
     <>
-      {/* Hero */}
-      <Section className="pt-32 pb-12">
-        <Container className="text-center">
+      <MergeBackground />
+      <ClickFlash />
+
+      {/* Hero — Metaball style */}
+      <section className="relative pt-32 pb-16 overflow-hidden min-h-[80vh] flex items-center">
+        <MetaballField />
+
+        <Container className="relative z-10 text-center">
           <FadeUp>
-            <Badge className="mb-4">
-              The Platform
-            </Badge>
+            <SectionTopic className="justify-center">The Platform</SectionTopic>
             <h1 className="monolith-title text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight">
-              Context-First Agent Architecture
+              Context-First<br />Agent Architecture
             </h1>
-            <p className="text-lg text-text-muted max-w-2xl mx-auto">
+            <KineticBar className="max-w-md mx-auto my-6" />
+            <p className="text-lg text-text-muted max-w-2xl mx-auto mb-8">
               Every agent runs on your structured business context. No generic
               prompts. No hallucinated strategy. Real understanding, real
-              execution.
+              execution — powered by the world&apos;s best language models.
             </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.15rem] px-3 py-1 border border-circuit text-circuit bg-circuit/5">LLM Agnostic</span>
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.15rem] px-3 py-1 border border-accent-red text-accent-red bg-accent-red/5">MCP Native</span>
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.15rem] px-3 py-1 border border-circuit text-circuit bg-circuit/5">Self-Optimizing</span>
+            </div>
+          </FadeUp>
+        </Container>
+      </section>
+
+      <SectionDivider />
+
+      {/* Lock-On Mechanism */}
+      <Section variant="bedrock">
+        <Container className="text-center">
+          <FadeUp>
+            <SectionTopic className="justify-center">The Lock-On Effect</SectionTopic>
+            <h2 className="monolith-title text-3xl md:text-4xl font-bold mb-6 uppercase tracking-tight">
+              Your Business Nervous System
+            </h2>
+            <p className="text-text-muted max-w-2xl mx-auto leading-relaxed mb-8">
+              Unlike vendor lock-in that traps you with proprietary formats, AaaS creates
+              <span className="text-circuit"> Lock-On</span> — your agents become so deeply
+              integrated with your workflows, so precisely tuned to your context, that the
+              system becomes indispensable. Not because you can&apos;t leave, but because
+              nothing else understands your business this well.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              {[
+                { label: "Context Depth", value: "847K vectors", sub: "Your business DNA" },
+                { label: "Tool Integrations", value: "Unlimited", sub: "MCPs + APIs" },
+                { label: "Model Access", value: "6+ LLMs", sub: "Best model per task" },
+              ].map((item) => (
+                <Card key={item.label} variant="glass" className="text-center">
+                  <div className="font-mono text-2xl font-bold text-circuit mb-1">{item.value}</div>
+                  <div className="font-mono text-xs text-text-muted uppercase tracking-wider">{item.label}</div>
+                  <div className="text-[10px] text-text-muted mt-1">{item.sub}</div>
+                </Card>
+              ))}
+            </div>
           </FadeUp>
         </Container>
       </Section>
 
+      <SectionDivider />
+
       {/* Evolution Loop */}
-      <Section id="how-it-works" variant="surface">
+      <Section id="how-it-works">
         <Container>
           <FadeUp>
+            <SectionTopic className="justify-center">Evolution Loop</SectionTopic>
             <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-tight">
               The Evolution Loop
             </h2>
           </FadeUp>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
             {evolutionSteps.map((step, i) => (
               <button
                 key={step.title}
                 onClick={() => setActiveEvolution(i)}
                 className={cn(
-                  "px-6 py-3 text-sm font-mono uppercase tracking-wider transition-all border",
+                  "flex items-center gap-2 px-5 py-3 text-sm font-mono uppercase tracking-wider transition-all duration-500 ease-liquid border rounded-sm",
                   i === activeEvolution
-                    ? "border-circuit text-circuit bg-circuit/5 shadow-[0_0_15px_rgba(0,243,255,0.15)]"
-                    : "border-[rgba(255,255,255,0.05)] text-text-muted hover:text-text hover:border-text/20"
+                    ? "border-circuit text-circuit bg-circuit/5 shadow-[0_0_20px_var(--circuit-dim)]"
+                    : "border-border text-text-muted hover:text-text hover:border-text/20"
                 )}
               >
+                <span className="text-lg">{step.icon}</span>
                 {step.title}
               </button>
             ))}
@@ -115,35 +200,43 @@ export default function PlatformPage() {
 
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-semibold text-text mb-4">
-              {evolutionSteps[activeEvolution].title}
+              {evolutionSteps[activeEvolution]!.title}
             </h3>
             <p className="text-text-muted leading-relaxed">
-              {evolutionSteps[activeEvolution].description}
+              {evolutionSteps[activeEvolution]!.description}
             </p>
           </div>
         </Container>
       </Section>
 
+      <SectionDivider />
+
       {/* Capability Grid */}
       <Section>
         <Container>
           <FadeUp>
+            <SectionTopic>Agent Capabilities</SectionTopic>
             <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-tight">
               What Agents Can Do
             </h2>
             <p className="text-text-muted text-center mb-16 max-w-xl mx-auto">
               Six capability domains, infinite applications — all powered by
-              your business context.
+              your business context and the right model for each task.
             </p>
           </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {capabilities.map((cap, i) => (
               <FadeUp key={cap.title} delay={i * 0.08}>
-                <Card className="h-full">
-                  <h3 className="text-lg font-semibold text-text mb-2">
-                    {cap.title}
-                  </h3>
+                <Card variant="glass" spotlight accentColor={cap.accent} className="h-full">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-text">
+                      {cap.title}
+                    </h3>
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-circuit/50 bg-circuit/5 px-2 py-0.5 rounded shrink-0 ml-2">
+                      {cap.badge}
+                    </span>
+                  </div>
                   <p className="text-sm text-text-muted leading-relaxed">
                     {cap.description}
                   </p>
@@ -154,24 +247,85 @@ export default function PlatformPage() {
         </Container>
       </Section>
 
+      <SectionDivider />
+
+      {/* Model Agnostic Section */}
+      <Section>
+        <Container>
+          <FadeUp>
+            <div className="text-center mb-12">
+              <SectionTopic className="justify-center">LLM Agnostic</SectionTopic>
+              <h2 className="monolith-title text-3xl md:text-4xl font-bold mb-4 uppercase tracking-tight">
+                Best Model for Every Task
+              </h2>
+              <p className="text-text-muted max-w-2xl mx-auto">
+                AaaS automatically selects the optimal language model for each task.
+                Complex reasoning? Opus. Fast content? Sonnet. Data analysis? GPT-4o.
+                Your agents always use the sharpest tool.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {models.map((model, i) => (
+              <FadeUp key={model.name} delay={i * 0.06}>
+                <Card variant="glass" className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-circuit animate-pulse-dot mt-2 shrink-0" />
+                  <div>
+                    <div className="font-mono text-sm font-medium text-text">{model.name}</div>
+                    <div className="text-xs text-text-muted">{model.provider}</div>
+                    <div className="text-xs text-circuit/60 mt-1">{model.use}</div>
+                  </div>
+                </Card>
+              </FadeUp>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      <SectionDivider />
+
+      {/* Live Agent Roster */}
+      <Section>
+        <Container className="max-w-3xl">
+          <FadeUp>
+            <SectionTopic className="justify-center">Live Status</SectionTopic>
+            <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-tight">
+              Active Agent Roster
+            </h2>
+            <p className="text-text-muted text-center mb-12">
+              A live snapshot of agents currently deployed across the network.
+            </p>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <AgentRoster agents={sampleAgents} />
+          </FadeUp>
+        </Container>
+      </Section>
+
+      <SectionDivider />
+
       {/* Adaptability */}
-      <Section variant="surface">
+      <Section variant="bedrock">
         <Container className="text-center">
           <FadeUp>
+            <SectionTopic className="justify-center">Continuous Alignment</SectionTopic>
             <h2 className="monolith-title text-3xl md:text-4xl font-bold mb-6 uppercase tracking-tight">
               Agents That Grow With You
             </h2>
             <p className="text-text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
               As your business evolves, your agents evolve too. New products,
-              new markets, new strategies — the context layer adapts, and
-              agents immediately reflect the change.
+              new markets, new strategies — the context layer adapts instantly,
+              and agents immediately reflect the change. No retraining. No
+              re-prompting. Just continuous alignment.
             </p>
             <a
               href={BOOKING_LINK}
               target="_blank"
               rel="noopener noreferrer"
+              className="inline-block px-14 py-5 border border-accent-red text-accent-red font-mono text-sm uppercase tracking-[0.3rem] hover:bg-accent-red hover:text-base hover:shadow-[0_0_40px_var(--accent-red-glow)] hover:scale-[1.03] transition-all duration-[400ms] ease-liquid"
             >
-              <Button size="lg">See It In Action</Button>
+              See It In Action
             </a>
           </FadeUp>
         </Container>

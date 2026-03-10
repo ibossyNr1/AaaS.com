@@ -1,23 +1,33 @@
 import { type HTMLAttributes } from "react";
 import { cn } from "./cn";
 
+type SectionVariant = "default" | "surface" | "bedrock";
+
 interface SectionProps extends HTMLAttributes<HTMLElement> {
-  variant?: "default" | "surface";
+  variant?: SectionVariant;
+  divider?: boolean | "red";
 }
 
 export function Section({
   className,
   variant = "default",
+  divider = false,
   ...props
 }: SectionProps) {
   return (
-    <section
-      className={cn(
-        "py-24 px-6",
-        variant === "surface" && "bg-surface",
-        className
+    <>
+      {divider && (
+        <div className={cn("kinetic-bar", divider === "red" && "red")} />
       )}
-      {...props}
-    />
+      <section
+        className={cn(
+          "py-12 md:py-24 px-4 md:px-6",
+          variant === "surface" && "bg-surface",
+          variant === "bedrock" && "bedrock",
+          className
+        )}
+        {...props}
+      />
+    </>
   );
 }

@@ -19,22 +19,23 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-base/60 backdrop-blur-xl border-b border-[rgba(255,255,255,0.05)]">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-16 h-20 flex items-center justify-between">
-          {/* Brand — Monolith style */}
-          <Link href="/" className="flex items-center gap-3">
-            <span className="font-mono text-xs tracking-[0.3rem] uppercase text-text">
+      <header className="fixed top-0 w-full z-50 glass border-b-0">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-16 h-16 md:h-20 flex items-center justify-between">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-2 h-2 rounded-full bg-accent-red animate-heartbeat" />
+            <span className="font-mono text-xs tracking-[0.3rem] uppercase text-text group-hover:text-circuit transition-colors duration-300">
               Agents as a Service
             </span>
           </Link>
 
-          {/* Desktop Nav — Monospace, dim-to-glow */}
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-10">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-mono text-xs uppercase tracking-wider text-text/50 hover:text-circuit hover:text-glow transition-all duration-300"
+                className="font-mono text-xs uppercase tracking-wider text-text/50 hover:text-circuit hover:text-glow transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-circuit hover:after:w-full after:transition-all after:duration-300"
               >
                 {item.label}
               </Link>
@@ -44,7 +45,7 @@ export function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <a href={BOOKING_LINK} target="_blank" rel="noopener noreferrer">
-              <Button size="sm" variant="secondary">Book a Call</Button>
+              <Button size="sm" variant="red">Book a Call</Button>
             </a>
           </div>
 
@@ -56,24 +57,27 @@ export function Navbar() {
           >
             <span
               className={cn(
-                "block w-6 h-0.5 bg-text transition-transform",
+                "block w-6 h-0.5 bg-text transition-transform duration-300",
                 mobileOpen && "rotate-45 translate-y-2"
               )}
             />
             <span
               className={cn(
-                "block w-6 h-0.5 bg-text transition-opacity",
+                "block w-6 h-0.5 bg-text transition-opacity duration-300",
                 mobileOpen && "opacity-0"
               )}
             />
             <span
               className={cn(
-                "block w-6 h-0.5 bg-text transition-transform",
+                "block w-6 h-0.5 bg-text transition-transform duration-300",
                 mobileOpen && "-rotate-45 -translate-y-2"
               )}
             />
           </button>
         </div>
+
+        {/* Kinetic bar under nav */}
+        <div className="kinetic-bar red" />
       </header>
 
       {/* Mobile Overlay */}
@@ -97,7 +101,7 @@ export function Navbar() {
               rel="noopener noreferrer"
               className="mt-4"
             >
-              <Button className="w-full" size="lg" variant="secondary">
+              <Button className="w-full" size="lg" variant="red">
                 Book a Call
               </Button>
             </a>
