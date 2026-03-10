@@ -24,7 +24,7 @@ export async function GET(
       data: entity,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch entity" }, { status: 500 });
   }
 }

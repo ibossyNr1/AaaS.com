@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       count: entities.length,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch entities" }, { status: 500 });
   }
 }
