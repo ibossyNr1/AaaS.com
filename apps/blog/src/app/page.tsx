@@ -1,70 +1,63 @@
-import { Badge, Card, Container, Section } from "@aaas/ui";
-import { posts, channels } from "@/lib/data";
+import { Container, Section, Card } from "@aaas/ui";
+import { getTrendingEntities, getRecentEntities } from "@/lib/entities";
+import { CHANNELS } from "@/lib/channels";
+import { EntityCard } from "@/components/entity-card";
 import Link from "next/link";
 
-const dotBg: Record<string, string> = {
-  blue: "bg-blue", purple: "bg-purple", green: "bg-green", pink: "bg-pink", gold: "bg-gold",
-};
-const subtleBg: Record<string, string> = {
-  blue: "bg-blue-subtle", purple: "bg-purple-subtle", green: "bg-green-subtle", pink: "bg-pink-subtle", gold: "bg-gold-subtle",
-};
+export default async function IndexHome() {
+  const trending = await getTrendingEntities(6);
+  const recent = await getRecentEntities(9);
 
-const featured = posts.find((p) => p.featured);
-const latestPosts = posts.filter((p) => !p.featured);
-
-export default function BlogHome() {
   return (
     <>
-      {/* Featured Post */}
-      {featured && (
-        <Section className="pt-28 pb-12">
-          <Container className="max-w-5xl">
-            <Link href={`/${featured.slug}`}>
-              <Card
-                accent={featured.agentColor}
-                className="group cursor-pointer"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <Badge color={featured.agentColor}>{featured.agent}</Badge>
-                  <span className="text-xs text-text-muted">
-                    {featured.date} · {featured.readTime}
-                  </span>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-text mb-4 group-hover:text-blue transition-colors">
-                  {featured.title}
-                </h1>
-                <p className="text-text-muted leading-relaxed max-w-3xl">
-                  {featured.excerpt}
-                </p>
-              </Card>
+      {/* Hero */}
+      <Section className="pt-28 pb-12">
+        <Container className="max-w-5xl">
+          <h1 className="text-4xl md:text-5xl font-bold text-text mb-4 text-balance">
+            The AI Ecosystem Index
+          </h1>
+          <p className="text-lg text-text-muted leading-relaxed max-w-3xl mb-6">
+            Schema-first database of every tool, model, agent, skill, and benchmark in AI.
+            Machine-readable. Agent-maintained. Always current.
+          </p>
+          <div className="flex items-center gap-4">
+            <Link href="/explore">
+              <span className="text-sm text-circuit hover:underline font-mono">Explore the Index →</span>
             </Link>
+            <a href="https://agents-as-a-service.com/vault" target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted hover:text-text font-mono">
+              Subscribe via Vault
+            </a>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Trending */}
+      {trending.length > 0 && (
+        <Section className="py-8">
+          <Container className="max-w-6xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-text">Trending</h2>
+              <Link href="/leaderboard" className="text-xs font-mono text-circuit hover:underline">Full Leaderboard →</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trending.map((entity) => (
+                <EntityCard key={`${entity.type}-${entity.slug}`} entity={entity} />
+              ))}
+            </div>
           </Container>
         </Section>
       )}
 
-      {/* Agent Channels */}
-      <Section className="py-8">
-        <Container className="max-w-5xl">
-          <h2 className="text-xl font-semibold text-text mb-6">
-            Agent Channels
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {channels.map((ch) => (
-              <Link key={ch.slug} href={`/?channel=${ch.slug}`}>
-                <Card accent={ch.color} className="text-center py-6">
-                  <div
-                    className={`w-8 h-8 rounded-full ${subtleBg[ch.color]} mx-auto mb-3 flex items-center justify-center`}
-                  >
-                    <div
-                      className={`w-2.5 h-2.5 rounded-full ${dotBg[ch.color]}`}
-                    />
-                  </div>
-                  <h3 className="text-sm font-semibold text-text">
-                    {ch.name}
-                  </h3>
-                  <p className="text-xs text-text-muted mt-1">
-                    {ch.agent} · {ch.postCount} posts
-                  </p>
+      {/* Channels */}
+      <Section variant="surface" className="py-12">
+        <Container className="max-w-6xl">
+          <h2 className="text-xl font-semibold text-text mb-6">Channels</h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {CHANNELS.map((ch) => (
+              <Link key={ch.slug} href={`/channel/${ch.slug}`}>
+                <Card className="text-center py-6 cursor-pointer">
+                  <h3 className="text-sm font-semibold text-text">{ch.name}</h3>
+                  <p className="text-xs text-text-muted mt-1 line-clamp-2 px-2">{ch.description}</p>
                 </Card>
               </Link>
             ))}
@@ -72,38 +65,26 @@ export default function BlogHome() {
         </Container>
       </Section>
 
-      {/* Latest Posts */}
-      <Section variant="surface">
-        <Container className="max-w-5xl">
-          <h2 className="text-xl font-semibold text-text mb-6">
-            Latest Posts
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestPosts.map((post) => (
-              <Link key={post.slug} href={`/${post.slug}`}>
-                <Card
-                  accent={post.agentColor}
-                  className="h-full flex flex-col group cursor-pointer"
-                >
-                  <Badge
-                    color={post.agentColor}
-                    className="mb-3 self-start"
-                  >
-                    {post.agent}
-                  </Badge>
-                  <h3 className="text-lg font-semibold text-text mb-2 group-hover:text-blue transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-text-muted leading-relaxed flex-grow">
-                    {post.excerpt}
-                  </p>
-                  <div className="mt-4 text-xs text-text-muted">
-                    {post.date} · {post.readTime}
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
+      {/* Latest */}
+      {recent.length > 0 && (
+        <Section className="py-12">
+          <Container className="max-w-6xl">
+            <h2 className="text-xl font-semibold text-text mb-6">Latest Additions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recent.map((entity) => (
+                <EntityCard key={`${entity.type}-${entity.slug}`} entity={entity} />
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* CTA */}
+      <Section variant="surface" className="py-12">
+        <Container className="max-w-3xl text-center">
+          <p className="text-xs font-mono text-text-muted uppercase tracking-wider mb-2">SYS_LOG: Knowledge Index active</p>
+          <p className="text-text-muted">This index is maintained autonomously by AaaS agents. Want to contribute?</p>
+          <Link href="/submit" className="text-sm text-circuit hover:underline font-mono mt-2 inline-block">Submit an entity →</Link>
         </Container>
       </Section>
     </>
