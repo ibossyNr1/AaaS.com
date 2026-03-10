@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         /* ═══════════════════════════════════════════
-           DESIGN TOKENS — Carved Logic System
+           DESIGN TOKENS — AaaS Framework System
            (shared across all playground pages)
            ═══════════════════════════════════════════ */
         :root {
@@ -18,9 +18,9 @@
             --basalt-bright: #2a2a2e;
             --circuit-glow: #00f3ff;
             --circuit-dim: rgba(0, 243, 255, 0.15);
-            --accent-red: #f4224b;
-            --accent-red-dim: rgba(244, 34, 75, 0.15);
-            --accent-red-glow: rgba(244, 34, 75, 0.4);
+            --accent-red: #F43F6C;
+            --accent-red-dim: rgba(244, 63, 108, 0.15);
+            --accent-red-glow: rgba(244, 63, 108, 0.4);
             --text-main: #e0e0e0;
             --text-muted: rgba(224, 224, 224, 0.5);
             --border: rgba(255, 255, 255, 0.05);
@@ -39,9 +39,9 @@
             --basalt-bright: #d4d4d0;
             --circuit-glow: #0088a0;
             --circuit-dim: rgba(0, 136, 160, 0.15);
-            --accent-red: #c91e42;
-            --accent-red-dim: rgba(201, 30, 66, 0.1);
-            --accent-red-glow: rgba(201, 30, 66, 0.3);
+            --accent-red: #c9335a;
+            --accent-red-dim: rgba(201, 51, 90, 0.1);
+            --accent-red-glow: rgba(201, 51, 90, 0.3);
             --text-main: #111113;
             --text-muted: rgba(17, 17, 19, 0.55);
             --border: rgba(0, 0, 0, 0.08);
@@ -53,7 +53,9 @@
             mix-blend-mode: multiply;
         }
 
-        [data-theme="light"] .monolith-title {
+        [data-theme="light"] .monolith-title,
+        [data-theme="light"] .section-title,
+        [data-theme="light"] .plan-price {
             background: none;
             -webkit-background-clip: unset;
             background-clip: unset;
@@ -416,13 +418,223 @@
         }
 
         /* ═══════════════════════════════════════════
+           AURA HERO — blurred blob background + glassy cards
+           ═══════════════════════════════════════════ */
+        .aura-section {
+            position: relative;
+            padding: 10rem 2rem 6rem;
+            margin-top: 4.5rem;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Viscous background blobs */
+        .aura-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            filter: blur(80px) contrast(1.2);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .aura-canvas {
+            opacity: 0.25;
+        }
+
+        .aura-blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            animation: aura-drift var(--aura-dur) ease-in-out infinite alternate;
+        }
+
+        [data-theme="light"] .aura-blob {
+            mix-blend-mode: multiply;
+        }
+
+        .aura-blob-1 {
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--accent-red) 0%, transparent 70%);
+            top: -10%; left: -10%;
+            --aura-dur: 20s;
+        }
+
+        .aura-blob-2 {
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--circuit-glow) 0%, transparent 70%);
+            bottom: -5%; right: -5%;
+            --aura-dur: 25s;
+        }
+
+        .aura-blob-3 {
+            width: 40vw; height: 40vw;
+            background: radial-gradient(circle, rgba(244, 63, 108, 0.6) 0%, transparent 70%);
+            top: 40%; left: 30%;
+            --aura-dur: 18s;
+        }
+
+        @keyframes aura-drift {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(10%, 15%) scale(1.1); }
+        }
+
+        /* Aura hero title */
+        .aura-hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 2;
+            text-align: left;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .aura-hero-title .outline-text {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+        }
+
+        .aura-hero-title .solid-text {
+            display: block;
+            color: var(--text-main);
+            -webkit-text-stroke: 0;
+        }
+
+        [data-theme="light"] .aura-hero-title .outline-text {
+            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="light"] .aura-hero-title .solid-text {
+            color: var(--text-main);
+        }
+
+        /* Aura glassy cards */
+        .aura-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+            .aura-grid { grid-template-columns: 1fr; }
+            .aura-hero-title { font-size: 3.5rem; }
+        }
+
+        .aura-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transition: all 0.6s var(--liquid-ease);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aura-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--circuit-glow);
+            transform: translateY(-8px);
+        }
+
+        /* Top gradient bar on hover */
+        .aura-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--accent-red), var(--circuit-glow));
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .aura-card:hover::after {
+            transform: translateX(0);
+        }
+
+        /* Mouse-follow radial glow */
+        .aura-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0, 243, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .aura-card:hover::before {
+            opacity: 1;
+        }
+
+        [data-theme="light"] .aura-card {
+            background: rgba(255, 255, 255, 0.75);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="light"] .aura-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--circuit-glow);
+        }
+
+        [data-theme="light"] .aura-card::before {
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0, 136, 160, 0.06) 0%, transparent 50%);
+        }
+
+        .aura-card-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            color: var(--circuit-glow);
+        }
+
+        .aura-card-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(180deg, #fff 0%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .aura-card-value {
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: var(--text-main);
+        }
+
+        .aura-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════
            TECTONIC PLATES — from AaaS_Sys.html
            Overlapping depth-layered panels
            ═══════════════════════════════════════════ */
         .tectonic-section {
             position: relative;
             padding: 8rem 0 4rem;
-            margin-top: 4.5rem; /* clear fixed navbar */
+            margin-top: 0;
         }
 
         .tectonic-container {
@@ -1434,6 +1646,47 @@
     </nav>
 
     <!-- ═══════════════════════════════════════════
+         AURA HERO — viscous blobs + glassy cards
+         ═══════════════════════════════════════════ -->
+    <section class="aura-section">
+        <!-- Background blobs -->
+        <div class="aura-canvas">
+            <div class="aura-blob aura-blob-1"></div>
+            <div class="aura-blob aura-blob-2"></div>
+            <div class="aura-blob aura-blob-3" id="aura-blob-follow"></div>
+        </div>
+
+        <!-- Hero title -->
+        <h1 class="aura-hero-title">
+            <span class="outline-text">STOP PAYING FOR</span>
+            <span class="solid-text">COMPUTE.</span>
+            <span class="outline-text">START PAYING FOR</span>
+            <span class="solid-text">OUTCOMES.</span>
+        </h1>
+
+        <!-- Glassy metric cards -->
+        <div class="aura-grid">
+            <div class="aura-card" data-aura-card>
+                <span class="aura-card-label">The Protocol</span>
+                <div class="aura-card-value">$0.00</div>
+                <div class="aura-card-desc">Zero upfront fees. Zero subscription costs. Our agents are suspended in a high-viscosity liquidity pool until a task is triggered.</div>
+            </div>
+
+            <div class="aura-card" data-aura-card>
+                <span class="aura-card-label">The Performance</span>
+                <div class="aura-card-value">100%</div>
+                <div class="aura-card-desc">Payment is cryptographically locked and only released upon verifiable objective completion. If the agent fails, you pay nothing.</div>
+            </div>
+
+            <div class="aura-card" data-aura-card>
+                <span class="aura-card-label">The Scale</span>
+                <div class="aura-card-value">∞</div>
+                <div class="aura-card-desc">Deploy thousands of specialized task-agents simultaneously. Viscous architecture allows for infinite parallel processing without overhead.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
          TECTONIC PLATES — from AaaS_Sys.html
          Overlapping depth-layered panels with parallax
          ═══════════════════════════════════════════ -->
@@ -1766,7 +2019,7 @@
     </div>
 
     <!-- Data stream -->
-    <div class="data-stream">SYS: CARVED_LOGIC_V02
+    <div class="data-stream">SYS: AAAS_FRAMEWORK_V02
 PAGE: PRICING_ENGINE
 MODE: PAY_PER_RESULT</div>
 
@@ -1783,8 +2036,8 @@ MODE: PAY_PER_RESULT</div>
             if (html.getAttribute('data-theme') === theme) return;
             html.setAttribute('data-theme', theme);
             streamEl.textContent = theme === 'light'
-                ? 'SYS: CARVED_LOGIC_V02\nPAGE: PRICING_ENGINE\nMODE: ETCHED_STONE'
-                : 'SYS: CARVED_LOGIC_V02\nPAGE: PRICING_ENGINE\nMODE: PAY_PER_RESULT';
+                ? 'SYS: AAAS_FRAMEWORK_V02\nPAGE: PRICING_ENGINE\nMODE: ETCHED_STONE'
+                : 'SYS: AAAS_FRAMEWORK_V02\nPAGE: PRICING_ENGINE\nMODE: PAY_PER_RESULT';
         }
 
         // Toggle enables/disables scroll-based theme switching
@@ -1793,6 +2046,27 @@ MODE: PAY_PER_RESULT</div>
         themeToggle.addEventListener('click', () => {
             scrollThemeEnabled = !scrollThemeEnabled;
             themeToggle.style.opacity = scrollThemeEnabled ? '1' : '0.4';
+        });
+
+        // Aura blob — subtle mouse follow
+        const auraBlobFollow = document.getElementById('aura-blob-follow');
+        if (auraBlobFollow) {
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                auraBlobFollow.style.transform = `translate(${x * 50}px, ${y * 50}px)`;
+            });
+        }
+
+        // Aura cards — mouse-follow radial glow
+        document.querySelectorAll('[data-aura-card]').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const mx = ((e.clientX - rect.left) / rect.width) * 100;
+                const my = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mx', mx + '%');
+                card.style.setProperty('--my', my + '%');
+            });
         });
 
         // Scroll-direction theme switching (only when enabled)

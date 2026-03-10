@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         /* ═══════════════════════════════════════════
-           DESIGN TOKENS — Carved Logic System
+           DESIGN TOKENS — AaaS Framework System
            (shared across all playground pages)
            ═══════════════════════════════════════════ */
         :root {
@@ -18,9 +18,9 @@
             --basalt-bright: #2a2a2e;
             --circuit-glow: #00f3ff;
             --circuit-dim: rgba(0, 243, 255, 0.15);
-            --accent-red: #f4224b;
-            --accent-red-dim: rgba(244, 34, 75, 0.15);
-            --accent-red-glow: rgba(244, 34, 75, 0.4);
+            --accent-red: #F43F6C;
+            --accent-red-dim: rgba(244, 63, 108, 0.15);
+            --accent-red-glow: rgba(244, 63, 108, 0.4);
             --text-main: #e0e0e0;
             --text-muted: rgba(224, 224, 224, 0.5);
             --border: rgba(255, 255, 255, 0.05);
@@ -38,9 +38,9 @@
             --basalt-bright: #d4d4d0;
             --circuit-glow: #0088a0;
             --circuit-dim: rgba(0, 136, 160, 0.15);
-            --accent-red: #c91e42;
-            --accent-red-dim: rgba(201, 30, 66, 0.1);
-            --accent-red-glow: rgba(201, 30, 66, 0.3);
+            --accent-red: #c9335a;
+            --accent-red-dim: rgba(201, 51, 90, 0.1);
+            --accent-red-glow: rgba(201, 51, 90, 0.3);
             --text-main: #111113;
             --text-muted: rgba(17, 17, 19, 0.55);
             --border: rgba(0, 0, 0, 0.1);
@@ -52,7 +52,8 @@
         }
 
         [data-theme="light"] .monolith-title,
-        [data-theme="light"] .section-title {
+        [data-theme="light"] .section-title,
+        [data-theme="light"] .stat-value {
             background: none;
             -webkit-background-clip: unset;
             background-clip: unset;
@@ -938,6 +939,455 @@
         }
 
         /* ═══════════════════════════════════════════
+           LIVE DEPLOYMENT FEED
+           ═══════════════════════════════════════════ */
+        .deploy-feed {
+            width: 100%;
+            background: var(--basalt-surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] .deploy-feed {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .engine-row {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .engine-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .engine-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .engine-dot.active {
+            background: var(--circuit-glow);
+            box-shadow: 0 0 8px var(--circuit-dim);
+            animation: feed-pulse 1.5s infinite;
+        }
+
+        .engine-dot.complete {
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red-glow);
+        }
+
+        @keyframes feed-pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .engine-name {
+            width: 110px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .engine-track {
+            flex-grow: 1;
+            height: 2px;
+            background: var(--basalt-bright);
+            position: relative;
+        }
+
+        .engine-fill {
+            position: absolute;
+            left: 0; top: 0; height: 100%;
+            background: var(--circuit-glow);
+            transition: width 2s ease-in-out;
+        }
+
+        .engine-fill.complete {
+            background: var(--accent-red);
+        }
+
+        .engine-dot.active-alt {
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red-glow);
+            animation: feed-pulse 1.5s infinite;
+        }
+
+        .engine-fill.alt {
+            background: var(--accent-red);
+        }
+
+        .billing-tag {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            background: var(--circuit-dim);
+            color: var(--circuit-glow);
+            flex-shrink: 0;
+        }
+
+        .billing-tag.alt {
+            background: var(--accent-red-dim);
+            color: var(--accent-red);
+        }
+
+        .billing-tag.settled {
+            background: var(--accent-red-dim);
+            color: var(--accent-red);
+        }
+
+        .feed-total {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .feed-total-label {
+            color: var(--text-muted);
+        }
+
+        .feed-total-value {
+            color: var(--circuit-glow);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════
+           AGENT COLLECTIVE SECTION
+           ═══════════════════════════════════════════ */
+        .collective-section {
+            padding: 0;
+            margin-top: 6rem;
+        }
+
+        .quarry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.8fr 1fr;
+            gap: 1px;
+            background-color: var(--border);
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .collective-header {
+            grid-column: 1 / -1;
+            background: var(--basalt-deep);
+            padding: 3rem 4rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slab {
+            background: var(--basalt-surface);
+            position: relative;
+            padding: 2.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .slab:hover {
+            z-index: 2;
+        }
+
+        [data-theme="light"] .slab {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* Copper wiring — adapted to circuit glow */
+        .copper-wire-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .braid {
+            fill: none;
+            stroke: var(--circuit-glow);
+            stroke-width: 1;
+            stroke-dasharray: 4, 2;
+            filter: drop-shadow(0 0 4px var(--circuit-dim));
+            opacity: 0.4;
+        }
+
+        .pulse-path {
+            stroke: var(--accent-red);
+            stroke-width: 1.5;
+            stroke-dasharray: 20, 100;
+            animation: wire-flow 4s linear infinite;
+        }
+
+        @keyframes wire-flow {
+            from { stroke-dashoffset: 240; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Agent roster */
+        .agent-roster {
+            margin-top: 2rem;
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .agent-row {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agent-row:last-child { border-bottom: none; }
+
+        .agent-node-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+
+        .agent-node-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
+
+        .agent-status-dot {
+            width: 6px; height: 6px;
+            background: var(--circuit-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--circuit-dim);
+        }
+
+        /* Central data slab */
+        .data-slab {
+            background: var(--basalt-deep);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            min-height: 550px;
+        }
+
+        [data-theme="light"] .data-slab {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .data-slab h2 {
+            font-weight: 900;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-top: 0.75rem;
+            background: linear-gradient(180deg, #fff 0%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .data-slab h2 {
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: var(--text-main);
+        }
+
+        .collective-metric-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: auto;
+        }
+
+        .collective-metric {
+            border-left: 2px solid var(--circuit-glow);
+            padding-left: 1rem;
+        }
+
+        .collective-metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        [data-theme="light"] .collective-metric-value {
+            color: var(--text-main);
+        }
+
+        .collective-metric-label {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Human-in-the-loop indicator */
+        .human-loop {
+            position: absolute;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid var(--circuit-glow);
+            padding: 0.85rem 1.5rem;
+            color: var(--circuit-glow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.08);
+            z-index: 10;
+        }
+
+        .human-loop::before {
+            content: '';
+            width: 8px; height: 8px;
+            background: var(--circuit-glow);
+            border-radius: 50%;
+            animation: heartbeat 1.5s infinite ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Terminal output */
+        .terminal-feed {
+            background: rgba(0, 0, 0, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+            height: 110px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        [data-theme="light"] .terminal-feed {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .terminal-feed::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 35px;
+            background: linear-gradient(transparent, var(--basalt-surface));
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .terminal-feed::after {
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.82));
+        }
+
+        /* Progress bars */
+        .progress-track {
+            height: 3px;
+            background: var(--basalt-bright);
+            width: 100%;
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0; top: 0;
+            height: 100%;
+            transition: width 1s ease;
+        }
+
+        /* CTA button — clipped corner */
+        .cta-collective {
+            display: block;
+            margin-top: auto;
+            background: var(--text-main);
+            color: var(--basalt-deep);
+            text-align: center;
+            padding: 1.25rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 92% 100%, 0 100%);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .cta-collective:hover {
+            background: var(--circuit-glow);
+            color: var(--basalt-deep);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px var(--circuit-dim);
+        }
+
+        /* Responsive for collective */
+        @media (max-width: 900px) {
+            .quarry-grid {
+                grid-template-columns: 1fr;
+            }
+            .data-slab {
+                min-height: auto;
+            }
+            .collective-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* ═══════════════════════════════════════════
            THEME TOGGLE
            ═══════════════════════════════════════════ */
         .theme-toggle {
@@ -1227,13 +1677,46 @@
                     <a href="#" class="btn-circuit" style="margin-top: 2rem;">See It In Action</a>
                 </div>
                 <div class="capability-visual">
-                    <!-- Metaball cluster as visual -->
-                    <div class="metaball-field" style="position: relative; width: 100%; height: 100%; right: auto; top: auto;">
-                        <div class="metaball glow-cyan" style="width: 120px; height: 120px; left: 30%; top: 30%; --orbit-duration: 10s; --orbit-radius: 80px;"></div>
-                        <div class="metaball glow-red" style="width: 90px; height: 90px; left: 50%; top: 50%; --orbit-duration: 14s; --orbit-radius: 60px; animation-delay: -3s;"></div>
-                        <div class="metaball" style="width: 150px; height: 150px; left: 40%; top: 40%; --orbit-duration: 18s; --orbit-radius: 100px; animation-delay: -7s;"></div>
+                    <!-- Live Deployment Feed -->
+                    <div class="deploy-feed">
+                        <div class="feed-header">
+                            <span>LIVE_DEPLOYMENT_FEED</span>
+                            <span>LATENCY: 12ms</span>
+                        </div>
+
+                        <div class="engine-row">
+                            <div class="engine-dot active"></div>
+                            <div class="engine-name">Market_Analyst</div>
+                            <div class="engine-track"><div class="engine-fill" data-feed-bar style="width: 85%;"></div></div>
+                            <div class="billing-tag">$0.00</div>
+                        </div>
+
+                        <div class="engine-row">
+                            <div class="engine-dot active-alt"></div>
+                            <div class="engine-name">Lead_Gen_Bot</div>
+                            <div class="engine-track"><div class="engine-fill alt" data-feed-bar style="width: 40%;"></div></div>
+                            <div class="billing-tag alt">$0.00</div>
+                        </div>
+
+                        <div class="engine-row">
+                            <div class="engine-dot complete"></div>
+                            <div class="engine-name">Code_Auditor</div>
+                            <div class="engine-track"><div class="engine-fill complete" data-feed-bar style="width: 100%;"></div></div>
+                            <div class="billing-tag settled">+$4.50</div>
+                        </div>
+
+                        <div class="engine-row">
+                            <div class="engine-dot active"></div>
+                            <div class="engine-name">Search_Agent</div>
+                            <div class="engine-track"><div class="engine-fill" data-feed-bar style="width: 65%;"></div></div>
+                            <div class="billing-tag">$0.00</div>
+                        </div>
+
+                        <div class="feed-total">
+                            <span class="feed-total-label">TOTAL_SETTLEMENT</span>
+                            <span class="feed-total-value">$4.50 USD</span>
+                        </div>
                     </div>
-                    <div class="kinetic-bar" style="position: absolute; bottom: 15%; width: 80%; left: 10%;"></div>
                 </div>
             </div>
         </div>
@@ -1261,6 +1744,133 @@
                 <div class="mono-label" style="margin-top: 2.5rem; color: var(--basalt-bright); font-size: 0.55rem;">
                     CORE_INIT_SEQUENCE // BYPASS_ENABLED
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         AGENT COLLECTIVE
+         ═══════════════════════════════════════════ -->
+    <section class="collective-section" id="collective">
+        <div class="quarry-grid">
+            <!-- Header bar -->
+            <div class="collective-header">
+                <div class="mono-label" style="margin-bottom: 0;">Network Status: <span style="color: var(--circuit-glow)">Synchronized</span></div>
+                <div class="mono-label" style="margin-bottom: 0; opacity: 0.4;">Auth: Root_Human_01</div>
+            </div>
+
+            <!-- Left Slab: Agent Roster -->
+            <div class="slab" data-collective-slab>
+                <svg class="copper-wire-svg">
+                    <path d="M0 50 Q 150 50 150 200 T 300 350" class="braid" />
+                    <path d="M0 50 Q 150 50 150 200 T 300 350" class="braid pulse-path" />
+                </svg>
+
+                <div class="mono-label">Deployment Units</div>
+                <h3 class="section-title" style="font-size: 1.8rem; margin-bottom: 0;">AGENT<br>COLLECTIVE</h3>
+
+                <div class="agent-roster">
+                    <div class="agent-row">
+                        <div>
+                            <div class="agent-node-label">Node_01</div>
+                            <div class="agent-node-name">STRATEGIC_MIND</div>
+                        </div>
+                        <div class="agent-status-dot"></div>
+                    </div>
+                    <div class="agent-row">
+                        <div>
+                            <div class="agent-node-label">Node_02</div>
+                            <div class="agent-node-name">CREATIVE_FLOW</div>
+                        </div>
+                        <div class="agent-status-dot"></div>
+                    </div>
+                    <div class="agent-row">
+                        <div>
+                            <div class="agent-node-label">Node_03</div>
+                            <div class="agent-node-name">DATA_EXCAVATOR</div>
+                        </div>
+                        <div class="agent-status-dot"></div>
+                    </div>
+                    <div class="agent-row">
+                        <div>
+                            <div class="agent-node-label">Node_04</div>
+                            <div class="agent-node-name">LOGISTICS_ENGINE</div>
+                        </div>
+                        <div class="agent-status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="terminal-feed" id="collective-terminal">
+                    > Initializing Node_01... [OK]<br>
+                    > Braid-link established at 450Gbps...<br>
+                    > Human verification pending...<br>
+                    > Human confirmed. Proceeding.
+                </div>
+            </div>
+
+            <!-- Center Slab: Primary Directive -->
+            <div class="data-slab" data-collective-slab>
+                <div style="position: relative; z-index: 2;">
+                    <div class="mono-label">Primary Directive</div>
+                    <h2>AUTONOMOUS<br>EXECUTION</h2>
+                    <p class="body-text" style="margin-top: 1.25rem; max-width: 500px;">
+                        The first agency built on tectonic foundations. Our agents operate in a high-conduction network, delivering superhuman output while maintaining a critical human-in-the-loop anchor for ethical alignment and strategic nuance.
+                    </p>
+                </div>
+
+                <div class="collective-metric-group">
+                    <div class="collective-metric">
+                        <div class="collective-metric-value" data-scramble>98.4%</div>
+                        <div class="collective-metric-label">Agent Autonomy</div>
+                    </div>
+                    <div class="collective-metric">
+                        <div class="collective-metric-value" data-scramble>12ms</div>
+                        <div class="collective-metric-label">Inference Latency</div>
+                    </div>
+                    <div class="collective-metric">
+                        <div class="collective-metric-value" data-scramble>4.2k</div>
+                        <div class="collective-metric-label">Tasks / Hour</div>
+                    </div>
+                    <div class="collective-metric">
+                        <div class="collective-metric-value" data-scramble>Active</div>
+                        <div class="collective-metric-label">Human Override</div>
+                    </div>
+                </div>
+
+                <div class="human-loop">
+                    Human-in-the-Loop Active
+                </div>
+            </div>
+
+            <!-- Right Slab: Operations Hub -->
+            <div class="slab" data-collective-slab>
+                <svg class="copper-wire-svg">
+                    <path d="M300 100 Q 150 150 150 300 T 0 500" class="braid" />
+                    <path d="M300 100 Q 150 150 150 300 T 0 500" class="braid pulse-path" style="animation-delay: -2s;" />
+                </svg>
+
+                <div class="mono-label">Operations Hub</div>
+                <h3 class="section-title" style="font-size: 1.4rem; margin-bottom: 0;">TECTONIC<br>STABILITY</h3>
+
+                <div style="margin-top: 2rem; position: relative; z-index: 1;">
+                    <div class="mono-label" style="font-size: 0.55rem;">System Load</div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 75%; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red-glow);"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; position: relative; z-index: 1;">
+                    <div class="mono-label" style="font-size: 0.55rem;">Ethical Alignment</div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 99%; background: var(--circuit-glow); box-shadow: 0 0 10px var(--circuit-dim);"></div>
+                    </div>
+                </div>
+
+                <p class="body-text" style="margin-top: 2rem; font-size: 0.8rem;">
+                    Our braided architecture ensures no agent operates in isolation. Every output is filtered through the Tectonic protocol before reaching the Human-in-the-Loop terminal.
+                </p>
+
+                <button class="cta-collective">Initiate New Task</button>
             </div>
         </div>
     </section>
@@ -1294,7 +1904,7 @@
 
     <!-- Data stream -->
     <div class="data-stream">
-        SYS: CARVED_LOGIC_V02
+        SYS: AAAS_FRAMEWORK_V02
 PAGE: AGENTIC_POWERHOUSE
 METABALLS: ACTIVE
     </div>
@@ -1312,8 +1922,8 @@ METABALLS: ACTIVE
             if (html.getAttribute('data-theme') === theme) return;
             html.setAttribute('data-theme', theme);
             streamEl.textContent = theme === 'light'
-                ? 'SYS: CARVED_LOGIC_V02\nPAGE: AGENTIC_POWERHOUSE\nMODE: ETCHED_STONE'
-                : 'SYS: CARVED_LOGIC_V02\nPAGE: AGENTIC_POWERHOUSE\nMETABALLS: ACTIVE';
+                ? 'SYS: AAAS_FRAMEWORK_V02\nPAGE: AGENTIC_POWERHOUSE\nMODE: ETCHED_STONE'
+                : 'SYS: AAAS_FRAMEWORK_V02\nPAGE: AGENTIC_POWERHOUSE\nMETABALLS: ACTIVE';
         }
 
         // Toggle enables/disables scroll-based theme switching
@@ -1397,6 +2007,55 @@ METABALLS: ACTIVE
             section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             observer.observe(section);
         });
+
+        // Deploy feed — animate progress bars
+        setInterval(() => {
+            document.querySelectorAll('[data-feed-bar]').forEach(bar => {
+                const current = parseFloat(bar.style.width);
+                if (current >= 100) return;
+                let next = current + (Math.random() * 4);
+                if (next > 100) next = 0;
+                bar.style.width = next + '%';
+            });
+        }, 2500);
+
+        // Agent Collective — slab tilt on mousemove
+        document.querySelectorAll('[data-collective-slab]').forEach(slab => {
+            slab.addEventListener('mousemove', e => {
+                const rect = slab.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateX = ((y - rect.height / 2) / 30).toFixed(2);
+                const rotateY = ((rect.width / 2 - x) / 30).toFixed(2);
+                slab.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            slab.addEventListener('mouseleave', () => {
+                slab.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            });
+        });
+
+        // Agent Collective — terminal feed
+        const collectiveTerminal = document.getElementById('collective-terminal');
+        if (collectiveTerminal) {
+            const collectiveLogs = [
+                "Analyzing market volatility...",
+                "Agent 03 extracting latent insights...",
+                "Human anchor validating strategy...",
+                "Network throughput optimized...",
+                "Tectonic slab stability 100%...",
+                "Refining neural pathways...",
+                "Synaptic braid firing at 4.2GHz...",
+                "Node_02 creative output +340%...",
+                "Ethical alignment check passed...",
+            ];
+            setInterval(() => {
+                const line = document.createElement('div');
+                line.textContent = '> ' + collectiveLogs[Math.floor(Math.random() * collectiveLogs.length)];
+                collectiveTerminal.appendChild(line);
+                if (collectiveTerminal.childNodes.length > 12) collectiveTerminal.removeChild(collectiveTerminal.firstChild);
+                collectiveTerminal.scrollTop = collectiveTerminal.scrollHeight;
+            }, 3000);
+        }
 
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(link => {

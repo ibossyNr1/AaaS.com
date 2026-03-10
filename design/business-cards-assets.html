@@ -13,7 +13,7 @@
         --text: #e8e8e8;
         --muted: #888;
         --aaas-green: #00ffc2;
-        --accent-red: #f4224b;
+        --accent-red: #F43F6C;
         --light-teal: #0088a0;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -606,7 +606,7 @@
     To recreate the TikTok/CRT text effect in Canva:<br><br>
     1. Place the main text in <strong>white (#FFFFFF)</strong><br>
     2. Duplicate the text layer — change color to <strong>#00FFC2</strong> (green), offset <strong>-2px left, -1px up</strong>, set opacity to <strong>60%</strong>, blend mode <strong>Screen</strong><br>
-    3. Duplicate again — change color to <strong>#F4224B</strong> (red), offset <strong>+2px right, +1px down</strong>, set opacity to <strong>60%</strong>, blend mode <strong>Screen</strong>
+    3. Duplicate again — change color to <strong>#F43F6C</strong> (red), offset <strong>+2px right, +1px down</strong>, set opacity to <strong>60%</strong>, blend mode <strong>Screen</strong>
 </div>
 
 <!-- ═══════════════════════════════════════ -->
@@ -643,9 +643,9 @@
         <div class="asset-detail">#00FFC2</div>
     </div>
     <div class="asset-card" style="min-width:120px;">
-        <div style="width:60px;height:60px;border-radius:8px;background:#f4224b;"></div>
+        <div style="width:60px;height:60px;border-radius:8px;background:#F43F6C;"></div>
         <div class="asset-label">Accent Red</div>
-        <div class="asset-detail">#F4224B</div>
+        <div class="asset-detail">#F43F6C</div>
     </div>
     <div class="asset-card" style="min-width:120px;">
         <div style="width:60px;height:60px;border-radius:8px;background:#0088a0;"></div>
@@ -730,7 +730,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
 
     mkMatrix('matrix-white', '#ffffff', 180);
     mkMatrix('matrix-green', '#00ffc2', 180);
-    mkMatrix('matrix-red', '#f4224b', 180);
+    mkMatrix('matrix-red', '#F43F6C', 180);
 
     // Edge strip layers (wider, shorter)
     function mkEdge(containerId, fgColor) {
@@ -752,7 +752,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
 
     mkEdge('edge-base', '#ffffff');
     mkEdge('edge-green', '#00ffc2');
-    mkEdge('edge-red', '#f4224b');
+    mkEdge('edge-red', '#F43F6C');
 
     // ── Combined Edge Strip Variations ──
     // Pre-render the QR matrix data for compositing
@@ -769,7 +769,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
 
     var srcWhite = renderMatrixData('#ffffff', size, mc, cellSize);
     var srcGreen = renderMatrixData('#00ffc2', size, mc, cellSize);
-    var srcRed   = renderMatrixData('#f4224b', size, mc, cellSize);
+    var srcRed   = renderMatrixData('#F43F6C', size, mc, cellSize);
 
     function compositeStrip(canvasId, opts) {
         var c = document.getElementById(canvasId);
@@ -790,7 +790,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
             var grad = ctx.createLinearGradient(0, 0, w, 0);
             grad.addColorStop(0, '#00ffc2');
             grad.addColorStop(0.5, '#0088a0');
-            grad.addColorStop(1, '#f4224b');
+            grad.addColorStop(1, '#F43F6C');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, barH);
             // Dark strip below bar
@@ -891,7 +891,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
 
     var mW = mkSrc('#ffffff');
     var mG = mkSrc('#00ffc2');
-    var mR = mkSrc('#f4224b');
+    var mR = mkSrc('#F43F6C');
 
     // ── Dark side full card ──
     function compositeCardDark(canvasId, opts) {
@@ -952,7 +952,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
         var grad = ctx.createLinearGradient(0, 0, w, 0);
         grad.addColorStop(0, '#00ffc2');
         grad.addColorStop(0.5, '#0088a0');
-        grad.addColorStop(1, '#f4224b');
+        grad.addColorStop(1, '#F43F6C');
         ctx.fillStyle = grad;
         ctx.fillRect(0, barY, w, barH);
 
@@ -997,7 +997,7 @@ generateHiResQR('qr-jorian-black', 'tel:+4917632010267', '#1a1a1c', 120);
     var grad = ctx.createLinearGradient(0, 0, c.width, 0);
     grad.addColorStop(0, '#00ffc2');
     grad.addColorStop(0.5, '#0088a0');
-    grad.addColorStop(1, '#f4224b');
+    grad.addColorStop(1, '#F43F6C');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, c.width, c.height);
 })();

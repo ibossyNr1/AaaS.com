@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN PLAYGROUND | Carved Logic</title>
+    <title>DESIGN PLAYGROUND | AaaS Framework</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         /* ═══════════════════════════════════════════
-           DESIGN TOKENS — Carved Logic System
+           DESIGN TOKENS — AaaS Framework System
            ═══════════════════════════════════════════ */
         :root {
             --basalt-deep: #080809;
@@ -17,9 +17,9 @@
             --basalt-bright: #2a2a2e;
             --circuit-glow: #00f3ff;
             --circuit-dim: rgba(0, 243, 255, 0.15);
-            --accent-red: #f4224b;
-            --accent-red-dim: rgba(244, 34, 75, 0.15);
-            --accent-red-glow: rgba(244, 34, 75, 0.4);
+            --accent-red: #F43F6C;
+            --accent-red-dim: rgba(244, 63, 108, 0.15);
+            --accent-red-glow: rgba(244, 63, 108, 0.4);
             --text-main: #e0e0e0;
             --text-muted: rgba(224, 224, 224, 0.5);
             --border: rgba(255, 255, 255, 0.05);
@@ -36,9 +36,9 @@
             --basalt-bright: #d4d4d0;
             --circuit-glow: #0088a0;
             --circuit-dim: rgba(0, 136, 160, 0.15);
-            --accent-red: #c91e42;
-            --accent-red-dim: rgba(201, 30, 66, 0.1);
-            --accent-red-glow: rgba(201, 30, 66, 0.3);
+            --accent-red: #c9335a;
+            --accent-red-dim: rgba(201, 51, 90, 0.1);
+            --accent-red-glow: rgba(201, 51, 90, 0.3);
             --text-main: #111113;
             --text-muted: rgba(17, 17, 19, 0.55);
             --border: rgba(0, 0, 0, 0.1);
@@ -1045,7 +1045,7 @@
 
         .service-block:hover {
             background: var(--basalt-surface);
-            box-shadow: inset 0 0 50px rgba(244, 34, 75, 0.15);
+            box-shadow: inset 0 0 50px rgba(244, 63, 108, 0.15);
         }
 
         .service-block:hover .block-label {
@@ -1055,7 +1055,7 @@
 
         [data-theme="light"] .service-block:hover {
             background: rgba(255, 255, 255, 0.85);
-            box-shadow: inset 0 0 50px rgba(201, 30, 66, 0.08);
+            box-shadow: inset 0 0 50px rgba(201, 51, 90, 0.08);
         }
 
         .block-label {
@@ -1483,7 +1483,7 @@
 
             <div class="value-strip">
                 <div>
-                    <span class="mono-label" style="color: var(--circuit-glow);">Why Carved Logic</span>
+                    <span class="mono-label" style="color: var(--circuit-glow);">Why AaaS Framework</span>
                     <h2 class="section-title">Intelligence<br>At Scale</h2>
                     <p class="body-text">
                         Enterprise-grade agent orchestration. Each node operates autonomously
@@ -1757,7 +1757,7 @@
 
     <!-- Data stream decoration -->
     <div class="data-stream">
-        SYS: CARVED_LOGIC_V02<br>
+        SYS: AAAS_FRAMEWORK_V02<br>
         ACCENT: #FF0C00 ↔ #00F3FF<br>
         CLICK_FEEDBACK: ACTIVE
     </div>
@@ -1770,8 +1770,8 @@
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
         const streamEl = document.querySelector('.data-stream');
-        const darkStreamText = 'SYS: CARVED_LOGIC_V02\nACCENT: #F4224B \u2194 #00F3FF\nCLICK_FEEDBACK: ACTIVE';
-        const lightStreamText = 'SYS: CARVED_LOGIC_V02\nMODE: ETCHED_STONE\nACCENT: #C91E42 \u2194 #0088A0';
+        const darkStreamText = 'SYS: AAAS_FRAMEWORK_V02\nACCENT: #F43F6C \u2194 #00F3FF\nCLICK_FEEDBACK: ACTIVE';
+        const lightStreamText = 'SYS: AAAS_FRAMEWORK_V02\nMODE: ETCHED_STONE\nACCENT: #C9335A \u2194 #0088A0';
 
         function setTheme(theme) {
             if (html.getAttribute('data-theme') === theme) return;
@@ -1900,7 +1900,7 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 if (x > 0 && y > 0 && x < rect.width && y < rect.height) {
-                    block.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(244, 34, 75, 0.15), var(--basalt-deep) 70%)`;
+                    block.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(244, 63, 108, 0.15), var(--basalt-deep) 70%)`;
                 }
             });
             block.addEventListener('mouseleave', () => {
