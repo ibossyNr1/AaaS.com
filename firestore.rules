@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Knowledge Index entity collections — public read, no public write
+    match /tools/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /models/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /agents/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /skills/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /scripts/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /benchmarks/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Agent logs — internal only
+    match /agent_logs/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
