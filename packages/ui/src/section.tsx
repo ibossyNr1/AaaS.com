@@ -22,7 +22,7 @@ export function Section({
       <section
         className={cn(
           "py-12 md:py-24 px-4 md:px-6",
-          variant === "surface" && "bg-surface",
+          variant === "surface" && "bg-surface/70 backdrop-blur-xl",
           variant === "bedrock" && "bedrock",
           className
         )}

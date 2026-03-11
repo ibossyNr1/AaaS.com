@@ -34,7 +34,7 @@ export function ThreePillars() {
     <Section divider>
       <Container>
         <FadeUp>
-          <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-tight">
+          <h2 className="monolith-title text-3xl md:text-4xl font-black text-center mb-4 uppercase tracking-tight">
             Three Pillars of Autonomy
           </h2>
           <p className="text-text-muted text-center mb-16 max-w-xl mx-auto">

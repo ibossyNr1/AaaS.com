@@ -10,6 +10,7 @@ export { DeployFeed } from "./deploy-feed";
 export { TerminalFeed } from "./terminal-feed";
 export { DataTape } from "./data-tape";
 export { AgentRoster } from "./agent-roster";
+export { ThemeToggle } from "./theme-toggle";
 export { cn } from "./cn";
 export { useMouseSpotlight } from "./use-mouse-spotlight";
 export { useParallaxTilt } from "./use-parallax-tilt";

@@ -19,14 +19,14 @@ const logLines = [
 const prefixColors: Record<string, string> = {
   sys: "text-text-muted",
   ctx: "text-circuit",
-  llm: "text-purple-400",
-  agt: "text-accent-red",
-  mem: "text-emerald-400",
-  api: "text-yellow-400",
-  skl: "text-blue-400",
-  aud: "text-orange-400",
-  dep: "text-circuit",
-  mkt: "text-pink-400",
+  llm: "text-pastel-sky",
+  agt: "text-accent-red/70",
+  mem: "text-accent-teal",
+  api: "text-text-muted",
+  skl: "text-circuit/60",
+  aud: "text-pastel-lavender",
+  dep: "text-circuit/80",
+  mkt: "text-accent-red/50",
 };
 
 interface TerminalFeedProps {
@@ -53,9 +53,9 @@ export function TerminalFeed({ className, maxLines = 8 }: TerminalFeedProps) {
     <div className={cn("glass rounded-lg overflow-hidden font-mono text-xs", className)}>
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-base/50">
         <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-accent-red/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-accent-red/50" />
+          <div className="w-2.5 h-2.5 rounded-full bg-circuit/30" />
+          <div className="w-2.5 h-2.5 rounded-full bg-accent-teal/50" />
         </div>
         <span className="text-text-muted text-[10px] uppercase tracking-widest ml-2">
           aaas://system-log

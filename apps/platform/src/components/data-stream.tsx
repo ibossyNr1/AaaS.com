@@ -23,13 +23,18 @@ export function DataStream() {
 
   return (
     <div
-      className="fixed bottom-6 right-8 font-mono text-[0.55rem] text-right opacity-40 pointer-events-none z-50 hidden md:block"
+      className="fixed bottom-6 right-8 font-mono text-[0.55rem] text-right opacity-40 z-50 hidden md:block"
       aria-hidden="true"
     >
-      <div className="text-circuit">{messages[line]}</div>
-      <div className="text-accent-red/60 mt-0.5">
-        SYS_LOG: AAAS_FRAMEWORK_v2.4
-      </div>
+      <div className="text-circuit pointer-events-none">{messages[line]}</div>
+      <a
+        href="https://www.supra-forge.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-text-muted/60 mt-0.5 block hover:text-circuit transition-colors"
+      >
+        Powered by Supra-forge
+      </a>
     </div>
   );
 }

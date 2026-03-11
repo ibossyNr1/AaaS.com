@@ -19,12 +19,29 @@
     --accent-red-dim: rgba(244, 63, 108, 0.15);
     --accent-red-glow: rgba(244, 63, 108, 0.4);
 
+    /* Accent teal — tertiary accent */
+    --accent-teal: 0 212 184;
+    --accent-teal-dim: rgba(0, 212, 184, 0.15);
+
+    /* Pastel accents — decorative palette */
+    --pastel-lavender: 147 154 255;
+    --pastel-gold: 248 217 116;
+    --pastel-mint: 105 212 166;
+    --pastel-sky: 85 184 255;
+    --pastel-blue: 191 219 254;
+    --pastel-purple: 233 213 255;
+    --pastel-green: 187 247 208;
+
     /* Text */
     --text: 224 224 224;
     --text-muted: rgba(224, 224, 224, 0.5);
 
     /* Grain texture */
     --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    --grain-opacity: 0.6;
+
+    /* Blend mode for background effects */
+    --aura-blend: screen;
 
     --radius: 0.75rem;
     --liquid-ease: cubic-bezier(0.23, 1, 0.32, 1);
@@ -32,17 +49,25 @@
 
   /* Light mode tokens */
   [data-theme="light"] {
-    --basalt-deep: 234 234 232;
-    --basalt-surface: 224 224 221;
-    --basalt-bright: 212 212 208;
+    --basalt-deep: 250 250 248;
+    --basalt-surface: 244 244 241;
+    --basalt-bright: 234 234 230;
     --circuit-glow: 0 136 160;
-    --circuit-dim: rgba(0, 136, 160, 0.15);
+    --circuit-dim: rgba(0, 136, 160, 0.12);
     --accent-red: 201 51 90;
-    --accent-red-dim: rgba(201, 51, 90, 0.1);
-    --accent-red-glow: rgba(201, 51, 90, 0.3);
+    --accent-red-dim: rgba(201, 51, 90, 0.08);
+    --accent-red-glow: rgba(201, 51, 90, 0.25);
+    --accent-teal: 0 160 140;
+    --accent-teal-dim: rgba(0, 160, 140, 0.1);
+    --pastel-lavender: 120 126 220;
+    --pastel-gold: 210 175 60;
+    --pastel-mint: 60 180 130;
+    --pastel-sky: 50 150 220;
     --text: 17 17 19;
     --text-muted: rgba(17, 17, 19, 0.55);
-    --border: rgba(0, 0, 0, 0.1);
+    --border: rgba(0, 0, 0, 0.08);
+    --grain-opacity: 0.3;
+    --aura-blend: multiply;
   }
 
   * {
@@ -68,7 +93,7 @@
     background-image: var(--grain);
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.6;
+    opacity: var(--grain-opacity);
     mix-blend-mode: overlay;
   }
 }
@@ -109,23 +134,23 @@
 
   /* Glassmorphism card */
   .glass {
-    background: rgba(26, 26, 28, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: rgba(26, 26, 28, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   [data-theme="light"] .glass {
-    background: rgba(255, 255, 255, 0.82);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
   /* Kinetic bar divider */
   .kinetic-bar {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
     position: relative;
     overflow: hidden;
   }
@@ -148,8 +173,15 @@
 
   /* Bedrock section */
   .bedrock {
-    background: rgb(var(--basalt-deep));
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: rgba(var(--basalt-deep), 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  [data-theme="light"] .bedrock {
+    background: rgba(var(--basalt-bright), 0.6);
+    border-color: rgba(0, 0, 0, 0.04);
   }
 
   /* Outline text for hero sections */
@@ -161,6 +193,18 @@
   [data-theme="light"] .outline-text {
     -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2);
   }
+}
+
+/* Logo dual-color pulse */
+@keyframes logoPulse {
+  0%, 100% { background: rgb(var(--accent-red)); box-shadow: 0 0 10px rgb(var(--accent-red)); }
+  25% { background: rgb(var(--accent-red)); box-shadow: 0 0 4px rgb(var(--accent-red)); opacity: 0.5; }
+  50% { background: rgb(var(--circuit-glow)); box-shadow: 0 0 10px rgb(var(--circuit-glow)); }
+  75% { background: rgb(var(--circuit-glow)); box-shadow: 0 0 4px rgb(var(--circuit-glow)); opacity: 0.5; }
+}
+
+.animate-logo-pulse {
+  animation: logoPulse 3s ease-in-out infinite;
 }
 
 /* Keyframe animations */
@@ -203,7 +247,7 @@
 
 @keyframes pulse-dot {
   0%, 100% { box-shadow: 0 0 4px rgb(var(--circuit-glow)); }
-  50% { box-shadow: 0 0 12px rgb(var(--circuit-glow)), 0 0 24px rgba(0, 243, 255, 0.3); }
+  50% { box-shadow: 0 0 12px rgb(var(--circuit-glow)), 0 0 24px var(--circuit-dim); }
 }
 
 /* Metaball orbit — circular motion keeping ball upright */
@@ -237,6 +281,85 @@
   33% { transform: translate(15%, 25%) scale(1.15) rotate(30deg); }
   66% { transform: translate(-5%, 10%) scale(0.95) rotate(-15deg); }
   100% { transform: translate(10%, -5%) scale(1.1) rotate(45deg); }
+}
+
+/* Counter-orbit — keeps labels upright */
+@keyframes counter-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Blinking star dot */
+@keyframes blink-star {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  30% { opacity: 0.3; transform: scale(0.7); }
+  60% { opacity: 1; transform: scale(1.15); }
+  80% { opacity: 0.6; transform: scale(0.9); }
+}
+
+/* Gravity thread pulse */
+@keyframes thread-pulse {
+  0%, 100% { opacity: 0; }
+  40% { opacity: 1; }
+  60% { opacity: 1; }
+}
+
+/* Planet gravitational halo */
+@keyframes halo-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Planet atmosphere pulse */
+@keyframes atmosphere-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgb(var(--circuit-glow) / 0.06), 0 0 50px rgb(var(--circuit-glow) / 0.03), inset 0 0 20px rgb(var(--circuit-glow) / 0.04);
+    border-color: rgb(var(--circuit-glow) / 0.08);
+  }
+  50% {
+    box-shadow: 0 0 40px rgb(var(--circuit-glow) / 0.15), 0 0 80px rgb(var(--circuit-glow) / 0.06), inset 0 0 30px rgb(var(--circuit-glow) / 0.08);
+    border-color: rgb(var(--circuit-glow) / 0.2);
+  }
+}
+
+/* Pulsating circuit glow ring */
+@keyframes glow-ring-pulse {
+  0%, 100% {
+    border-color: rgb(var(--circuit-glow) / 0.15);
+    box-shadow: 0 0 8px rgb(var(--circuit-glow) / 0.05);
+  }
+  50% {
+    border-color: rgb(var(--circuit-glow) / 0.45);
+    box-shadow: 0 0 25px rgb(var(--circuit-glow) / 0.15), 0 0 50px rgb(var(--circuit-glow) / 0.05);
+  }
+}
+
+/* Theme visibility helpers */
+[data-theme="light"] .dark-only { display: none !important; }
+:root .light-only { display: none !important; }
+[data-theme="light"] .light-only { display: block !important; }
+
+/* Light mode: soften glow utilities */
+[data-theme="light"] .glow-circuit {
+  box-shadow: 0 0 24px var(--circuit-dim);
+}
+
+[data-theme="light"] .glow-red {
+  box-shadow: 0 0 24px var(--accent-red-dim);
+}
+
+[data-theme="light"] .text-glow {
+  text-shadow: none;
+}
+
+[data-theme="light"] .text-glow-red {
+  text-shadow: none;
+}
+
+/* Light mode: kinetic bar uses darker line for visibility */
+[data-theme="light"] .kinetic-bar::after {
+  filter: blur(6px);
+  opacity: 0.7;
 }
 
 /* Reduce motion for accessibility */

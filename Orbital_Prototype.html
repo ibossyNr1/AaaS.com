@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AaaS — Orbital Animation Prototype</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --basalt-deep: #080809;
+      --basalt-surface: #1a1a1c;
+      --circuit-glow: #00f3ff;
+      --accent-red: #F43F6C;
+      --text: #e0e0e0;
+      --text-muted: rgba(224, 224, 224, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--basalt-deep);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 300vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ========== STAR FIELD ========== */
+    .star-field {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      transition: transform 0.2s ease-out;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* ========== NEBULA LAYER ========== */
+    .nebula-layer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+      transition: transform 0.18s ease-out;
+    }
+
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0;
+      animation: nebula-drift 20s ease-in-out infinite;
+    }
+
+    .nebula-1 {
+      width: 65vw; height: 65vw;
+      top: 5%; left: -15%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.18), transparent 70%);
+      animation-duration: 25s;
+      opacity: 0.7;
+    }
+
+    .nebula-2 {
+      width: 55vw; height: 55vw;
+      bottom: -10%; right: -15%;
+      background: radial-gradient(circle, rgba(244, 63, 108, 0.14), transparent 65%);
+      animation-duration: 30s;
+      animation-delay: -8s;
+      opacity: 0.6;
+    }
+
+    .nebula-3 {
+      width: 40vw; height: 40vw;
+      top: 25%; right: 5%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.12), transparent 60%);
+      animation-duration: 22s;
+      animation-delay: -14s;
+      opacity: 0.55;
+    }
+
+    .nebula-4 {
+      width: 45vw; height: 45vw;
+      bottom: 10%; left: 10%;
+      background: radial-gradient(circle, rgba(244, 63, 108, 0.1), transparent 60%);
+      animation-duration: 28s;
+      animation-delay: -5s;
+      opacity: 0.5;
+    }
+
+    .nebula-5 {
+      width: 30vw; height: 30vw;
+      top: 45%; left: 35%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.09), rgba(244, 63, 108, 0.06), transparent 65%);
+      animation-duration: 18s;
+      animation-delay: -10s;
+      opacity: 0.5;
+    }
+
+    /* ========== LENS FLARE ========== */
+    .lens-flare {
+      position: fixed;
+      pointer-events: none;
+      z-index: 15;
+      mix-blend-mode: screen;
+    }
+
+    /* Small core — sits between mouse and planet center */
+    .flare-core {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.12), rgba(0, 243, 255, 0.06) 40%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Streak — line through the flare axis */
+    .flare-streak {
+      position: absolute;
+      width: 400px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent 5%, rgba(0, 243, 255, 0.1), rgba(255, 255, 255, 0.06), rgba(244, 63, 108, 0.08), transparent 95%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Ring ghost — mirrored through center (classic lens flare artifact) */
+    .flare-ring {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 243, 255, 0.07);
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.02), transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Ghost orb — further mirrored */
+    .flare-ghost {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244, 63, 108, 0.05), transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Far flare — BIG bloom on the far side beyond the mouse */
+    .flare-far {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.06), rgba(0, 243, 255, 0.03) 40%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Starburst — 6-point star on the core position */
+    .flare-starburst {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      transform: translate(-50%, -50%);
+      background:
+        linear-gradient(0deg, transparent 45%, rgba(255,255,255,0.04) 49%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.04) 51%, transparent 55%),
+        linear-gradient(90deg, transparent 45%, rgba(255,255,255,0.04) 49%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.04) 51%, transparent 55%),
+        linear-gradient(45deg, transparent 45%, rgba(0,243,255,0.03) 49%, rgba(0,243,255,0.04) 50%, rgba(0,243,255,0.03) 51%, transparent 55%),
+        linear-gradient(-45deg, transparent 45%, rgba(0,243,255,0.03) 49%, rgba(0,243,255,0.04) 50%, rgba(0,243,255,0.03) 51%, transparent 55%);
+      transition: opacity 0.3s;
+    }
+
+    /* ========== PARALLAX CONTAINER ========== */
+    .parallax-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: transform 0.15s ease-out;
+    }
+
+    .orbital-system {
+      position: relative;
+      width: 900px;
+      height: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ========== SCROLLABLE CONTENT ========== */
+    .scroll-content {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .scroll-section {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    .scroll-section h2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      line-height: 0.9;
+      background: linear-gradient(180deg, #fff 0%, #444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .scroll-section p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 480px;
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* ========== ORBITAL RINGS ========== */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      animation: orbit linear infinite;
+    }
+
+    .orbit-ring svg { width: 100%; height: 100%; overflow: visible; }
+
+    .ring-brand    { width: 820px; height: 820px; animation-duration: 50s; }
+    .ring-context  { width: 620px; height: 620px; animation-duration: 38s; animation-direction: reverse; }
+    .ring-industry { width: 440px; height: 440px; animation-duration: 28s; }
+    .ring-strategy { width: 290px; height: 290px; animation-duration: 20s; animation-direction: reverse; }
+    .ring-aaas     { width: 170px; height: 170px; animation-duration: 14s; }
+
+    /* Ghost rings */
+    .ghost-ring {
+      position: absolute;
+      border-radius: 50%;
+      animation: orbit linear infinite;
+      pointer-events: none;
+    }
+
+    .ghost-ring svg { width: 100%; height: 100%; overflow: visible; }
+
+    .ghost-1 { width: 880px; height: 880px; animation-duration: 70s; animation-direction: reverse; }
+    .ghost-2 { width: 740px; height: 740px; animation-duration: 55s; }
+    .ghost-3 { width: 530px; height: 530px; animation-duration: 42s; animation-direction: reverse; }
+    .ghost-4 { width: 360px; height: 360px; animation-duration: 32s; }
+    .ghost-5 { width: 210px; height: 210px; animation-duration: 24s; animation-direction: reverse; }
+
+    .ring-path { fill: none; stroke-dasharray: 8 6; stroke-width: 1; }
+    .ring-path-solid { fill: none; stroke-width: 0.5; }
+
+    .ring-brand .ring-path    { stroke: rgba(0, 243, 255, 0.06); }
+    .ring-context .ring-path  { stroke: rgba(244, 63, 108, 0.05); }
+    .ring-industry .ring-path { stroke: rgba(0, 243, 255, 0.06); }
+    .ring-strategy .ring-path { stroke: rgba(244, 63, 108, 0.05); }
+    .ring-aaas .ring-path     { stroke: rgba(0, 243, 255, 0.07); }
+
+    .ghost-1 .ring-path-solid { stroke: rgba(255, 255, 255, 0.015); }
+    .ghost-2 .ring-path       { stroke: rgba(0, 243, 255, 0.03); stroke-dasharray: 4 12; }
+    .ghost-3 .ring-path-solid { stroke: rgba(255, 255, 255, 0.02); }
+    .ghost-4 .ring-path       { stroke: rgba(244, 63, 108, 0.025); stroke-dasharray: 3 10; }
+    .ghost-5 .ring-path-solid { stroke: rgba(0, 243, 255, 0.02); }
+
+    /* ========== GRAVITY THREADS ========== */
+    .gravity-threads {
+      position: absolute;
+      width: 900px; height: 900px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .gravity-thread {
+      stroke-width: 0.5;
+      fill: none;
+      opacity: 0;
+      animation: thread-pulse 4s ease-in-out infinite;
+    }
+
+    .gravity-thread.cyan  { stroke: rgba(0, 243, 255, 0.12); }
+    .gravity-thread.red   { stroke: rgba(244, 63, 108, 0.1); }
+    .gravity-thread.white { stroke: rgba(255, 255, 255, 0.08); }
+
+    /* ========== DOT + LABEL ========== */
+    .dot-label-group {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .orbit-label {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      margin-bottom: 8px;
+      animation: counter-orbit linear infinite;
+    }
+
+    .ring-brand .orbit-label    { color: rgba(0, 243, 255, 0.5);   animation-duration: 50s; font-size: 11px; }
+    .ring-context .orbit-label  { color: rgba(244, 63, 108, 0.5);  animation-duration: 38s; animation-direction: reverse; font-size: 10px; }
+    .ring-industry .orbit-label { color: rgba(0, 243, 255, 0.45);  animation-duration: 28s; font-size: 9px; }
+    .ring-strategy .orbit-label { color: rgba(244, 63, 108, 0.45); animation-duration: 20s; animation-direction: reverse; font-size: 8px; }
+    .ring-aaas .orbit-label     { color: rgba(0, 243, 255, 0.6);   animation-duration: 14s; font-size: 7px; letter-spacing: 0.4em; }
+
+    /* ========== DOTS ========== */
+    .orbit-dot {
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: blink-star ease-in-out infinite;
+    }
+
+    .ring-brand .orbit-dot {
+      width: 8px; height: 8px;
+      background: var(--circuit-glow);
+      box-shadow: 0 0 10px var(--circuit-glow), 0 0 25px rgba(0, 243, 255, 0.35);
+      animation-duration: 2s;
+    }
+
+    .ring-context .orbit-dot {
+      width: 7px; height: 7px;
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red), 0 0 22px rgba(244, 63, 108, 0.3);
+      animation-duration: 1.8s;
+    }
+
+    .ring-industry .orbit-dot {
+      width: 5px; height: 5px;
+      background: var(--circuit-glow);
+      box-shadow: 0 0 6px var(--circuit-glow), 0 0 18px rgba(0, 243, 255, 0.25);
+      animation-duration: 1.5s;
+    }
+
+    .ring-strategy .orbit-dot {
+      width: 4px; height: 4px;
+      background: var(--accent-red);
+      box-shadow: 0 0 6px var(--accent-red), 0 0 15px rgba(244, 63, 108, 0.25);
+      animation-duration: 1.6s;
+    }
+
+    .ring-aaas .orbit-dot {
+      width: 6px; height: 6px;
+      background: #fff;
+      box-shadow: 0 0 8px #fff, 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(0, 243, 255, 0.2);
+      animation-duration: 1.2s;
+    }
+
+    /* Comet trail on AaaS */
+    .ring-aaas .dot-label-group::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 50%;
+      transform: translateX(-50%);
+      width: 3px; height: 18px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35), transparent);
+      border-radius: 50%;
+      filter: blur(2px);
+      animation: counter-orbit 14s linear infinite;
+    }
+
+    /* Secondary dots */
+    .orbit-dot-b {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%) translateY(50%);
+      border-radius: 50%;
+      animation: blink-star ease-in-out infinite;
+    }
+
+    .ring-brand .orbit-dot-b    { width: 4px; height: 4px; background: rgba(0, 243, 255, 0.3);   animation-duration: 3s; }
+    .ring-context .orbit-dot-b  { width: 3px; height: 3px; background: rgba(244, 63, 108, 0.3);  animation-duration: 2.8s; }
+    .ring-industry .orbit-dot-b { width: 3px; height: 3px; background: rgba(0, 243, 255, 0.25);  animation-duration: 2.5s; }
+    .ring-strategy .orbit-dot-b { width: 2px; height: 2px; background: rgba(244, 63, 108, 0.25); animation-duration: 2.2s; }
+    .ring-aaas .orbit-dot-b     { width: 3px; height: 3px; background: rgba(255, 255, 255, 0.3); animation-duration: 2s; }
+
+    /* ========== SHOOTING STARS ========== */
+    .shooting-star {
+      position: fixed;
+      width: 80px; height: 1px;
+      background: linear-gradient(90deg, rgba(0, 243, 255, 0.6), transparent);
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      animation: shoot 6s linear infinite;
+    }
+
+    .shooting-star:nth-child(1) { top: 15%; left: 10%; transform: rotate(-25deg); animation-delay: 0s; }
+    .shooting-star:nth-child(2) { top: 60%; right: 5%; transform: rotate(-35deg); animation-delay: 3.5s; width: 60px; background: linear-gradient(90deg, rgba(244, 63, 108, 0.5), transparent); }
+    .shooting-star:nth-child(3) { top: 35%; left: 50%; transform: rotate(-20deg); animation-delay: 7s; width: 50px; }
+
+    /* ========== CENTRAL PLANET ========== */
+    .planet {
+      position: relative;
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: planet-pulse 4s ease-in-out infinite;
+    }
+
+    .planet-surface {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(60, 65, 75, 1) 0%, rgba(30, 32, 38, 1) 35%, rgba(12, 12, 14, 1) 70%, rgba(8, 8, 9, 1) 100%);
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      overflow: hidden;
+      box-shadow:
+        inset -8px -4px 16px rgba(0, 0, 0, 0.6),
+        inset 6px 6px 12px rgba(255, 255, 255, 0.02);
+    }
+
+    /* Specular highlight — bright gloss */
+    .planet-surface::before {
+      content: '';
+      position: absolute;
+      top: 6%; left: 12%;
+      width: 50%; height: 40%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 40% 35%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 40%, transparent 70%);
+    }
+
+    /* Circuit rim light */
+    .planet-surface::after {
+      content: '';
+      position: absolute;
+      top: 8%; right: 2%;
+      width: 25%; height: 65%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(0, 243, 255, 0.14) 0%, transparent 70%);
+      filter: blur(5px);
+    }
+
+    /* Red accent storm */
+    .planet-accent {
+      position: absolute;
+      top: 22%; right: 20%;
+      width: 16px; height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(244, 63, 108, 0.4), transparent 70%);
+      filter: blur(3px);
+    }
+
+    /* Secondary surface detail */
+    .planet-band {
+      position: absolute;
+      top: 55%; left: 10%;
+      width: 80%; height: 8%;
+      border-radius: 50%;
+      background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.04), rgba(255,255,255,0.02), transparent);
+      filter: blur(2px);
+    }
+
+    /* Pulsating atmosphere — matches homepage orbPulse */
+    .planet-atmosphere {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 243, 255, 0.1);
+      animation: atmosphere-pulse 4s ease-in-out infinite;
+    }
+
+    /* Pulsating green/circuit ring — matching homepage */
+    .planet-glow-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 243, 255, 0.2);
+      animation: glow-ring-pulse 4s ease-in-out infinite;
+    }
+
+    /* Spinning conic border */
+    .planet-ring-spin {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      background: conic-gradient(from 0deg, transparent, rgba(0, 243, 255, 0.18), transparent 40%, rgba(244, 63, 108, 0.14), transparent 70%) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: orbit 10s linear infinite;
+    }
+
+    .planet-core-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--circuit-glow);
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+      z-index: 2;
+    }
+
+    /* Gravitational halo */
+    .planet-halo {
+      position: absolute;
+      inset: -35px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.04) 0%, transparent 70%);
+      animation: halo-pulse 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .static-outer-ring {
+      position: absolute;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* ========== LEGEND ========== */
+    .legend {
+      position: fixed;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      z-index: 20;
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.6; }
+
+    .legend-item:nth-child(1) .legend-dot { background: var(--circuit-glow); }
+    .legend-item:nth-child(2) .legend-dot { background: var(--accent-red); }
+    .legend-item:nth-child(3) .legend-dot { background: var(--circuit-glow); }
+    .legend-item:nth-child(4) .legend-dot { background: var(--accent-red); }
+    .legend-item:nth-child(5) .legend-dot { background: #fff; }
+
+    .page-title {
+      position: fixed;
+      top: 40px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+      z-index: 20;
+    }
+
+    .page-subtitle {
+      position: fixed;
+      top: 68px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: rgba(224, 224, 224, 0.3);
+      white-space: nowrap;
+      z-index: 20;
+    }
+
+    /* ========== KEYFRAMES ========== */
+    @keyframes orbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes counter-orbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    @keyframes blink-star {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      30% { opacity: 0.3; transform: scale(0.7); }
+      60% { opacity: 1; transform: scale(1.15); }
+      80% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    /* Planet pulsates like homepage orbPulse */
+    @keyframes planet-pulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.08));
+      }
+      50% {
+        transform: scale(1.08);
+        filter: drop-shadow(0 0 50px rgba(0, 243, 255, 0.2));
+      }
+    }
+
+    /* Atmosphere ring pulses in sync */
+    @keyframes atmosphere-pulse {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.06), 0 0 50px rgba(0, 243, 255, 0.03), inset 0 0 20px rgba(0, 243, 255, 0.04);
+        border-color: rgba(0, 243, 255, 0.08);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(0, 243, 255, 0.15), 0 0 80px rgba(0, 243, 255, 0.06), inset 0 0 30px rgba(0, 243, 255, 0.08);
+        border-color: rgba(0, 243, 255, 0.2);
+      }
+    }
+
+    /* Green/circuit glow ring pulses */
+    @keyframes glow-ring-pulse {
+      0%, 100% {
+        border-color: rgba(0, 243, 255, 0.15);
+        box-shadow: 0 0 8px rgba(0, 243, 255, 0.05);
+      }
+      50% {
+        border-color: rgba(0, 243, 255, 0.45);
+        box-shadow: 0 0 25px rgba(0, 243, 255, 0.15), 0 0 50px rgba(0, 243, 255, 0.05);
+      }
+    }
+
+    @keyframes nebula-drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(4vw, -3vh) scale(1.08); }
+      50% { transform: translate(-3vw, 4vh) scale(0.95); }
+      75% { transform: translate(2vw, 2vh) scale(1.04); }
+    }
+
+    @keyframes thread-pulse {
+      0%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+      60% { opacity: 1; }
+    }
+
+    @keyframes halo-pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    @keyframes shoot {
+      0% { transform: translateX(0) rotate(var(--angle, -25deg)); opacity: 0; }
+      2% { opacity: 0.9; }
+      8% { transform: translateX(300px) rotate(var(--angle, -25deg)); opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes twinkle-static {
+      0%, 100% { opacity: var(--base-opacity, 0.3); }
+      50% { opacity: calc(var(--base-opacity, 0.3) * 2.5); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-title">Orbital Prototype — AaaS</div>
+  <div class="page-subtitle">parallax background · move mouse · scroll to preview</div>
+
+  <!-- Deep-space star field -->
+  <div class="star-field" id="starField"></div>
+
+  <!-- Nebula gradients -->
+  <div class="nebula-layer" id="nebulaLayer">
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+    <div class="nebula nebula-4"></div>
+    <div class="nebula nebula-5"></div>
+  </div>
+
+  <!-- Shooting stars -->
+  <div class="shooting-star" style="--angle: -25deg;"></div>
+  <div class="shooting-star" style="--angle: -35deg;"></div>
+  <div class="shooting-star" style="--angle: -20deg;"></div>
+
+  <!-- Lens flare (mouse-tracked) -->
+  <div class="lens-flare" id="lensFlare">
+    <div class="flare-far" id="flareFar"></div>
+    <div class="flare-starburst" id="flareStarburst"></div>
+    <div class="flare-core" id="flareCore"></div>
+    <div class="flare-streak" id="flareStreak"></div>
+    <div class="flare-ring" id="flareRing"></div>
+    <div class="flare-ghost" id="flareGhost"></div>
+  </div>
+
+  <!-- Fixed parallax background -->
+  <div class="parallax-bg" id="parallaxBg">
+    <div class="orbital-system">
+
+      <svg class="static-outer-ring" viewBox="0 0 900 900" aria-hidden="true">
+        <circle cx="450" cy="450" r="445" stroke="rgba(255,255,255,0.015)" fill="none" stroke-width="1" />
+      </svg>
+
+      <!-- Ghost rings -->
+      <div class="ghost-ring ghost-1"><svg viewBox="0 0 880 880"><circle cx="440" cy="440" r="435" class="ring-path-solid" /></svg></div>
+      <div class="ghost-ring ghost-2"><svg viewBox="0 0 740 740"><circle cx="370" cy="370" r="365" class="ring-path" /></svg></div>
+      <div class="ghost-ring ghost-3"><svg viewBox="0 0 530 530"><circle cx="265" cy="265" r="260" class="ring-path-solid" /></svg></div>
+      <div class="ghost-ring ghost-4"><svg viewBox="0 0 360 360"><circle cx="180" cy="180" r="175" class="ring-path" /></svg></div>
+      <div class="ghost-ring ghost-5"><svg viewBox="0 0 210 210"><circle cx="105" cy="105" r="100" class="ring-path-solid" /></svg></div>
+
+      <!-- Gravity threads -->
+      <svg class="gravity-threads" viewBox="0 0 900 900" aria-hidden="true">
+        <line x1="450" y1="40"  x2="450" y2="450" class="gravity-thread cyan"  style="animation-delay: 0s;" />
+        <line x1="450" y1="860" x2="450" y2="450" class="gravity-thread red"   style="animation-delay: 1s;" />
+        <line x1="140" y1="450" x2="450" y2="450" class="gravity-thread cyan"  style="animation-delay: 2s;" />
+        <line x1="760" y1="450" x2="450" y2="450" class="gravity-thread red"   style="animation-delay: 3s;" />
+        <line x1="450" y1="365" x2="450" y2="450" class="gravity-thread white" style="animation-delay: 0.5s;" />
+      </svg>
+
+      <!-- Labeled rings -->
+      <div class="orbit-ring ring-brand">
+        <svg viewBox="0 0 820 820"><circle cx="410" cy="410" r="390" class="ring-path" /></svg>
+        <div class="dot-label-group"><span class="orbit-label">Brand</span><div class="orbit-dot"></div></div>
+        <div class="orbit-dot-b"></div>
+      </div>
+
+      <div class="orbit-ring ring-context">
+        <svg viewBox="0 0 620 620"><circle cx="310" cy="310" r="290" class="ring-path" /></svg>
+        <div class="dot-label-group"><span class="orbit-label">Context</span><div class="orbit-dot"></div></div>
+        <div class="orbit-dot-b"></div>
+      </div>
+
+      <div class="orbit-ring ring-industry">
+        <svg viewBox="0 0 440 440"><circle cx="220" cy="220" r="200" class="ring-path" /></svg>
+        <div class="dot-label-group"><span class="orbit-label">Industry</span><div class="orbit-dot"></div></div>
+        <div class="orbit-dot-b"></div>
+      </div>
+
+      <div class="orbit-ring ring-strategy">
+        <svg viewBox="0 0 290 290"><circle cx="145" cy="145" r="130" class="ring-path" /></svg>
+        <div class="dot-label-group"><span class="orbit-label">Strategy</span><div class="orbit-dot"></div></div>
+        <div class="orbit-dot-b"></div>
+      </div>
+
+      <div class="orbit-ring ring-aaas">
+        <svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="70" class="ring-path" /></svg>
+        <div class="dot-label-group"><span class="orbit-label">AaaS</span><div class="orbit-dot"></div></div>
+        <div class="orbit-dot-b"></div>
+      </div>
+
+      <!-- Central planet -->
+      <div class="planet">
+        <div class="planet-halo"></div>
+        <div class="planet-atmosphere"></div>
+        <div class="planet-glow-ring"></div>
+        <div class="planet-ring-spin"></div>
+        <div class="planet-surface">
+          <div class="planet-accent"></div>
+          <div class="planet-band"></div>
+        </div>
+        <div class="planet-core-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="scroll-content">
+    <div class="scroll-section">
+      <div>
+        <h2>Initialize Your<br>Autonomous<br>Workforce</h2>
+        <p>Your business context, structured for machines.</p>
+      </div>
+    </div>
+    <div class="scroll-section">
+      <div>
+        <h2>Context<br>Is King</h2>
+        <p>Brand, context, industry, and strategy converge into autonomous execution.</p>
+      </div>
+    </div>
+    <div class="scroll-section">
+      <div>
+        <h2>Scroll<br>Complete</h2>
+        <p>The orbital system stays fixed behind content — parallax ready.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot"></div>Brand</div>
+    <div class="legend-item"><div class="legend-dot"></div>Context</div>
+    <div class="legend-item"><div class="legend-dot"></div>Industry</div>
+    <div class="legend-item"><div class="legend-dot"></div>Strategy</div>
+    <div class="legend-item"><div class="legend-dot"></div>AaaS</div>
+  </div>
+
+  <script>
+    // ── Star field ──
+    const starField = document.getElementById('starField');
+    for (let i = 0; i < 120; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() < 0.85 ? (Math.random() * 1.5 + 0.5) : (Math.random() * 2.5 + 1.5);
+      const baseOpacity = Math.random() * 0.4 + 0.1;
+      star.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random()*100}%; left:${Math.random()*100}%;
+        opacity:${baseOpacity}; --base-opacity:${baseOpacity};
+        animation:twinkle-static ${Math.random()*4+2}s ease-in-out infinite;
+        animation-delay:${Math.random()*5}s;
+        box-shadow:0 0 ${size*2}px rgba(255,255,255,${baseOpacity*0.5});
+      `;
+      starField.appendChild(star);
+    }
+
+    // ── Lens flare elements ──
+    const flareCore = document.getElementById('flareCore');
+    const flareStreak = document.getElementById('flareStreak');
+    const flareRing = document.getElementById('flareRing');
+    const flareGhost = document.getElementById('flareGhost');
+    const flareStarburst = document.getElementById('flareStarburst');
+    const flareFar = document.getElementById('flareFar');
+    const parallaxBg = document.getElementById('parallaxBg');
+    const nebulaLayer = document.getElementById('nebulaLayer');
+
+    let cx = 0, cy = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      const mx = e.clientX;
+      const my = e.clientY;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const centerX = vw / 2;
+      const centerY = vh / 2;
+
+      // Normalized -1 to 1
+      cx = (mx / vw - 0.5) * 2;
+      cy = (my / vh - 0.5) * 2;
+
+      // ── Parallax (2x strength) ──
+      parallaxBg.style.transform = `translate(${cx * -30}px, ${cy * -30}px)`;
+      nebulaLayer.style.transform = `translate(${cx * -16}px, ${cy * -16}px)`;
+      starField.style.transform = `translate(${cx * -6}px, ${cy * -6}px)`;
+
+      // ── Lens flare — positioned along the center-to-mouse axis ──
+      // Direction vector from center to mouse
+      const dx = mx - centerX;
+      const dy = my - centerY;
+
+      // Core: 30% of the way from center toward mouse (between planet and cursor)
+      const coreX = centerX + dx * 0.3;
+      const coreY = centerY + dy * 0.3;
+      flareCore.style.left = coreX + 'px';
+      flareCore.style.top = coreY + 'px';
+
+      // Starburst: same position as core
+      flareStarburst.style.left = coreX + 'px';
+      flareStarburst.style.top = coreY + 'px';
+
+      // Streak: centered on the midpoint between core and mouse
+      const streakX = centerX + dx * 0.5;
+      const streakY = centerY + dy * 0.5;
+      flareStreak.style.left = streakX + 'px';
+      flareStreak.style.top = streakY + 'px';
+
+      // Far flare: BIG bloom BEYOND the mouse (1.3x from center)
+      const farX = centerX + dx * 1.3;
+      const farY = centerY + dy * 1.3;
+      flareFar.style.left = farX + 'px';
+      flareFar.style.top = farY + 'px';
+
+      // Ring: mirrored through center (opposite side of mouse)
+      const ringX = centerX - dx * 0.35;
+      const ringY = centerY - dy * 0.35;
+      flareRing.style.left = ringX + 'px';
+      flareRing.style.top = ringY + 'px';
+
+      // Ghost: further mirrored
+      const ghostX = centerX - dx * 0.6;
+      const ghostY = centerY - dy * 0.6;
+      flareGhost.style.left = ghostX + 'px';
+      flareGhost.style.top = ghostY + 'px';
+
+      // Intensity increases with distance from center
+      const dist = Math.sqrt(cx * cx + cy * cy);
+      const intensity = Math.min(dist * 1.2, 1);
+      flareCore.style.opacity = intensity * 0.7;
+      flareStarburst.style.opacity = intensity * 0.5;
+      flareStreak.style.opacity = intensity * 0.5;
+      flareFar.style.opacity = intensity * 0.6;
+      flareRing.style.opacity = intensity * 0.4;
+      flareGhost.style.opacity = intensity * 0.35;
+
+      // Rotate streak to align with the axis
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      flareStreak.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+    });
+  </script>
+
+</body>
+</html>

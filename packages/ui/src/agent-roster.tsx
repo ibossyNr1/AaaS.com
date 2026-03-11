@@ -8,7 +8,7 @@ interface Agent {
 }
 
 const statusConfig = {
-  active: { dot: "bg-emerald-400 animate-pulse-dot", label: "Active" },
+  active: { dot: "bg-accent-teal animate-pulse-dot", label: "Active" },
   idle: { dot: "bg-text-muted", label: "Idle" },
   learning: { dot: "bg-circuit animate-heartbeat", label: "Learning" },
 };

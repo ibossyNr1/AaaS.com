@@ -23,6 +23,16 @@ const sharedConfig: Partial<Config> = {
           dim: "var(--accent-red-dim)",
           glow: "var(--accent-red-glow)",
         },
+        "accent-teal": {
+          DEFAULT: "rgb(var(--accent-teal) / <alpha-value>)",
+          dim: "var(--accent-teal-dim)",
+        },
+        pastel: {
+          lavender: "rgb(var(--pastel-lavender) / <alpha-value>)",
+          gold: "rgb(var(--pastel-gold) / <alpha-value>)",
+          mint: "rgb(var(--pastel-mint) / <alpha-value>)",
+          sky: "rgb(var(--pastel-sky) / <alpha-value>)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],

@@ -47,7 +47,7 @@ export function UseCases() {
     <Section divider>
       <Container>
         <FadeUp>
-          <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-tight">
+          <h2 className="monolith-title text-3xl md:text-4xl font-black text-center mb-4 uppercase tracking-tight">
             Built For Your World
           </h2>
           <p className="text-text-muted text-center mb-12 max-w-xl mx-auto">
@@ -110,7 +110,7 @@ export function UseCases() {
                 <div className="font-mono text-[0.6rem] text-text-muted uppercase tracking-wider mb-1">
                   Cost Reduction
                 </div>
-                <div className="text-2xl font-bold font-mono text-emerald-400">
+                <div className="text-2xl font-bold font-mono text-accent-teal">
                   {current.stats.savings}
                 </div>
               </div>

@@ -36,7 +36,7 @@ export function Hero() {
         <div className="relative">
           {/* System status badge */}
           <Badge className="mb-6 animate-fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot inline-block mr-2" />
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-teal animate-pulse-dot inline-block mr-2" />
             System Online — 12 Agents Active
           </Badge>
 
@@ -45,9 +45,10 @@ export function Hero() {
             CONTEXT<br />IS KING
           </h1>
 
-          <p className="max-w-lg text-lg text-text/70 font-light leading-relaxed mb-4">
-            Your business context, structured for machines.{" "}
-            <span className="text-text/50">
+          <p className="max-w-lg text-lg leading-relaxed mb-4">
+            <span className="font-bold text-text">Your business context, structured for machines.</span>
+            <br />
+            <span className="text-text/50 font-light">
               Deploy autonomous AI agents that truly understand your strategy,
               brand, market, and operations — then execute with surgical precision.
             </span>
@@ -97,13 +98,13 @@ export function Hero() {
           {/* Orbital Orb — Enhanced */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[700px] hidden lg:flex items-center justify-center pointer-events-none">
             {/* Background aura */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,243,255,0.1)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle,rgb(var(--circuit-glow)/0.1)_0%,transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_40%,var(--accent-red-dim),transparent_50%)]" />
 
             {/* Orbital rings */}
             <div ref={ringRef} className="absolute w-[300px] h-[300px] animate-orbit" style={{ animationDuration: "25s" }}>
               <svg className="w-full h-full" viewBox="0 0 300 300" aria-hidden="true">
-                <circle cx="150" cy="150" r="140" stroke="rgba(0,243,255,0.08)" fill="none" strokeDasharray="8 6" />
+                <circle cx="150" cy="150" r="140" stroke="rgb(var(--circuit-glow) / 0.08)" fill="none" strokeDasharray="8 6" />
               </svg>
               {/* Orbiting dot */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-circuit animate-pulse-dot" />
@@ -111,7 +112,7 @@ export function Hero() {
 
             <div className="absolute w-[220px] h-[220px] animate-orbit" style={{ animationDuration: "18s", animationDirection: "reverse" }}>
               <svg className="w-full h-full" viewBox="0 0 220 220" aria-hidden="true">
-                <circle cx="110" cy="110" r="100" stroke="rgba(244,63,108,0.08)" fill="none" strokeDasharray="4 8" />
+                <circle cx="110" cy="110" r="100" stroke="rgb(var(--accent-red) / 0.08)" fill="none" strokeDasharray="4 8" />
               </svg>
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent-red" />
             </div>
@@ -120,7 +121,7 @@ export function Hero() {
             <div
               ref={orbRef}
               className="relative w-24 h-24 rounded-full bg-base border border-circuit/30 animate-orb-pulse flex items-center justify-center transition-transform duration-700 ease-liquid"
-              style={{ boxShadow: "0 0 40px rgba(0,243,255,0.15), inset 0 0 30px rgba(0,243,255,0.1)" }}
+              style={{ boxShadow: "0 0 40px var(--circuit-dim), inset 0 0 30px rgb(var(--circuit-glow) / 0.1)" }}
             >
               <div className="w-1.5 h-1.5 rounded-full bg-circuit" />
               <div className="absolute w-3 h-3 rounded-full bg-accent-red/40 blur-sm top-3 right-4" />
@@ -128,7 +129,7 @@ export function Hero() {
 
             {/* Static outer ring */}
             <svg className="absolute w-full h-full" aria-hidden="true">
-              <circle cx="50%" cy="50%" r="200" stroke="rgba(255,255,255,0.03)" fill="none" />
+              <circle cx="50%" cy="50%" r="200" stroke="var(--border)" fill="none" />
             </svg>
           </div>
         </div>

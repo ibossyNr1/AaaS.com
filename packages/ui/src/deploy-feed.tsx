@@ -22,14 +22,14 @@ const sampleEntries: DeployEntry[] = [
 ];
 
 const statusColors = {
-  success: "text-emerald-400",
-  pending: "text-yellow-400",
+  success: "text-accent-teal",
+  pending: "text-pastel-gold",
   running: "text-circuit animate-feed-pulse",
 };
 
 const statusDots = {
-  success: "bg-emerald-400",
-  pending: "bg-yellow-400",
+  success: "bg-accent-teal",
+  pending: "bg-pastel-gold",
   running: "bg-circuit animate-pulse-dot",
 };
 

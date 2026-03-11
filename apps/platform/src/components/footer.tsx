@@ -16,7 +16,7 @@ const footerLinks = {
     { label: "FAQ", href: "/pricing#faq" },
   ],
   Projects: [
-    { label: "Enora.ai", href: "/projects#enora" },
+    { label: "Enora-AI", href: "/projects#enora" },
     { label: "Vault", href: "/vault" },
     { label: "Skill Repository", href: "/vault#skills" },
   ],

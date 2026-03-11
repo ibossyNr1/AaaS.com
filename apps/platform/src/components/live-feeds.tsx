@@ -6,7 +6,7 @@ export function LiveFeeds() {
     <Section variant="surface" divider>
       <Container>
         <FadeUp>
-          <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-tight">
+          <h2 className="monolith-title text-3xl md:text-4xl font-black text-center mb-4 uppercase tracking-tight">
             Live System Activity
           </h2>
           <p className="text-text-muted text-center mb-12 max-w-xl mx-auto">

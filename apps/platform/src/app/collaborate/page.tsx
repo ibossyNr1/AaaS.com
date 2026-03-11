@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Button, Card, Badge, Container, Section } from "@aaas/ui";
 import { FadeUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
-import { CircuitBackground } from "@/components/circuit-background";
+import { AuraBackground } from "@/components/aura-background";
 import { SectionTopic } from "@/components/section-topic";
 import { SectionDivider } from "@/components/section-divider";
 
@@ -67,7 +67,7 @@ const ventureStats = [
 export default function CollaboratePage() {
   return (
     <>
-      <CircuitBackground />
+      <AuraBackground />
 
       {/* Hero — Bedrock style with circuit traces */}
       <section className="relative pt-32 pb-16 overflow-hidden min-h-[60vh] flex items-center">
@@ -98,7 +98,7 @@ export default function CollaboratePage() {
           <SectionTopic>Partnership Paths</SectionTopic>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <FadeUp>
-              <Card variant="bedrock" spotlight className="h-full flex flex-col">
+              <Card variant="glass" spotlight className="h-full flex flex-col">
                 <Badge className="mb-4 self-start">For Investors</Badge>
                 <h2 className="text-2xl font-bold text-text mb-2">Invest in AaaS</h2>
                 <p className="font-mono text-xs text-circuit/50 uppercase tracking-wider mb-4">
@@ -118,7 +118,7 @@ export default function CollaboratePage() {
                     "LLM-agnostic architecture via Open Router",
                     "Growing enterprise pipeline & ambassador network",
                     "Equity-for-service venture builder model",
-                    "Manufacturing vertical (Enora.ai) as proof of concept",
+                    "Manufacturing vertical (Enora-AI) as proof of concept",
                   ].map((item) => (
                     <li
                       key={item}
@@ -140,7 +140,7 @@ export default function CollaboratePage() {
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <Card variant="bedrock" spotlight accentColor="red" className="h-full flex flex-col">
+              <Card variant="glass" spotlight accentColor="red" className="h-full flex flex-col">
                 <Badge variant="red" className="mb-4 self-start">For Ventures</Badge>
                 <h2 className="text-2xl font-bold text-text mb-2">Co-Innovate</h2>
                 <p className="font-mono text-xs text-accent-red/50 uppercase tracking-wider mb-4">
@@ -151,7 +151,7 @@ export default function CollaboratePage() {
                   agents? We deploy our full platform in exchange for equity
                   alignment. Your domain expertise + our AI infrastructure =
                   a venture that moves at machine speed. We&apos;ve done it with
-                  Enora.ai in manufacturing, and we&apos;re ready to do it in your vertical.
+                  Enora-AI in manufacturing, and we&apos;re ready to do it in your vertical.
                 </p>
                 <ul className="space-y-3 mb-8">
                   {[
@@ -159,7 +159,7 @@ export default function CollaboratePage() {
                     "Dedicated agent development for your use cases",
                     "Minority equity stake (typically 5-15%)",
                     "Strategic advisory & go-to-market support",
-                    "Access to Superforge venture network",
+                    "Access to Supra-forge venture network",
                     "Priority feature development & model access",
                   ].map((item) => (
                     <li

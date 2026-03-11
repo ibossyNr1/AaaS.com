@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button, cn } from "@aaas/ui";
+import { Button, ThemeToggle, cn } from "@aaas/ui";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
@@ -12,6 +12,7 @@ const navItems = [
   { label: "Projects", href: "/projects" },
   { label: "Vault", href: "/vault" },
   { label: "Collaborate", href: "/collaborate" },
+  { label: "Delivery", href: "/delivery" },
 ];
 
 export function Navbar() {
@@ -23,9 +24,11 @@ export function Navbar() {
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-16 h-16 md:h-20 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-2 h-2 rounded-full bg-accent-red animate-heartbeat" />
-            <span className="font-mono text-xs tracking-[0.3rem] uppercase text-text group-hover:text-circuit transition-colors duration-300">
-              Agents as a Service
+            <span className="border-l-2 border-circuit pl-3 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full animate-logo-pulse shrink-0" />
+              <span className="font-mono text-xs tracking-[0.3rem] uppercase text-text group-hover:text-circuit transition-colors duration-300">
+                Agents as a Service
+              </span>
             </span>
           </Link>
 
@@ -44,6 +47,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <a href={BOOKING_LINK} target="_blank" rel="noopener noreferrer">
               <Button size="sm" variant="red">Book a Call</Button>
             </a>
@@ -95,16 +99,19 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <a
-              href={BOOKING_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4"
-            >
-              <Button className="w-full" size="lg" variant="red">
-                Book a Call
-              </Button>
-            </a>
+            <div className="mt-4 flex items-center gap-4">
+              <ThemeToggle />
+              <a
+                href={BOOKING_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1"
+              >
+                <Button className="w-full" size="lg" variant="red">
+                  Book a Call
+                </Button>
+              </a>
+            </div>
           </nav>
         </div>
       )}

@@ -22,12 +22,12 @@ export function MergeBackground() {
       {/* Chromium canvas — ambient radial glow */}
       <div
         className="fixed inset-0 -z-[3] pointer-events-none"
-        style={{ background: "radial-gradient(circle at 50% 40%, #111 0%, rgb(var(--basalt-deep)) 70%)" }}
+        style={{ background: "radial-gradient(circle at 50% 40%, rgb(var(--basalt-surface)) 0%, rgb(var(--basalt-deep)) 70%)" }}
       />
 
-      {/* Merging white metaballs — fixed background */}
+      {/* Merging metaballs — fixed background */}
       <div
-        className="fixed inset-0 -z-[1] overflow-hidden pointer-events-none opacity-[0.06]"
+        className="fixed inset-0 -z-[1] overflow-hidden pointer-events-none opacity-[0.06] dark-only"
         style={{ filter: "url(#gooey-bg)", contain: "layout style" }}
       >
         <div

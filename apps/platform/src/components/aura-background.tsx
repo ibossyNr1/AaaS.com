@@ -2,7 +2,14 @@
 
 export function AuraBackground() {
   return (
-    <div className="fixed inset-0 -z-[2] overflow-hidden pointer-events-none">
+    <div
+      className="fixed inset-0 -z-[2] overflow-hidden pointer-events-none"
+      style={{
+        filter: "blur(80px) contrast(1.2)",
+        opacity: 0.5,
+        mixBlendMode: "var(--aura-blend)" as React.CSSProperties["mixBlendMode"],
+      }}
+    >
       {/* Aura blob 1 — accent red, top-left */}
       <div
         className="absolute rounded-full will-change-transform"
@@ -11,12 +18,10 @@ export function AuraBackground() {
           height: "60vw",
           maxWidth: 900,
           maxHeight: 900,
-          top: "-15%",
+          top: "-10%",
           left: "-10%",
           background: "radial-gradient(circle, rgb(var(--accent-red)) 0%, transparent 70%)",
-          opacity: 0.06,
-          filter: "blur(80px)",
-          animation: "aura-drift 20s infinite alternate var(--liquid-ease)",
+          animation: "aura-drift 20s ease-in-out infinite alternate",
         }}
       />
       {/* Aura blob 2 — circuit cyan, bottom-right */}
@@ -27,30 +32,41 @@ export function AuraBackground() {
           height: "50vw",
           maxWidth: 750,
           maxHeight: 750,
-          bottom: "-10%",
-          right: "-10%",
+          bottom: "-5%",
+          right: "-5%",
           background: "radial-gradient(circle, rgb(var(--circuit-glow)) 0%, transparent 70%)",
-          opacity: 0.05,
-          filter: "blur(80px)",
-          animation: "aura-drift 25s infinite alternate var(--liquid-ease)",
+          animation: "aura-drift 25s ease-in-out infinite alternate",
           animationDelay: "-8s",
         }}
       />
-      {/* Aura blob 3 — subtle red, center */}
+      {/* Aura blob 3 — pastel lavender, center-left (light mode accent) */}
       <div
         className="absolute rounded-full will-change-transform"
         style={{
-          width: "40vw",
-          height: "40vw",
-          maxWidth: 600,
-          maxHeight: 600,
-          top: "40%",
-          left: "30%",
-          background: "radial-gradient(circle, rgb(var(--accent-red)) 0%, transparent 70%)",
-          opacity: 0.03,
-          filter: "blur(80px)",
-          animation: "aura-drift 18s infinite alternate var(--liquid-ease)",
+          width: "35vw",
+          height: "35vw",
+          maxWidth: 550,
+          maxHeight: 550,
+          top: "30%",
+          left: "15%",
+          background: "radial-gradient(circle, rgb(var(--pastel-lavender) / 0.5) 0%, transparent 70%)",
+          animation: "aura-drift 22s ease-in-out infinite alternate",
           animationDelay: "-4s",
+        }}
+      />
+      {/* Aura blob 4 — pastel mint, top-right */}
+      <div
+        className="absolute rounded-full will-change-transform"
+        style={{
+          width: "30vw",
+          height: "30vw",
+          maxWidth: 450,
+          maxHeight: 450,
+          top: "10%",
+          right: "10%",
+          background: "radial-gradient(circle, rgb(var(--pastel-mint) / 0.4) 0%, transparent 70%)",
+          animation: "aura-drift 18s ease-in-out infinite alternate",
+          animationDelay: "-12s",
         }}
       />
     </div>

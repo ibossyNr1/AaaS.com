@@ -46,7 +46,7 @@ export function ProcessStepper() {
     <Section variant="surface" divider="red">
       <Container>
         <FadeUp>
-          <h2 className="monolith-title text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-tight">
+          <h2 className="monolith-title text-3xl md:text-4xl font-black text-center mb-16 uppercase tracking-tight">
             How It Works
           </h2>
         </FadeUp>

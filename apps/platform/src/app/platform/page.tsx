@@ -305,7 +305,7 @@ export default function PlatformPage() {
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <div className="max-w-3xl bg-surface border border-border p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="max-w-3xl bg-surface/50 backdrop-blur-xl border border-border p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
               {/* Feed header */}
               <div className="flex justify-between font-mono text-[0.6rem] text-text-muted uppercase tracking-[0.05rem] pb-3 border-b border-border">
                 <span>LIVE_AGENT_FEED</span>

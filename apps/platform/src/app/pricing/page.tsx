@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button, Card, Badge, Container, Section, cn } from "@aaas/ui";
 import { FadeUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
@@ -9,6 +9,27 @@ import { SectionTopic } from "@/components/section-topic";
 import { SectionDivider } from "@/components/section-divider";
 
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
+
+const auraCards = [
+  {
+    label: "Always-on Operations",
+    value: "Retainer",
+    description:
+      "Dedicated context engineering, custom workflows, unlimited tasks, and priority support.",
+  },
+  {
+    label: "Zero Commitment",
+    value: "Pay-per-Task",
+    description:
+      "On-demand agent execution. Transparent token pricing via Open Router. Full capability.",
+  },
+  {
+    label: "Shared Upside",
+    value: "Build with AaaS",
+    description:
+      "Full platform deployment in exchange for equity alignment. Your expertise, our infrastructure.",
+  },
+];
 
 const plans = [
   {
@@ -31,7 +52,7 @@ const plans = [
   },
   {
     name: "Pay-per-Task",
-    badge: "Most Popular",
+    badge: null,
     tagline: "Scale as you grow",
     description:
       "On-demand agent execution for specific projects. Pay only for the compute you use, with transparent token pricing via Open Router. Zero commitment, full capability.",
@@ -101,6 +122,46 @@ const faqs = [
   },
 ];
 
+function AuraCard({ label, value, description }: { label: string; value: string; description: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty("--mx", `${x}%`);
+    el.style.setProperty("--my", `${y}%`);
+  }, []);
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      className="group relative overflow-hidden p-10 backdrop-blur-[24px] border border-white/10 transition-all duration-[600ms] ease-liquid hover:border-circuit hover:-translate-y-2"
+      style={{ background: "rgba(255, 255, 255, 0.04)" }}
+    >
+      {/* Sliding gradient top bar */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-red to-circuit -translate-x-full group-hover:translate-x-0 transition-transform duration-[600ms] ease-out" />
+      {/* Mouse-follow radial glow */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+        style={{
+          background: "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0, 243, 255, 0.08) 0%, transparent 50%)",
+        }}
+      />
+      <span className="block font-mono text-[0.65rem] uppercase tracking-[0.15rem] text-circuit mb-6">
+        {label}
+      </span>
+      <div className="monolith-title text-[2.5rem] font-black mb-2">
+        {value}
+      </div>
+      <p className="text-[0.9rem] text-text-muted leading-relaxed">{description}</p>
+    </div>
+  );
+}
+
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -108,23 +169,24 @@ export default function PricingPage() {
     <>
       <AuraBackground />
 
-      {/* Hero — Aura style */}
-      <section className="relative pt-32 pb-16 overflow-hidden min-h-[60vh] flex items-center">
+      {/* Hero — Aura outline/solid text */}
+      <section className="relative pt-32 pb-16 overflow-hidden min-h-[70vh] flex items-center">
         <Container className="relative z-10">
           <FadeUp>
-            <SectionTopic>Flexible Plans</SectionTopic>
-          </FadeUp>
-          <FadeUp delay={0.1}>
-            <h1 className="monolith-title text-[clamp(3rem,10vw,7rem)] font-black leading-[0.85] tracking-[-0.04em] uppercase mb-4">
-              Investment in<br />Intelligence
+            <h1 className="text-[clamp(3rem,10vw,8rem)] font-black leading-[0.9] tracking-[-0.04em] uppercase mb-16">
+              <span className="block outline-text">Stop Paying For</span>
+              <span className="block text-text">Compute.</span>
+              <span className="block outline-text">Start Paying For</span>
+              <span className="block text-text">Outcomes.</span>
             </h1>
           </FadeUp>
+
           <FadeUp delay={0.2}>
-            <p className="text-lg font-light text-text-muted max-w-[560px] leading-relaxed">
-              No hidden fees. No per-seat pricing. No token anxiety. Choose the
-              model that fits your stage and scale — from single tasks to full
-              autonomous operations.
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {auraCards.map((card) => (
+                <AuraCard key={card.label} {...card} />
+              ))}
+            </div>
           </FadeUp>
         </Container>
       </section>
@@ -210,7 +272,7 @@ export default function PricingPage() {
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <div className="max-w-3xl bg-surface border border-border p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="max-w-3xl bg-surface/50 backdrop-blur-xl border border-border p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
               <div className="flex justify-between font-mono text-[0.6rem] text-text-muted uppercase tracking-[0.05rem] pb-3 border-b border-border">
                 <span>TOKEN_ECONOMY_FEED</span>
                 <span>STATUS: LIVE</span>

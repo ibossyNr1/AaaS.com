@@ -7,11 +7,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Projects | Agent-as-a-Service",
-  description: "Live projects powered by AaaS infrastructure. Explore Enora.ai and more.",
+  description: "Live projects powered by AaaS infrastructure. Explore Enora-AI and more.",
   openGraph: { title: "AaaS Projects", description: "What We're Building" },
 };
-
-const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
 const otherProjects = [
   {
@@ -39,7 +37,7 @@ const otherProjects = [
     stats: "847K vectors",
   },
   {
-    title: "Superforge Platform",
+    title: "Supra-forge Platform",
     status: "Planning",
     statusColor: "red" as const,
     description:
@@ -62,7 +60,7 @@ export default function ProjectsPage() {
         <Container className="relative z-10 text-center">
           <FadeUp>
             <Badge variant="red" className="mb-4">Projects</Badge>
-            <h1 className="monolith-title text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight">
+            <h1 className="monolith-title text-4xl md:text-6xl font-black mb-4 uppercase tracking-tight">
               What We&apos;re Building
             </h1>
             <p className="text-lg text-text-muted max-w-2xl mx-auto">
@@ -74,21 +72,21 @@ export default function ProjectsPage() {
         </Container>
       </Section>
 
-      {/* Featured: Enora.ai — Bedrock */}
+      {/* Featured: Enora-AI — Glass */}
       <Section className="py-12" divider="red">
         <Container>
           <FadeUp>
-            <Card variant="bedrock" className="relative overflow-hidden p-0">
+            <Card variant="glass" spotlight className="relative overflow-hidden p-0">
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
                 {/* Content */}
                 <div className="lg:col-span-3 p-8 lg:p-12">
                   <div className="flex items-center gap-3 mb-6">
                     <Badge variant="red">Featured</Badge>
                     <Badge>Live</Badge>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot" />
+                    <span className="w-2 h-2 rounded-full bg-circuit animate-pulse-dot shadow-[0_0_8px_rgb(var(--circuit-glow))]" />
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-text mb-4">
-                    Enora.ai
+                  <h2 className="text-3xl md:text-4xl font-black text-text mb-4">
+                    Enora-AI
                   </h2>
                   <p className="text-sm font-mono text-accent-red/60 uppercase tracking-wider mb-4">
                     Manufacturing Intelligence Platform
@@ -121,12 +119,12 @@ export default function ProjectsPage() {
                       <div className="text-[10px] font-mono text-text-muted uppercase">Monitoring</div>
                     </div>
                     <div>
-                      <div className="font-mono text-xl font-bold text-emerald-400">-40%</div>
+                      <div className="font-mono text-xl font-bold text-accent-teal">-40%</div>
                       <div className="text-[10px] font-mono text-text-muted uppercase">Audit Time</div>
                     </div>
                   </div>
                   <a
-                    href={BOOKING_LINK}
+                    href="https://www.supra-forge.com"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -148,7 +146,7 @@ export default function ProjectsPage() {
       <Section variant="surface" divider>
         <Container>
           <FadeUp>
-            <h2 className="monolith-title text-3xl font-bold text-center mb-12 uppercase tracking-tight">
+            <h2 className="monolith-title text-3xl font-black text-center mb-12 uppercase tracking-tight">
               Ecosystem Projects
             </h2>
           </FadeUp>

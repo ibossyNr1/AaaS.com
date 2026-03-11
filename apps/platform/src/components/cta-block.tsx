@@ -15,7 +15,7 @@ export function CTABlock() {
           <p className="font-mono text-xs text-accent-red uppercase tracking-widest mb-4">
             Ready to deploy?
           </p>
-          <h2 className="monolith-title text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">
+          <h2 className="monolith-title text-3xl md:text-5xl font-black mb-4 uppercase tracking-tight">
             Initialize Your<br />Autonomous Workforce
           </h2>
           <p className="text-text-muted max-w-lg mx-auto mb-8">

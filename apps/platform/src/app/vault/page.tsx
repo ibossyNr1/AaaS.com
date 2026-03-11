@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, Badge, Container, Section, DataTape, cn } from "@aaas/ui";
 import { FadeUp, CountUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
-import { CircuitBackground } from "@/components/circuit-background";
+import { MergeBackground } from "@/components/merge-background";
 
 const categories = [
   "All",
@@ -144,7 +144,7 @@ export default function VaultPage() {
 
   return (
     <>
-      <CircuitBackground />
+      <MergeBackground />
       {/* Hero — Metaball */}
       <Section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -155,7 +155,7 @@ export default function VaultPage() {
         <Container className="relative z-10 text-center">
           <FadeUp>
             <Badge className="mb-4">The Vault</Badge>
-            <h1 className="monolith-title text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight">
+            <h1 className="monolith-title text-4xl md:text-6xl font-black mb-4 uppercase tracking-tight">
               Structured<br />Intelligence
             </h1>
             <p className="text-lg text-text-muted max-w-2xl mx-auto">
@@ -236,7 +236,7 @@ export default function VaultPage() {
           <FadeUp>
             <div className="text-center mb-12">
               <Badge variant="red" className="mb-4">Innovation Engine</Badge>
-              <h2 className="monolith-title text-3xl md:text-4xl font-bold mb-4 uppercase tracking-tight">
+              <h2 className="monolith-title text-3xl md:text-4xl font-black mb-4 uppercase tracking-tight">
                 Self-Optimizing Repository
               </h2>
               <p className="text-text-muted max-w-2xl mx-auto">
