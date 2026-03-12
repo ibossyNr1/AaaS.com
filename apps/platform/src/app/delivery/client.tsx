@@ -10,8 +10,7 @@ interface PitchBlock {
 
 interface Persona {
   id: string;
-  label: string;
-  icon: string;
+  noun: string;
   audio: string;
   duration: number;
   pitch: PitchBlock[];
@@ -20,8 +19,7 @@ interface Persona {
 const PERSONAS: Persona[] = [
   {
     id: "general",
-    label: "Overview",
-    icon: "◎",
+    noun: "Curious",
     audio: "/audio/aaas-pitch-kokoro.mp3",
     duration: 137,
     pitch: [
@@ -47,8 +45,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "founder",
-    label: "Founders",
-    icon: "⚡",
+    noun: "Founder",
     audio: "/audio/aaas-pitch-founder.mp3",
     duration: 109,
     pitch: [
@@ -71,8 +68,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "investor",
-    label: "Investors",
-    icon: "📊",
+    noun: "Investor",
     audio: "/audio/aaas-pitch-investor.mp3",
     duration: 128,
     pitch: [
@@ -97,8 +93,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "business",
-    label: "Business Owners",
-    icon: "🏢",
+    noun: "Business Owner",
     audio: "/audio/aaas-pitch-business.mp3",
     duration: 115,
     pitch: [
@@ -120,8 +115,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "user",
-    label: "Individual Users",
-    icon: "👤",
+    noun: "User",
     audio: "/audio/aaas-pitch-user.mp3",
     duration: 100,
     pitch: [
@@ -142,8 +136,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "partner",
-    label: "Partners",
-    icon: "🤝",
+    noun: "Partner",
     audio: "/audio/aaas-pitch-partner.mp3",
     duration: 114,
     pitch: [
@@ -166,15 +159,16 @@ const PERSONAS: Persona[] = [
 ];
 
 export function DeliveryClient() {
-  const [personaId, setPersonaId] = useState("general");
+  const [personaIdx, setPersonaIdx] = useState(0);
   const [scrolling, setScrolling] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [selectorOpen, setSelectorOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const animRef = useRef<number>(0);
   const startTimeRef = useRef(0);
 
-  const persona = PERSONAS.find((p) => p.id === personaId)!;
+  const persona = PERSONAS[personaIdx];
 
   const stopScroll = useCallback(() => {
     setScrolling(false);
@@ -191,6 +185,7 @@ export function DeliveryClient() {
 
   const startScroll = useCallback(() => {
     if (!scrollRef.current) return;
+    setSelectorOpen(false);
     setScrolling(true);
 
     if (audioRef.current) {
@@ -229,69 +224,120 @@ export function DeliveryClient() {
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape" && scrolling) stopScroll();
-      if (e.key === " " && !scrolling) {
+      if (e.key === "Escape") {
+        if (scrolling) stopScroll();
+        if (selectorOpen) setSelectorOpen(false);
+      }
+      if (e.key === " " && !scrolling && !selectorOpen) {
         e.preventDefault();
         startScroll();
       }
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [scrolling, startScroll, stopScroll]);
+  }, [scrolling, selectorOpen, startScroll, stopScroll]);
 
   useEffect(() => {
     return () => cancelAnimationFrame(animRef.current);
   }, []);
+
+  // Reload audio when persona changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+    }
+  }, [persona.audio]);
 
   return (
     <>
       <OrbitalBackground />
       <audio ref={audioRef} src={persona.audio} preload="auto" />
 
-      {/* Controls — visible when not scrolling */}
+      {/* === Hero identity selector — visible when not scrolling === */}
       {!scrolling && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 animate-fade-up">
-          {/* Persona selector */}
-          <div className="flex flex-wrap justify-center gap-2 max-w-lg">
-            {PERSONAS.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setPersonaId(p.id)}
-                className={`glass rounded-full px-4 py-2 border text-xs font-mono uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 ${
-                  personaId === p.id
-                    ? "border-circuit/40 text-circuit shadow-[0_0_12px_var(--circuit-dim)]"
-                    : "border-border/30 text-text-muted hover:border-circuit/20 hover:text-text"
-                }`}
-              >
-                <span>{p.icon}</span>
-                <span>{p.label}</span>
-              </button>
-            ))}
-          </div>
+        <div className="fixed inset-0 z-40 flex flex-col items-center justify-center pointer-events-none">
+          <div className="pointer-events-auto flex flex-col items-center gap-8">
+            {/* "I am a ___" headline */}
+            <div className="flex flex-col items-center gap-2">
+              <span className="font-mono text-xs uppercase tracking-[0.5em] text-text-muted">
+                Tell us who you are
+              </span>
+              <div className="flex items-baseline gap-4">
+                <span className="text-[clamp(1.5rem,4vw,2.5rem)] font-light text-text tracking-tight">
+                  I am a
+                </span>
+                <button
+                  onClick={() => setSelectorOpen(!selectorOpen)}
+                  className="group relative text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-circuit tracking-tight transition-all duration-300 hover:text-circuit"
+                >
+                  {persona.noun}
+                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-circuit/40 group-hover:bg-circuit transition-colors" />
+                  {/* Chevron */}
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className={`inline-block w-5 h-5 ml-2 opacity-50 transition-transform duration-300 ${selectorOpen ? "rotate-180" : ""}`}
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
 
-          {/* Play button */}
-          <button
-            onClick={startScroll}
-            className="group glass rounded-full px-8 py-4 border border-circuit/20 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_var(--circuit-dim)]"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-5 h-5 text-circuit"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-            <span className="font-mono text-sm uppercase tracking-wider text-text">
-              Start Pitch
-            </span>
-          </button>
-          <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
-            or press Space
-          </span>
+            {/* Dropdown persona list */}
+            {selectorOpen && (
+              <div className="glass rounded-2xl border border-border/30 p-2 flex flex-col gap-1 min-w-[240px] animate-fade-up">
+                {PERSONAS.map((p, idx) => (
+                  <button
+                    key={p.id}
+                    onClick={() => {
+                      setPersonaIdx(idx);
+                      setSelectorOpen(false);
+                    }}
+                    className={`rounded-xl px-5 py-3 text-left font-mono text-sm transition-all duration-200 ${
+                      idx === personaIdx
+                        ? "bg-circuit/10 text-circuit"
+                        : "text-text-muted hover:bg-white/5 hover:text-text"
+                    }`}
+                  >
+                    I am a <span className="font-bold">{p.noun}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Play button */}
+            {!selectorOpen && (
+              <div className="flex flex-col items-center gap-3 animate-fade-up">
+                <button
+                  onClick={startScroll}
+                  className="group glass rounded-full px-8 py-4 border border-circuit/20 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_var(--circuit-dim)]"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5 text-circuit"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span className="font-mono text-sm uppercase tracking-wider text-text">
+                    Start Pitch
+                  </span>
+                </button>
+                <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
+                  or press Space
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Stop button + progress — visible while scrolling */}
+      {/* === Stop button + progress — visible while scrolling === */}
       {scrolling && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3">
           <button
@@ -318,7 +364,7 @@ export function DeliveryClient() {
         </div>
       )}
 
-      {/* Scrolling content */}
+      {/* === Scrolling content === */}
       <div className="relative z-10 min-h-screen flex items-end justify-center overflow-hidden">
         <div
           ref={scrollRef}
