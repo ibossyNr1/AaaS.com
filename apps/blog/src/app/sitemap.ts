@@ -2,6 +2,14 @@ import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/entities";
 import { CHANNELS } from "@/lib/channels";
 import type { EntityType } from "@/lib/types";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit as firestoreLimit,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const BASE_URL = "https://aaas.blog";
 
@@ -56,5 +64,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticEntries, ...channelEntries, ...entityEntries];
+  // Episode pages
+  const episodeEntries: MetadataRoute.Sitemap = [];
+
+  try {
+    const epQuery = query(
+      collection(db, "episodes"),
+      orderBy("publishedAt", "desc"),
+      firestoreLimit(200),
+    );
+    const epSnap = await getDocs(epQuery);
+    for (const d of epSnap.docs) {
+      episodeEntries.push({
+        url: `${BASE_URL}/listen/${d.id}`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      });
+    }
+  } catch {
+    // Episodes collection may not exist yet
+  }
+
+  return [...staticEntries, ...channelEntries, ...entityEntries, ...episodeEntries];
 }

@@ -293,6 +293,10 @@ export function ListenClient({ episodes }: { episodes: Episode[] }) {
       // Switch to new episode
       setCurrentId(episode.id);
       setPlaying(true);
+      // Track play count (fire-and-forget)
+      fetch(`/api/episodes/${episode.id}/play`, { method: "POST" }).catch(
+        () => {},
+      );
       // Audio element will re-render with new src; play after mount
       setTimeout(() => {
         audioRef.current?.play();

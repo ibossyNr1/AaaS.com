@@ -7,11 +7,16 @@
  * Agent names:
  *   audit          — Schema auditor (daily completeness scoring)
  *   heal           — Schema healer (auto-fill missing data)
+ *   enrich         — Enrichment agent (fetch real data from public APIs)
  *   validate-links — Link validator (weekly URL checking)
  *   freshness      — Freshness agent (detect stale entities)
  *   rank           — Ranking agent (recalculate leaderboard scores)
+ *   categorize     — Categorization agent (verify/suggest channel assignments)
  *   media          — Media agent (generate narration episodes)
  *   ingest         — Ingestion agent (discover new entities)
+ *   webhook        — Webhook delivery agent (dispatch queued notifications)
+ *   changelog      — Changelog agent (detect entity changes)
+ *   digest-email   — Digest email agent (weekly subscriber digest)
  *   all            — Run all agents sequentially in dependency order
  *
  * Examples:
@@ -34,6 +39,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Schema Healer",
     load: () => import("./schema-healer"),
   },
+  enrich: {
+    label: "Enrichment Agent",
+    load: () => import("./enrichment-agent"),
+  },
   "validate-links": {
     label: "Link Validator",
     load: () => import("./link-validator"),
@@ -46,6 +55,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Ranking Agent",
     load: () => import("./ranking-agent"),
   },
+  categorize: {
+    label: "Categorization Agent",
+    load: () => import("./categorization-agent"),
+  },
   media: {
     label: "Media Agent",
     load: () => import("./media-agent"),
@@ -54,6 +67,18 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Ingestion Agent",
     load: () => import("./ingestion-agent"),
   },
+  webhook: {
+    label: "Webhook Delivery Agent",
+    load: () => import("./webhook-agent"),
+  },
+  changelog: {
+    label: "Changelog Agent",
+    load: () => import("./changelog-agent"),
+  },
+  "digest-email": {
+    label: "Digest Email Agent",
+    load: () => import("./digest-email-agent"),
+  },
 };
 
 /**
@@ -61,20 +86,30 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
  * Dependencies flow top to bottom:
  * 1. audit -> identifies gaps
  * 2. heal -> fills gaps
- * 3. freshness -> flags stale entities
- * 4. rank -> recalculates scores (uses updated data)
- * 5. validate-links -> checks URLs
- * 6. media -> generates audio for complete entities
- * 7. ingest -> discovers new entities (runs last to avoid processing incomplete data)
+ * 3. enrich -> fetches real data from public APIs
+ * 4. freshness -> flags stale entities
+ * 5. changelog -> detects entity changes (before ranking recalculates scores)
+ * 6. rank -> recalculates scores (uses updated data)
+ * 7. categorize -> verifies/suggests channel assignments
+ * 8. validate-links -> checks URLs
+ * 9. media -> generates audio for complete entities
+ * 10. ingest -> discovers new entities (runs last to avoid processing incomplete data)
+ * 11. webhook -> delivers queued notifications (runs after all data changes)
+ * 12. digest-email -> sends weekly subscriber digest (runs last, after all agents)
  */
 const EXECUTION_ORDER = [
   "audit",
   "heal",
+  "enrich",
   "freshness",
+  "changelog",
   "rank",
+  "categorize",
   "validate-links",
   "media",
   "ingest",
+  "webhook",
+  "digest-email",
 ];
 
 // Track consecutive failures per agent for alerting

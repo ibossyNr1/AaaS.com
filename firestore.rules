@@ -46,18 +46,45 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Subscriptions — internal only
-    match /subscriptions/{document=**} {
+    // Subscribers — public write (email signup), no public read
+    match /subscribers/{document=**} {
+      allow read: if false;
+      allow write: if true;
+    }
+
+    // Webhooks — no public access (managed via API with auth)
+    match /webhooks/{document=**} {
       allow read, write: if false;
+    }
+
+    // Webhook queue — internal only
+    match /webhook_queue/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Entity snapshots — internal only (changelog agent)
+    match /entity_snapshots/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Categorization suggestions — internal only
+    match /categorization_suggestions/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Email logs — internal only
+    match /email_logs/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Agent logs — public read (dashboard), no public write
+    match /agent_logs/{document=**} {
+      allow read: if true;
+      allow write: if false;
     }
 
     // Healing queue — internal only
     match /healing_queue/{document=**} {
-      allow read, write: if false;
-    }
-
-    // Agent logs — internal only
-    match /agent_logs/{document=**} {
       allow read, write: if false;
     }
 

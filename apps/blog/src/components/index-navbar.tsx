@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Listen", href: "/listen" },
   { label: "Submit", href: "/submit" },
   { label: "Dashboard", href: "/me" },
+  { label: "System", href: "/dashboard" },
 ];
 
 const channelLinks = [

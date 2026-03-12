@@ -12,13 +12,20 @@
     "agent:validate-links": "npx tsx src/agents/link-validator.ts",
     "agent:freshness": "npx tsx src/agents/freshness-agent.ts",
     "agent:rank": "npx tsx src/agents/ranking-agent.ts",
+    "agent:enrich": "npx tsx src/agents/enrichment-agent.ts",
+    "agent:categorize": "npx tsx src/agents/categorization-agent.ts",
     "agent:media": "npx tsx src/agents/media-agent.ts",
     "agent:ingest": "npx tsx src/agents/ingestion-agent.ts",
+    "agent:webhook": "npx tsx src/agents/webhook-agent.ts",
+    "agent:changelog": "npx tsx src/agents/changelog-agent.ts",
+    "agent:digest-email": "npx tsx src/agents/digest-email-agent.ts",
     "agent:run-all": "npx tsx src/agents/runner.ts all",
-    "agent:run": "npx tsx src/agents/runner.ts"
+    "agent:run": "npx tsx src/agents/runner.ts",
+    "seed:episodes": "npx tsx src/seed/seed-episodes.ts"
   },
   "dependencies": {
     "@aaas/ui": "*",
+    "@google-cloud/text-to-speech": "^6.4.0",
     "firebase": "^12.10.0",
     "next": "14.2.35",
     "react": "^18",
