@@ -7,6 +7,7 @@ import { GradeBadge } from "@/components/grade-badge";
 import { WatchButton } from "./watch-button";
 import { PrintButton } from "./print-button";
 import { FollowButton } from "./follow-button";
+import { BookmarkButton } from "@/components/bookmark-button";
 import { EntitySparkline } from "@/components/entity-sparkline";
 
 export function EntityHeader({ entity }: { entity: Entity }) {
@@ -26,6 +27,7 @@ export function EntityHeader({ entity }: { entity: Entity }) {
           </span>
           <WatchButton type={entity.type} slug={entity.slug} name={entity.name} />
           <FollowButton type="entity" id={`${entity.type}:${entity.slug}`} name={entity.name} />
+          <BookmarkButton type={entity.type} slug={entity.slug} />
           <PrintButton />
           <a
             href={`/api/entity/${entity.type}/${entity.slug}/feed`}

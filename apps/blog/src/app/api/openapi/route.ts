@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 
 const entityTypeEnum = ["tool", "model", "agent", "skill", "script", "benchmark"];

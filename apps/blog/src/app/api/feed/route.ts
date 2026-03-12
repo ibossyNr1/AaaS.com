@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getRecentEntities } from "@/lib/entities";
 import type { Entity } from "@/lib/types";

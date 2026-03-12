@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getTrendingEntities, getEntitiesByType, getEntitiesByChannel } from "@/lib/entities";
 import type { EntityType } from "@/lib/types";
