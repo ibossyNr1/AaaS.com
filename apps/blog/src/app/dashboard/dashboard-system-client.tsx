@@ -44,11 +44,19 @@ interface DashboardStats {
 const AGENT_LABELS: Record<string, string> = {
   audit: "Schema Auditor",
   heal: "Schema Healer",
+  enrich: "Enrichment Agent",
   freshness: "Freshness Agent",
+  changelog: "Changelog Agent",
   rank: "Ranking Agent",
+  categorize: "Categorization Agent",
   "validate-links": "Link Validator",
   media: "Media Agent",
   ingest: "Ingestion Agent",
+  "auto-review": "Auto Review Agent",
+  webhook: "Webhook Delivery",
+  "digest-email": "Digest Email Agent",
+  views: "Views Agent",
+  runner: "Agent Runner",
 };
 
 /* -------------------------------------------------------------------------- */

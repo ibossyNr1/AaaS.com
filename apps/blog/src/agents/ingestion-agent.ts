@@ -1,11 +1,10 @@
 /**
  * Ingestion Agent
  *
- * Discovers new AI entities from curated sources and creates submission
- * entries in the `submissions` collection for review. Currently operates
- * in "dry run" mode — logs what it would scan and creates placeholder
- * submissions. In production, this would use web scraping and LLM
- * classification to populate real entity data.
+ * Discovers new AI entities from curated API sources and creates submission
+ * entries in the `submissions` collection for review. Uses real API calls
+ * to GitHub, HuggingFace, and arXiv to find recent AI tools, models, and
+ * research papers.
  *
  * Pipeline: discover -> deduplicate -> validate -> queue
  * Daily cap: 20 candidates per run
@@ -18,52 +17,39 @@ import { db, logAgentAction } from "./logger";
 
 const AGENT_NAME = "ingestion-agent";
 const DAILY_CAP = 20;
+const RATE_LIMIT_MS = 1000;
 
 const ENTITY_COLLECTIONS = ["tools", "models", "agents", "skills", "scripts", "benchmarks"];
+
+/** Get date string for "one week ago" in YYYY-MM-DD format */
+function getRecentDateCutoff(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 7);
+  return d.toISOString().split("T")[0];
+}
 
 /** Curated sources for entity discovery */
 const DISCOVERY_SOURCES = [
   {
     id: "github-trending",
-    name: "GitHub Trending — AI/ML",
-    url: "https://github.com/trending?since=daily&spoken_language_code=en",
+    name: "GitHub Search — AI/ML Repos",
+    url: `https://api.github.com/search/repositories?q=topic:machine-learning+topic:ai+created:>${getRecentDateCutoff()}&sort=stars&per_page=5`,
     entityType: "tool" as const,
-    description: "Trending AI/ML repositories on GitHub",
+    description: "Recently created AI/ML repositories on GitHub",
   },
   {
     id: "huggingface-models",
     name: "HuggingFace — New Models",
-    url: "https://huggingface.co/models?sort=modified",
+    url: "https://huggingface.co/api/models?sort=lastModified&direction=-1&limit=5",
     entityType: "model" as const,
     description: "Recently updated models on HuggingFace Hub",
   },
   {
-    id: "huggingface-spaces",
-    name: "HuggingFace — Trending Spaces",
-    url: "https://huggingface.co/spaces?sort=trending",
-    entityType: "tool" as const,
-    description: "Trending demo spaces on HuggingFace",
-  },
-  {
-    id: "producthunt-ai",
-    name: "Product Hunt — AI Category",
-    url: "https://www.producthunt.com/topics/artificial-intelligence",
-    entityType: "tool" as const,
-    description: "New AI product launches on Product Hunt",
-  },
-  {
     id: "arxiv-cs-ai",
     name: "arXiv — CS.AI",
-    url: "https://arxiv.org/list/cs.AI/recent",
+    url: "http://export.arxiv.org/api/query?search_query=cat:cs.AI&sortBy=submittedDate&sortOrder=descending&max_results=5",
     entityType: "benchmark" as const,
     description: "Recent AI research papers and benchmarks",
-  },
-  {
-    id: "arxiv-cs-cl",
-    name: "arXiv — CS.CL",
-    url: "https://arxiv.org/list/cs.CL/recent",
-    entityType: "model" as const,
-    description: "Recent computational linguistics papers (new LLMs)",
   },
 ];
 
@@ -76,17 +62,178 @@ interface DiscoveryCandidate {
 }
 
 /**
- * Simulate discovery from a source.
- * In production: scrape the source URL, extract entity candidates,
- * use LLM to classify type and extract metadata.
+ * Infer entity type from GitHub repository topics.
  */
-function discoverFromSource(source: typeof DISCOVERY_SOURCES[number]): DiscoveryCandidate[] {
-  // Stub: log that we would scan and return empty
-  console.log(`  Scanning: ${source.name} (${source.url})`);
-  console.log(`    -> In production: would scrape and extract candidates`);
+function inferTypeFromTopics(topics: string[]): string {
+  const joined = topics.join(" ").toLowerCase();
+  if (/\bagent\b/.test(joined)) return "agent";
+  if (/\bmodel\b|\bllm\b|\btransformer\b/.test(joined)) return "model";
+  if (/\bbenchmark\b|\bleaderboard\b|\beval\b/.test(joined)) return "benchmark";
+  if (/\bskill\b|\bplugin\b/.test(joined)) return "skill";
+  return "tool";
+}
 
-  // Return empty — real implementation would return scraped candidates
-  return [];
+/**
+ * Parse GitHub search API response into discovery candidates.
+ */
+function parseGitHubResponse(data: unknown, sourceId: string): DiscoveryCandidate[] {
+  const candidates: DiscoveryCandidate[] = [];
+  const body = data as { items?: Array<{
+    name?: string;
+    full_name?: string;
+    description?: string;
+    html_url?: string;
+    topics?: string[];
+  }> };
+
+  if (!body.items || !Array.isArray(body.items)) return candidates;
+
+  for (const repo of body.items) {
+    candidates.push({
+      sourceId,
+      name: repo.full_name || repo.name || "unknown",
+      suggestedType: inferTypeFromTopics(repo.topics || []),
+      url: repo.html_url || "",
+      description: repo.description || "",
+    });
+  }
+
+  return candidates;
+}
+
+/**
+ * Parse HuggingFace models API response into discovery candidates.
+ */
+function parseHuggingFaceResponse(data: unknown, sourceId: string): DiscoveryCandidate[] {
+  const candidates: DiscoveryCandidate[] = [];
+  const models = data as Array<{
+    modelId?: string;
+    tags?: string[];
+    pipeline_tag?: string;
+  }>;
+
+  if (!Array.isArray(models)) return candidates;
+
+  for (const model of models) {
+    const id = model.modelId || "unknown";
+    const pipelineTag = model.pipeline_tag || "general";
+    const tags = model.tags || [];
+    const tagStr = tags.slice(0, 5).join(", ");
+    const desc = `HuggingFace model (${pipelineTag}). Tags: ${tagStr || "none"}`;
+
+    candidates.push({
+      sourceId,
+      name: id,
+      suggestedType: "model",
+      url: `https://huggingface.co/${id}`,
+      description: desc,
+    });
+  }
+
+  return candidates;
+}
+
+/**
+ * Parse arXiv Atom XML response into discovery candidates.
+ * Uses simple regex-based parsing — no external XML library needed.
+ */
+function parseArxivResponse(xml: string, sourceId: string): DiscoveryCandidate[] {
+  const candidates: DiscoveryCandidate[] = [];
+
+  // Match each <entry> block
+  const entryPattern = /<entry>([\s\S]*?)<\/entry>/g;
+  let entryMatch: RegExpExecArray | null;
+
+  while ((entryMatch = entryPattern.exec(xml)) !== null) {
+    const entry = entryMatch[1];
+
+    const titleMatch = entry.match(/<title[^>]*>([\s\S]*?)<\/title>/);
+    const summaryMatch = entry.match(/<summary[^>]*>([\s\S]*?)<\/summary>/);
+    const linkMatch = entry.match(/<id>([\s\S]*?)<\/id>/);
+
+    const title = titleMatch
+      ? titleMatch[1].replace(/\s+/g, " ").trim()
+      : "Untitled";
+    const summary = summaryMatch
+      ? summaryMatch[1].replace(/\s+/g, " ").trim()
+      : "";
+    const url = linkMatch
+      ? linkMatch[1].trim()
+      : "";
+
+    // Truncate summary to keep descriptions reasonable
+    const truncatedSummary = summary.length > 300
+      ? summary.slice(0, 297) + "..."
+      : summary;
+
+    candidates.push({
+      sourceId,
+      name: title,
+      suggestedType: "benchmark",
+      url,
+      description: truncatedSummary,
+    });
+  }
+
+  return candidates;
+}
+
+/**
+ * Discover entities from a source by calling its real API endpoint.
+ */
+async function discoverFromSource(
+  source: typeof DISCOVERY_SOURCES[number],
+): Promise<DiscoveryCandidate[]> {
+  console.log(`  Scanning: ${source.name} (${source.url})`);
+
+  try {
+    const headers: Record<string, string> = {
+      "User-Agent": "AaaS-IngestionAgent/1.0",
+    };
+
+    // GitHub API requests benefit from an Accept header
+    if (source.id === "github-trending") {
+      headers["Accept"] = "application/vnd.github.v3+json";
+    }
+
+    const response = await fetch(source.url, { headers });
+
+    if (!response.ok) {
+      console.warn(
+        `  [${source.id}] HTTP ${response.status}: ${response.statusText}`,
+      );
+      return [];
+    }
+
+    if (source.id === "github-trending") {
+      const data = await response.json();
+      return parseGitHubResponse(data, source.id);
+    }
+
+    if (source.id === "huggingface-models") {
+      const data = await response.json();
+      return parseHuggingFaceResponse(data, source.id);
+    }
+
+    if (source.id === "arxiv-cs-ai") {
+      const xml = await response.text();
+      return parseArxivResponse(xml, source.id);
+    }
+
+    console.warn(`  [${source.id}] Unknown source id, skipping parse`);
+    return [];
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`  [${source.id}] Fetch failed: ${message}`);
+    return [];
+  }
+}
+
+/**
+ * Sleep helper for rate limiting between API calls.
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -157,8 +304,13 @@ export async function run(): Promise<void> {
     // Phase 1: Discover candidates from all sources
     for (const source of DISCOVERY_SOURCES) {
       sourcesScanned++;
-      const candidates = discoverFromSource(source);
+      const candidates = await discoverFromSource(source);
       allCandidates.push(...candidates);
+
+      // Rate limit: wait between source fetches
+      if (sourcesScanned < DISCOVERY_SOURCES.length) {
+        await sleep(RATE_LIMIT_MS);
+      }
     }
 
     candidatesFound = allCandidates.length;
@@ -254,13 +406,6 @@ export async function run(): Promise<void> {
     console.log(
       `[${AGENT_NAME}] Discovery complete. ${sourcesScanned} sources scanned, ${candidatesFound} candidates found, ${submissionsCreated} submissions created.`,
     );
-
-    if (candidatesFound === 0) {
-      console.log(
-        `[${AGENT_NAME}] Note: Running in stub mode — no real scraping is performed. ` +
-        `In production, discovery sources would return real candidates.`,
-      );
-    }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     await logAgentAction(

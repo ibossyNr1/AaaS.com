@@ -1,5 +1,6 @@
 import { Container, Section, Card } from "@aaas/ui";
 import type { Metadata } from "next";
+import { SubmitForm } from "./submit-form";
 
 export const metadata: Metadata = {
   title: "Submit — AaaS Knowledge Index",
@@ -103,6 +104,26 @@ export default function SubmitPage() {
             before being published. Authenticate with an API key, send a POST
             request, and we handle the rest.
           </p>
+        </Container>
+      </Section>
+
+      {/* Interactive Form */}
+      <Section className="pb-10">
+        <Container className="max-w-3xl">
+          <SubmitForm />
+        </Container>
+      </Section>
+
+      {/* Divider */}
+      <Section className="pb-6">
+        <Container className="max-w-3xl">
+          <div className="flex items-center gap-4">
+            <div className="flex-grow border-t border-border" />
+            <p className="text-xs font-mono uppercase tracking-wider text-text-muted shrink-0">
+              Or use the API directly
+            </p>
+            <div className="flex-grow border-t border-border" />
+          </div>
         </Container>
       </Section>
 

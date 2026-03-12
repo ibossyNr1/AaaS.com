@@ -1,9 +1,9 @@
 # AaaS Knowledge Index — Implementation Plan
 
-> **Status: ALL PHASES COMPLETE**
+> **Status: ALL 7 PHASES COMPLETE**
 > Last updated: 2026-03-12
 
-**Goal:** Transform the static blog (aaas-blog.web.app) into an autonomous, self-healing, schema-first knowledge index with entity data layer, structured pages, audio pipeline, self-healing agents, search, and CI/CD.
+**Goal:** Transform the static blog (aaas-blog.web.app) into the most extensive, autonomously functioning agentic knowledge index with 15 self-healing agents, real-time entity discovery, auto-approval pipeline, page view analytics, entity comparison, and full CI/CD automation.
 
 **Architecture:** Firestore-backed entity database with typed data access layer. Next.js 14 with server rendering via Firebase App Hosting. Shared `@aaas/ui` design system. Self-healing agent scripts run via `tsx` CLI on scheduled GitHub Actions.
 
@@ -98,36 +98,85 @@
 
 ---
 
+## Phase 6: Autonomous Systems & Real Data Pipeline (COMPLETE)
+
+- [x] **Task 1:** Real TTS pipeline (`lib/tts.ts`) — Google Cloud TTS, ElevenLabs, stub auto-detection
+- [x] **Task 2:** Enrichment agent (`agents/enrichment-agent.ts`) — npm, GitHub, HuggingFace API enrichment
+- [x] **Task 3:** Categorization agent (`agents/categorization-agent.ts`) — keyword-based channel assignment
+- [x] **Task 4:** Changelog agent (`agents/changelog-agent.ts`) — diff-based entity change tracking with snapshots
+- [x] **Task 5:** Webhook agent (`agents/webhook-agent.ts`) — HMAC-SHA256 signed delivery with exponential backoff
+- [x] **Task 6:** Digest email agent (`agents/digest-email-agent.ts`) — weekly HTML digest, SendGrid/Resend integration
+- [x] **Task 7:** Dashboard page (`/dashboard`) — system health, agent status, entity health, media stats
+- [x] **Task 8:** Episode detail page (`/listen/[id]`) — audio player, transcript, source link
+- [x] **Task 9:** Subscribe page + API (`/subscribe`, `/api/subscribe`, `/api/unsubscribe`)
+- [x] **Task 10:** Webhook CRUD API (`/api/webhooks`, `/api/webhooks/[id]`)
+- [x] **Task 11:** Podcast RSS feed (`/api/podcast`) — iTunes namespace
+- [x] **Task 12:** Dashboard stats API (`/api/dashboard/stats`)
+- [x] **Task 13:** Entity changelog API (`/api/entity/[type]/[slug]/changelog`)
+- [x] **Task 14:** Firestore rules + indexes for all new collections
+- [x] **Task 15:** Seed episodes script (`seed/seed-episodes.ts`)
+- [x] **Task 16:** Updated runner with all 12 agents in dependency order
+
+---
+
+## Phase 7: Production-Grade Autonomous Pipeline (COMPLETE)
+
+- [x] **Task 1:** Real ingestion agent — GitHub Search API, HuggingFace Models API, arXiv API with XML parsing
+- [x] **Task 2:** Auto-review agent (`agents/auto-review-agent.ts`) — validates and auto-approves submissions (score ≥70/100)
+- [x] **Task 3:** Views agent (`agents/views-agent.ts`) — aggregates page views into engagement scores, 30-day cleanup
+- [x] **Task 4:** Entity comparison page (`/compare`) — side-by-side scores, field diffs, capabilities Venn overlap
+- [x] **Task 5:** Interactive submit form (`submit/submit-form.tsx`) — client-side form + existing API docs
+- [x] **Task 6:** Entity changelog display (`components/entity-changelog.tsx`) — collapsible timeline on entity pages
+- [x] **Task 7:** Page view tracking (`/api/track` + `page-tracker.tsx`) — fire-and-forget beacon, atomic counters
+- [x] **Task 8:** PageTracker component in root layout for site-wide tracking
+- [x] **Task 9:** Updated runner with 15 agents (added auto-review, views) in dependency order
+- [x] **Task 10:** Updated GitHub Actions workflow for new agents (daily + weekly schedules)
+- [x] **Task 11:** Dashboard agent labels updated for all 15 agents
+- [x] **Task 12:** Navbar + homepage updated with Compare link, Subscribe link
+- [x] **Task 13:** Firestore rules + indexes for page_views and page_view_counts collections
+
+---
+
 ## Architecture Summary
 
 ```
 apps/blog/
 ├── src/
-│   ├── app/                          # 37+ routes
-│   │   ├── page.tsx                  # Homepage (trending, channels, latest)
+│   ├── app/                          # 45+ routes
+│   │   ├── page.tsx                  # Homepage (trending, channels, latest, CTAs)
 │   │   ├── explore/                  # Search + filter (client-side)
+│   │   ├── compare/                  # Side-by-side entity comparison
 │   │   ├── leaderboard/              # Category tabs, score breakdowns
 │   │   ├── listen/                   # Audio hub with player
-│   │   ├── submit/                   # API documentation
+│   │   ├── listen/[id]/              # Episode detail page
+│   │   ├── submit/                   # Interactive form + API documentation
+│   │   ├── subscribe/                # Email subscription form
 │   │   ├── me/                       # Persona dashboard
+│   │   ├── dashboard/                # System health dashboard
 │   │   ├── {tool,model,agent,skill,script,benchmark}/[slug]/  # Entity pages
 │   │   ├── channel/[topic]/          # 10 channel pages
 │   │   ├── author/[id]/             # Agent profiles
 │   │   ├── og/                       # Dynamic OG images (edge)
 │   │   ├── api/
 │   │   │   ├── entities/             # List/filter entities
-│   │   │   ├── entity/[type]/[slug]/ # Single entity
+│   │   │   ├── entity/[type]/[slug]/ # Single entity + changelog
 │   │   │   ├── leaderboard/[cat]/    # Leaderboard
 │   │   │   ├── search/               # Full-text search
-│   │   │   ├── episodes/             # Audio episodes
-│   │   │   ├── submit/               # Entity submission
+│   │   │   ├── episodes/             # Audio episodes + play count
+│   │   │   ├── submit/               # Entity submission (POST)
+│   │   │   ├── subscribe/            # Email subscription
+│   │   │   ├── unsubscribe/          # Email unsubscription
+│   │   │   ├── webhooks/             # Webhook CRUD
+│   │   │   ├── dashboard/stats/      # System health stats
+│   │   │   ├── podcast/              # Podcast RSS feed (iTunes)
+│   │   │   ├── track/                # Page view tracking beacon
 │   │   │   └── feed/                 # RSS 2.0
 │   │   ├── sitemap.ts
 │   │   ├── robots.ts
 │   │   └── not-found.tsx
-│   ├── components/                   # 13 components
-│   ├── lib/                          # 7 modules (types, entities, channels, firebase, schemas, media, tts)
-│   ├── agents/                       # 9 self-healing agent scripts
+│   ├── components/                   # 15 components
+│   ├── lib/                          # 11 modules (types, entities, channels, firebase, schemas, media, tts, diff, webhooks, email-templates)
+│   ├── agents/                       # 15 self-healing agent scripts + runner
 │   └── seed/                         # Seed data + runner
 ├── .eslintrc.json                    # Excludes agents/
 ├── tsconfig.json                     # target es2017, excludes agents/
@@ -135,11 +184,11 @@ apps/blog/
 └── apphosting.yaml
 
 .github/workflows/
-├── agents.yml                        # Scheduled agent runs (daily/weekly)
+├── agents.yml                        # Scheduled agent runs (daily/weekly/supplemental)
 └── deploy-blog.yml                   # Auto-deploy on push
 
-firestore.rules                       # Security rules
-firestore.indexes.json                # 30+ composite indexes
+firestore.rules                       # Security rules (14 collections)
+firestore.indexes.json                # 35+ composite indexes
 ```
 
 ## Required GitHub Secrets

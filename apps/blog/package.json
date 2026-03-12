@@ -18,7 +18,9 @@
     "agent:ingest": "npx tsx src/agents/ingestion-agent.ts",
     "agent:webhook": "npx tsx src/agents/webhook-agent.ts",
     "agent:changelog": "npx tsx src/agents/changelog-agent.ts",
+    "agent:auto-review": "npx tsx src/agents/auto-review-agent.ts",
     "agent:digest-email": "npx tsx src/agents/digest-email-agent.ts",
+    "agent:views": "npx tsx src/agents/views-agent.ts",
     "agent:run-all": "npx tsx src/agents/runner.ts all",
     "agent:run": "npx tsx src/agents/runner.ts",
     "seed:episodes": "npx tsx src/seed/seed-episodes.ts"

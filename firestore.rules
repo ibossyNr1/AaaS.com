@@ -88,6 +88,17 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Page views — public write (client tracking), no public read
+    match /page_views/{document=**} {
+      allow read: if false;
+      allow write: if true;
+    }
+
+    // Page view counts — internal only
+    match /page_view_counts/{document=**} {
+      allow read, write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

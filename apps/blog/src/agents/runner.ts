@@ -14,6 +14,7 @@
  *   categorize     — Categorization agent (verify/suggest channel assignments)
  *   media          — Media agent (generate narration episodes)
  *   ingest         — Ingestion agent (discover new entities)
+ *   auto-review    — Auto review agent (approve high-confidence submissions)
  *   webhook        — Webhook delivery agent (dispatch queued notifications)
  *   changelog      — Changelog agent (detect entity changes)
  *   digest-email   — Digest email agent (weekly subscriber digest)
@@ -67,6 +68,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Ingestion Agent",
     load: () => import("./ingestion-agent"),
   },
+  "auto-review": {
+    label: "Auto Review Agent",
+    load: () => import("./auto-review-agent"),
+  },
   webhook: {
     label: "Webhook Delivery Agent",
     load: () => import("./webhook-agent"),
@@ -79,6 +84,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Digest Email Agent",
     load: () => import("./digest-email-agent"),
   },
+  views: {
+    label: "Views Agent",
+    load: () => import("./views-agent"),
+  },
 };
 
 /**
@@ -90,12 +99,14 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
  * 4. freshness -> flags stale entities
  * 5. changelog -> detects entity changes (before ranking recalculates scores)
  * 6. rank -> recalculates scores (uses updated data)
- * 7. categorize -> verifies/suggests channel assignments
+ * 7. views -> aggregates page views into engagement scores
+ * 8. categorize -> verifies/suggests channel assignments
  * 8. validate-links -> checks URLs
  * 9. media -> generates audio for complete entities
  * 10. ingest -> discovers new entities (runs last to avoid processing incomplete data)
- * 11. webhook -> delivers queued notifications (runs after all data changes)
- * 12. digest-email -> sends weekly subscriber digest (runs last, after all agents)
+ * 11. auto-review -> auto-approves high-confidence submissions from ingest
+ * 12. webhook -> delivers queued notifications (runs after all data changes)
+ * 13. digest-email -> sends weekly subscriber digest (runs last, after all agents)
  */
 const EXECUTION_ORDER = [
   "audit",
@@ -104,10 +115,12 @@ const EXECUTION_ORDER = [
   "freshness",
   "changelog",
   "rank",
+  "views",
   "categorize",
   "validate-links",
   "media",
   "ingest",
+  "auto-review",
   "webhook",
   "digest-email",
 ];

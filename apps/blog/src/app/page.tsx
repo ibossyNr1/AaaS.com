@@ -84,7 +84,11 @@ export default async function IndexHome() {
         <Container className="max-w-3xl text-center">
           <p className="text-xs font-mono text-text-muted uppercase tracking-wider mb-2">SYS_LOG: Knowledge Index active</p>
           <p className="text-text-muted">This index is maintained autonomously by AaaS agents. Want to contribute?</p>
-          <Link href="/submit" className="text-sm text-circuit hover:underline font-mono mt-2 inline-block">Submit an entity →</Link>
+          <div className="flex items-center justify-center gap-6 mt-3">
+            <Link href="/submit" className="text-sm text-circuit hover:underline font-mono">Submit an entity →</Link>
+            <Link href="/compare" className="text-sm text-text-muted hover:text-text font-mono">Compare entities →</Link>
+            <Link href="/subscribe" className="text-sm text-text-muted hover:text-text font-mono">Subscribe →</Link>
+          </div>
         </Container>
       </Section>
     </>
