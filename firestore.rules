@@ -184,6 +184,49 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Health checks — public read (dashboard), no public write
+    match /health_checks/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Health alerts — internal only (written by health agent)
+    match /health_alerts/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Alert summaries — public read (dashboard), no public write
+    match /alert_summaries/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Event log — public read (activity feed), no public write
+    match /event_log/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Subscriptions — authenticated read/write own data
+    match /subscriptions/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Admin users — internal only
+    match /admin_users/{document=**} {
+      allow read, write: if false;
+    }
+
+    // System config — internal only
+    match /system_config/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Agent triggers — internal only
+    match /agent_triggers/{document=**} {
+      allow read, write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

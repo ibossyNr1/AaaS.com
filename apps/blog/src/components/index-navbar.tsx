@@ -28,6 +28,9 @@ const navLinks = [
   { label: "Watchlist", href: "/watchlist" },
   { label: "Following", href: "/following" },
   { label: "Profile", href: "/profile" },
+  { label: "Events", href: "/events" },
+  { label: "Webhooks", href: "/webhooks" },
+  { label: "Vault", href: "/vault" },
   { label: "API Docs", href: "/api-docs" },
   { label: "Embed", href: "/embed" },
 ];

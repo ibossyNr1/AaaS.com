@@ -19,6 +19,7 @@
  *   auto-review    — Auto review agent (approve high-confidence submissions)
  *   webhook        — Webhook delivery agent (dispatch queued notifications)
  *   changelog      — Changelog agent (detect entity changes)
+ *   subscription   — Subscription agent (personalized subscriber notifications)
  *   digest         — Digest agent (compose weekly summary digests)
  *   digest-email   — Digest email agent (weekly subscriber digest)
  *   trending       — Trending agent (detect significant score changes)
@@ -26,6 +27,8 @@
  *   comparison     — Comparison agent (generate popular entity comparisons)
  *   audio          — Audio agent (TTS narration episodes)
  *   video          — Video agent (generate video scene metadata)
+ *   health         — Health agent (comprehensive system health checks)
+ *   alerting       — Alerting agent (aggregate alerts and failures)
  *   all            — Run all agents sequentially in dependency order
  *
  * Examples:
@@ -132,6 +135,18 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Video Agent",
     load: () => import("./video-agent"),
   },
+  health: {
+    label: "Health Agent",
+    load: () => import("./health-agent"),
+  },
+  subscription: {
+    label: "Subscription Agent",
+    load: () => import("./subscription-agent"),
+  },
+  alerting: {
+    label: "Alerting Agent",
+    load: () => import("./alerting-agent"),
+  },
 };
 
 /**
@@ -156,6 +171,7 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
  */
 const EXECUTION_ORDER = [
   "audit",
+  "health",
   "heal",
   "enrich",
   "summary",
@@ -176,8 +192,10 @@ const EXECUTION_ORDER = [
   "auto-review",
   "webhook",
   "search-analytics",
+  "subscription",
   "digest",
   "digest-email",
+  "alerting",
 ];
 
 // Track consecutive failures per agent for alerting
