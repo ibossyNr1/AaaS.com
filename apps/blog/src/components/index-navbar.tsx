@@ -14,7 +14,10 @@ const navLinks = [
   { label: "Developers", href: "/developer" },
   { label: "Dashboard", href: "/me" },
   { label: "System", href: "/dashboard" },
+  { label: "Stats", href: "/stats" },
   { label: "Activity", href: "/activity" },
+  { label: "Watchlist", href: "/watchlist" },
+  { label: "API Docs", href: "/api-docs" },
 ];
 
 const channelLinks = [

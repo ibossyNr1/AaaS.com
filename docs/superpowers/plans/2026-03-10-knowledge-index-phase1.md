@@ -1,6 +1,6 @@
 # AaaS Knowledge Index — Implementation Plan
 
-> **Status: ALL 9 PHASES COMPLETE**
+> **Status: ALL 10 PHASES COMPLETE**
 > Last updated: 2026-03-12
 
 **Goal:** Transform the static blog (aaas-blog.web.app) into the most extensive, autonomously functioning agentic knowledge index with 15 self-healing agents, real-time entity discovery, auto-approval pipeline, page view analytics, entity comparison, and full CI/CD automation.
@@ -173,6 +173,20 @@
 
 ---
 
+## Phase 10: API Hardening & User Engagement Layer (COMPLETE)
+
+- [x] **Task 1:** Rate limiting middleware (`lib/rate-limit.ts`) — SHA-256 API key validation with daily usage reset, atomic Firestore increment, anonymous IP-based fallback (20/day), `X-RateLimit-*` headers. Applied to `/api/submit`, `/api/search`, `/api/export`
+- [x] **Task 2:** Entity watchlist (`lib/use-watchlist.ts`, `components/watch-button.tsx`, `/watchlist`) — localStorage-backed watch/unwatch with heart icon toggle, custom "watchlist-change" event for cross-component sync, dedicated page with lazy-fetched scores and remove/clear-all
+- [x] **Task 3:** OpenAPI 3.0.3 specification (`/api/openapi`) — full spec covering all 15+ endpoints with parameter types, request bodies, response schemas, security schemes, and tag grouping
+- [x] **Task 4:** Interactive API documentation (`/api-docs`) — auto-fetches OpenAPI spec, sidebar navigation by tag, expandable endpoint cards with parameter tables, schema viewers, and "Try it" panel with live request execution and response display
+- [x] **Task 5:** Entity health grades (`lib/grades.ts`, `components/grade-badge.tsx`) — 8-tier grading system (A+ through F) computed from composite scores, colored circular badges (sm/md/lg), dimension-level grades on entity header, integrated into entity cards
+- [x] **Task 6:** System analytics (`/api/stats`, `/stats`) — entity counts by type, agent success rate, submissions/media/subscriber/API key stats, trending counts, SVG circular progress rings, CSS bar charts, top performers table, auto-refresh 60s
+- [x] **Task 7:** Firestore rules updated for `rate_limit_anonymous` collection
+- [x] **Task 8:** Navbar updated with Watchlist, Stats, and API Docs links
+- [x] **Task 9:** Build verification — all routes compile cleanly
+
+---
+
 ## Architecture Summary
 
 ```
@@ -195,9 +209,16 @@ apps/blog/
 │   │   ├── channel/[topic]/          # 10 channel pages
 │   │   ├── author/[id]/             # Agent profiles
 │   │   ├── og/                       # Dynamic OG images (edge)
+│   │   ├── api-docs/                 # Interactive API documentation
+│   │   ├── stats/                    # System analytics dashboard
+│   │   ├── watchlist/                # User entity watchlist
 │   │   ├── api/
+│   │   │   ├── openapi/              # OpenAPI 3.0.3 spec
+│   │   │   ├── stats/                # System analytics API
+│   │   │   ├── keys/                 # API key CRUD
+│   │   │   ├── activity/             # Unified activity feed API
 │   │   │   ├── entities/             # List/filter entities
-│   │   │   ├── entity/[type]/[slug]/ # Single entity + changelog + history
+│   │   │   ├── entity/[type]/[slug]/ # Single entity + changelog + history + similar + grade + versions
 │   │   │   ├── badge/[type]/[slug]/  # SVG health badges
 │   │   │   ├── export/               # Bulk JSON/CSV export
 │   │   │   ├── trending/             # Trending alerts
@@ -218,8 +239,8 @@ apps/blog/
 │   │   ├── sitemap.ts
 │   │   ├── robots.ts
 │   │   └── not-found.tsx
-│   ├── components/                   # 20 components
-│   ├── lib/                          # 11 modules (types, entities, channels, firebase, schemas, media, tts, diff, webhooks, email-templates)
+│   ├── components/                   # 25+ components
+│   ├── lib/                          # 14 modules (types, entities, channels, firebase, schemas, media, tts, diff, webhooks, email-templates, grades, rate-limit, use-watchlist)
 │   ├── agents/                       # 17 self-healing agent scripts + runner
 │   └── seed/                         # Seed data + runner
 ├── .eslintrc.json                    # Excludes agents/
@@ -231,7 +252,7 @@ apps/blog/
 ├── agents.yml                        # Scheduled agent runs (daily/weekly/supplemental)
 └── deploy-blog.yml                   # Auto-deploy on push
 
-firestore.rules                       # Security rules (15 collections)
+firestore.rules                       # Security rules (17 collections)
 firestore.indexes.json                # 36+ composite indexes
 ```
 

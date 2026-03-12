@@ -3,6 +3,7 @@ import { Card, Badge } from "@aaas/ui";
 import type { Entity } from "@/lib/types";
 import { ENTITY_TYPES } from "@/lib/types";
 import { getChannelName } from "@/lib/channels";
+import { GradeBadge } from "@/components/grade-badge";
 
 interface EntityCardProps {
   entity: Entity;
@@ -42,8 +43,11 @@ export function EntityCard({ entity }: EntityCardProps) {
               </span>
             ))}
           </div>
-          <div className="text-xs font-mono text-circuit">
-            {entity.scores.composite}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono text-circuit">
+              {entity.scores.composite}
+            </span>
+            <GradeBadge composite={entity.scores.composite} size="sm" />
           </div>
         </div>
       </Card>

@@ -116,6 +116,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Rate limit anonymous — internal only (rate-limit middleware)
+    match /rate_limit_anonymous/{document=**} {
+      allow read, write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

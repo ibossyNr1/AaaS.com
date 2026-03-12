@@ -35,7 +35,7 @@ export function BlogFooter() {
             <div className="flex flex-col gap-2">
               <a href="https://agents-as-a-service.com" target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted hover:text-text transition-colors">AaaS Platform</a>
               <a href="https://agents-as-a-service.com/vault" target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted hover:text-text transition-colors">Vault</a>
-              <Link href="/api/entities" className="text-sm text-text-muted hover:text-text transition-colors">API</Link>
+              <Link href="/api-docs" className="text-sm text-text-muted hover:text-text transition-colors">API Docs</Link>
             </div>
           </div>
         </div>

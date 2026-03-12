@@ -9,6 +9,7 @@ import {
   type QueryConstraint,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limit";
 import type { Entity } from "@/lib/types";
 
 const COLLECTION_MAP: Record<string, string> = {
@@ -25,6 +26,15 @@ const VALID_TYPES = new Set(Object.keys(COLLECTION_MAP));
 const VALID_SORT = new Set(["composite", "newest", "name"]);
 
 export async function GET(req: NextRequest) {
+  // --- Rate limiting ---
+  const rl = await checkRateLimit(req);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: rl.error },
+      { status: 429, headers: rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100) },
+    );
+  }
+
   const { searchParams } = req.nextUrl;
   const q = searchParams.get("q")?.toLowerCase().trim() || "";
   const type = searchParams.get("type") || "";
@@ -93,14 +103,17 @@ export async function GET(req: NextRequest) {
 
     const final = filtered.slice(0, limit);
 
-    return NextResponse.json({
-      data: final,
-      count: final.length,
-      total: results.length,
-      query: q || null,
-      filters: { type: type || null, channel: channel || null, sort },
-      timestamp: new Date().toISOString(),
-    });
+    return NextResponse.json(
+      {
+        data: final,
+        count: final.length,
+        total: results.length,
+        query: q || null,
+        filters: { type: type || null, channel: channel || null, sort },
+        timestamp: new Date().toISOString(),
+      },
+      { headers: rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100) },
+    );
   } catch {
     return NextResponse.json(
       { error: "Search failed" },

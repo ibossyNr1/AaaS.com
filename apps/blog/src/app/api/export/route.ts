@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limit";
 
 const ENTITY_COLLECTIONS: Record<string, string> = {
   tool: "tools",
@@ -102,6 +103,15 @@ function toCSV(entities: Record<string, unknown>[]): string {
 
 export async function GET(request: NextRequest) {
   try {
+    // --- Rate limiting ---
+    const rl = await checkRateLimit(request);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: rl.error },
+        { status: 429, headers: rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100) },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get("format") || "json";
     const type = searchParams.get("type") || undefined;
@@ -132,6 +142,7 @@ export async function GET(request: NextRequest) {
           "Content-Type": "text/csv",
           "Content-Disposition": `attachment; filename="aaas-export-${dateStr}.csv"`,
           "Cache-Control": "public, max-age=300",
+          ...rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100),
         },
       });
     }
@@ -145,6 +156,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         "Content-Disposition": `attachment; filename="aaas-export-${dateStr}.json"`,
         "Cache-Control": "public, max-age=300",
+        ...rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100),
       },
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/rate-limit";
 import type { EntityType } from "@/lib/types";
 
 const VALID_TYPES = new Set<EntityType>(["tool", "model", "agent", "skill", "script", "benchmark"]);
@@ -9,6 +10,15 @@ const REQUIRED_FIELDS = ["name", "type", "description", "provider", "category"] 
 
 export async function POST(req: NextRequest) {
   try {
+    // --- Rate limiting ---
+    const rl = await checkRateLimit(req);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: rl.error },
+        { status: 429, headers: rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100) },
+      );
+    }
+
     // --- Auth ---
     const apiKey = req.headers.get("x-api-key");
     if (!apiKey || apiKey.trim().length === 0) {
@@ -66,7 +76,7 @@ export async function POST(req: NextRequest) {
         status: "pending",
         message: "Submission received and queued for review.",
       },
-      { status: 201 }
+      { status: 201, headers: rateLimitHeaders(rl.remaining ?? 0, rl.limit ?? 100) },
     );
   } catch {
     return NextResponse.json(
