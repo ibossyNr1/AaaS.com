@@ -1,6 +1,6 @@
 # AaaS Knowledge Index — Implementation Plan
 
-> **Status: ALL 12 PHASES COMPLETE**
+> **Status: ALL 13 PHASES COMPLETE**
 > Last updated: 2026-03-12
 
 **Goal:** Transform the static blog (aaas-blog.web.app) into the most extensive, autonomously functioning agentic knowledge index with 15 self-healing agents, real-time entity discovery, auto-approval pipeline, page view analytics, entity comparison, and full CI/CD automation.
@@ -210,6 +210,19 @@
 
 ---
 
+## Phase 13: Social & Content Enrichment Layer (COMPLETE)
+
+- [x] **Task 1:** Entity comments (`components/entity-comments.tsx`, `/api/entity/[type]/[slug]/comments`) — threaded discussions with 2-level nesting, upvoting with localStorage deduplication, author persistence, HTML sanitization, vote API, integrated into entity pages after SimilarEntities
+- [x] **Task 2:** User contribution profiles (`/profile`, `/api/profile`) — localStorage-based identity, stats cards (submissions with status breakdown, comments, upvotes, watchlist count), activity timeline, watchlist grid, 60s auto-refresh, Profile link added to navbar
+- [x] **Task 3:** Metadata capture agent (`agents/metadata-agent.ts`) — extracts title, description, favicon, OG image from entity URLs via regex HTML parsing (first 50KB), 7-day freshness check, writes to `entity_metadata` collection. Added to runner (18 agents total) and weekly-supplemental GitHub Actions schedule
+- [x] **Task 4:** Entity link preview (`components/entity-link-preview.tsx`) — rich preview card showing OG image, favicon, title, description from metadata API, loading skeleton, graceful fallback. Shown on entity pages below header when URL exists
+- [x] **Task 5:** Hover preview cards (`components/entity-hover-card.tsx`, `components/entity-link.tsx`) — 300ms hover delay, viewport-aware positioning, module-level cache Map, fade-in animation. EntityLink wrapper integrated into similar-entities and entity-relations components
+- [x] **Task 6:** Comparison export (`components/comparison-export.tsx`) — shareable links via `?e=type:slug` URL params with auto-load, JSON/CSV/Markdown download via Blob+createObjectURL, clipboard copy with toast notifications
+- [x] **Task 7:** Firestore rules for comments (public read/write) and entity_metadata (public read)
+- [x] **Task 8:** Build verification — all routes compile cleanly
+
+---
+
 ## Architecture Summary
 
 ```
@@ -262,9 +275,9 @@ apps/blog/
 │   │   ├── sitemap.ts
 │   │   ├── robots.ts
 │   │   └── not-found.tsx
-│   ├── components/                   # 35+ components
+│   ├── components/                   # 40+ components
 │   ├── lib/                          # 14 modules (types, entities, channels, firebase, schemas, media, tts, diff, webhooks, email-templates, grades, rate-limit, use-watchlist)
-│   ├── agents/                       # 17 self-healing agent scripts + runner
+│   ├── agents/                       # 18 self-healing agent scripts + runner
 │   └── seed/                         # Seed data + runner
 ├── .eslintrc.json                    # Excludes agents/
 ├── tsconfig.json                     # target es2017, excludes agents/
@@ -275,7 +288,7 @@ apps/blog/
 ├── agents.yml                        # Scheduled agent runs (daily/weekly/supplemental)
 └── deploy-blog.yml                   # Auto-deploy on push
 
-firestore.rules                       # Security rules (17 collections)
+firestore.rules                       # Security rules (19 collections)
 firestore.indexes.json                # 36+ composite indexes
 ```
 
