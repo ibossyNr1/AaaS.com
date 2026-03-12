@@ -1,6 +1,6 @@
 # AaaS Knowledge Index — Implementation Plan
 
-> **Status: ALL 10 PHASES COMPLETE**
+> **Status: ALL 11 PHASES COMPLETE**
 > Last updated: 2026-03-12
 
 **Goal:** Transform the static blog (aaas-blog.web.app) into the most extensive, autonomously functioning agentic knowledge index with 15 self-healing agents, real-time entity discovery, auto-approval pipeline, page view analytics, entity comparison, and full CI/CD automation.
@@ -187,6 +187,18 @@
 
 ---
 
+## Phase 11: Platform Polish & Embeddable Ecosystem (COMPLETE)
+
+- [x] **Task 1:** Global command palette (`components/command-palette.tsx`) — Cmd+K/Ctrl+K overlay with entity search (300ms debounce), page navigation (15 pages), full keyboard nav (arrows, Enter, Escape), click-outside dismiss. Trigger pill in navbar
+- [x] **Task 2:** Embeddable widgets system (`/embed/`) — iframe-ready entity card, leaderboard, and score badge pages with `?theme=dark|light` and `?limit=N` support. Minimal embed layout hides site chrome. Code generator page at `/embed` with live preview and copy-to-clipboard
+- [x] **Task 3:** Entity sparkline charts — pure inline SVG sparklines (`components/sparkline.tsx`) with gradient fill, last-point dot, dashed fallback for sparse data. EntitySparkline wrapper fetches `/api/entity/[type]/[slug]/sparkline` (30 snapshots). Integrated into entity cards (60x20) and headers (120x32)
+- [x] **Task 4:** Admin moderation UI overhaul (`/admin/review`) — two tabs (Submissions, Categorization Suggestions) with count badges, status filters, expand/collapse details, batch actions (Approve All, Reject All, Apply All High Confidence), auto-refresh 30s
+- [x] **Task 5:** Webhook dispatch agent (`agents/webhook-agent.ts`) — two-phase dispatch+deliver, matches trending_alerts to webhook event subscriptions (entity.score.up/down/change/*), HMAC-SHA256 signatures, 10s timeout, retry queue with exponential backoff, auto-pause after 5 failures. Test endpoint at `/api/webhooks/test`
+- [x] **Task 6:** Navbar updated with Embed link and command palette integration
+- [x] **Task 7:** Build verification — all routes compile cleanly
+
+---
+
 ## Architecture Summary
 
 ```
@@ -239,7 +251,7 @@ apps/blog/
 │   │   ├── sitemap.ts
 │   │   ├── robots.ts
 │   │   └── not-found.tsx
-│   ├── components/                   # 25+ components
+│   ├── components/                   # 30+ components
 │   ├── lib/                          # 14 modules (types, entities, channels, firebase, schemas, media, tts, diff, webhooks, email-templates, grades, rate-limit, use-watchlist)
 │   ├── agents/                       # 17 self-healing agent scripts + runner
 │   └── seed/                         # Seed data + runner
