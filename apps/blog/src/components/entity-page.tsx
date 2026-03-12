@@ -7,6 +7,7 @@ import { EntitySchemaTable } from "./entity-schema-table";
 import { EntityScores } from "./entity-scores";
 import { EntityRelations } from "./entity-relations";
 import { EntityJsonLd } from "./entity-json-ld";
+import { ScoreHistoryChart } from "./score-history-chart";
 import { EntityChangelog } from "./entity-changelog";
 
 interface EntityPageProps {
@@ -24,6 +25,7 @@ export async function EntityPage({ type, slug }: EntityPageProps) {
       <EntityHeader entity={entity} />
       <EntitySchemaTable entity={entity} />
       <EntityScores entity={entity} />
+      <ScoreHistoryChart type={type} slug={slug} />
       <EntityRelations entity={entity} />
       <EntityChangelog type={type} slug={slug} />
       <Section variant="surface" className="py-12">

@@ -9,6 +9,7 @@ const navLinks = [
   { label: "Leaderboard", href: "/leaderboard" },
   { label: "Listen", href: "/listen" },
   { label: "Compare", href: "/compare" },
+  { label: "Graph", href: "/graph" },
   { label: "Submit", href: "/submit" },
   { label: "Dashboard", href: "/me" },
   { label: "System", href: "/dashboard" },

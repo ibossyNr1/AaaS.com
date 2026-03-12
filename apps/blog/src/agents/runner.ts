@@ -18,6 +18,7 @@
  *   webhook        — Webhook delivery agent (dispatch queued notifications)
  *   changelog      — Changelog agent (detect entity changes)
  *   digest-email   — Digest email agent (weekly subscriber digest)
+ *   trending       — Trending agent (detect significant score changes)
  *   all            — Run all agents sequentially in dependency order
  *
  * Examples:
@@ -88,6 +89,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Views Agent",
     load: () => import("./views-agent"),
   },
+  trending: {
+    label: "Trending Agent",
+    load: () => import("./trending-agent"),
+  },
 };
 
 /**
@@ -100,7 +105,8 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
  * 5. changelog -> detects entity changes (before ranking recalculates scores)
  * 6. rank -> recalculates scores (uses updated data)
  * 7. views -> aggregates page views into engagement scores
- * 8. categorize -> verifies/suggests channel assignments
+ * 8. trending -> detects significant score changes (uses scores updated by rank + views)
+ * 9. categorize -> verifies/suggests channel assignments
  * 8. validate-links -> checks URLs
  * 9. media -> generates audio for complete entities
  * 10. ingest -> discovers new entities (runs last to avoid processing incomplete data)
@@ -116,6 +122,7 @@ const EXECUTION_ORDER = [
   "changelog",
   "rank",
   "views",
+  "trending",
   "categorize",
   "validate-links",
   "media",

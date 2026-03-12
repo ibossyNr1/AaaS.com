@@ -216,6 +216,13 @@
         { "fieldPath": "date", "order": "ASCENDING" },
         { "fieldPath": "entityType", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "trending_alerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "detectedAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

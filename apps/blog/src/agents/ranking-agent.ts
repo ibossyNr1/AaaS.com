@@ -125,6 +125,21 @@ export async function run(): Promise<void> {
             "scores.composite": composite,
           });
 
+        // Write score history snapshot
+        await db
+          .collection(entity.collection)
+          .doc(entity.docId)
+          .collection("score_history")
+          .add({
+            timestamp: new Date().toISOString(),
+            adoption,
+            quality,
+            freshness: scores.freshness || 0,
+            citations: normalizedCitations,
+            engagement,
+            composite,
+          });
+
         updatedEntities++;
         console.log(
           `  ${entity.collection}/${entity.docId}: composite ${currentComposite} -> ${composite}, citations ${currentCitations} -> ${normalizedCitations} (raw: ${rawCitations})`,
