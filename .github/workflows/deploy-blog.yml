@@ -1,0 +1,58 @@
+name: Deploy Blog (Firebase App Hosting)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/blog/**"
+      - "packages/ui/**"
+      - "package-lock.json"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-blog-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build blog (via Turborepo)
+        run: npx turbo build --filter=blog
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "apps/blog/.next" ]; then
+            echo "::error::Build verification failed — apps/blog/.next directory not found"
+            exit 1
+          fi
+          echo "Build output verified: apps/blog/.next exists"
+          ls -la apps/blog/.next/
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+
+      - name: Deploy to Firebase App Hosting
+        run: |
+          npm install -g firebase-tools
+          firebase apphosting:backends:get blog --project aaas-platform || echo "::warning::Could not fetch backend info, proceeding with deploy"
+          firebase deploy --only apphosting --project aaas-platform

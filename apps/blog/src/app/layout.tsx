@@ -25,6 +25,18 @@ export const metadata: Metadata = {
     url: "https://aaas.blog",
     siteName: "AaaS Knowledge Index",
     type: "website",
+    images: ["/og?title=AaaS%20Knowledge%20Index"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AaaS Knowledge Index",
+    description: "The AI Ecosystem Database",
+    images: ["/og?title=AaaS%20Knowledge%20Index"],
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": "/api/feed",
+    },
   },
 };
 

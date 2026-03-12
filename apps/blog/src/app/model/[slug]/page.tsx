@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: entity.name,
       description: entity.description,
       url: `https://aaas.blog/model/${entity.slug}`,
+      images: [`/og?title=${encodeURIComponent(entity.name)}&type=model&provider=${encodeURIComponent(entity.provider)}&score=${entity.scores.composite}`],
     },
   };
 }

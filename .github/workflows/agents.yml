@@ -1,0 +1,137 @@
+name: AaaS Self-Healing Agents
+
+on:
+  schedule:
+    # Daily core agents: audit, heal, freshness, rank
+    - cron: "0 6 * * *"
+    # Weekly full run: all agents (Sundays 02:00 UTC)
+    - cron: "0 2 * * 0"
+    # Weekly supplemental: validate-links, media, ingest (Wednesdays 04:00 UTC)
+    - cron: "0 4 * * 3"
+
+  workflow_dispatch:
+    inputs:
+      agents:
+        description: "Agent(s) to run (comma-separated, or 'all')"
+        required: false
+        default: "all"
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  run-agents:
+    name: Run Agents
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          CREDS_FILE="${RUNNER_TEMP}/firebase-credentials.json"
+          echo "${FIREBASE_SERVICE_ACCOUNT}" > "${CREDS_FILE}"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${CREDS_FILE}" >> "${GITHUB_ENV}"
+
+      - name: Determine agents to run
+        id: agents
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          INPUT_AGENTS: ${{ inputs.agents }}
+        run: |
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "targets=${INPUT_AGENTS}" >> "${GITHUB_OUTPUT}"
+            echo "label=manual (${INPUT_AGENTS})" >> "${GITHUB_OUTPUT}"
+          elif [[ "${EVENT_SCHEDULE}" == "0 2 * * 0" ]]; then
+            echo "targets=all" >> "${GITHUB_OUTPUT}"
+            echo "label=weekly-full (Sunday)" >> "${GITHUB_OUTPUT}"
+          elif [[ "${EVENT_SCHEDULE}" == "0 4 * * 3" ]]; then
+            echo "targets=validate-links,media,ingest" >> "${GITHUB_OUTPUT}"
+            echo "label=weekly-supplemental (Wednesday)" >> "${GITHUB_OUTPUT}"
+          else
+            echo "targets=audit,heal,freshness,rank" >> "${GITHUB_OUTPUT}"
+            echo "label=daily-core" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Run agents
+        working-directory: apps/blog
+        env:
+          AGENT_TARGETS: ${{ steps.agents.outputs.targets }}
+        run: |
+          echo "::group::Agent run — ${AGENT_TARGETS}"
+
+          if [[ "${AGENT_TARGETS}" == "all" ]]; then
+            npx tsx src/agents/runner.ts all
+          else
+            IFS=',' read -ra AGENT_LIST <<< "${AGENT_TARGETS}"
+            FAILED=()
+            for agent in "${AGENT_LIST[@]}"; do
+              agent="$(echo "${agent}" | xargs)"
+              echo "--- Running agent: ${agent} ---"
+              if ! npx tsx src/agents/runner.ts "${agent}"; then
+                FAILED+=("${agent}")
+              fi
+            done
+
+            if [[ ${#FAILED[@]} -gt 0 ]]; then
+              echo "::error::Failed agents: ${FAILED[*]}"
+              exit 1
+            fi
+          fi
+
+          echo "::endgroup::"
+
+      - name: Cleanup credentials
+        if: always()
+        run: rm -f "${GOOGLE_APPLICATION_CREDENTIALS}"
+
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        env:
+          AGENT_LABEL: ${{ steps.agents.outputs.label }}
+          AGENT_TARGETS: ${{ steps.agents.outputs.targets }}
+        with:
+          script: |
+            const label = process.env.AGENT_LABEL;
+            const targets = process.env.AGENT_TARGETS;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Agent failure: ${label} — ${new Date().toISOString().slice(0, 10)}`,
+              body: [
+                `## Agent Run Failed`,
+                ``,
+                `| Detail | Value |`,
+                `|--------|-------|`,
+                `| **Schedule** | ${label} |`,
+                `| **Agents** | \`${targets}\` |`,
+                `| **Run** | [View logs](${runUrl}) |`,
+                `| **Triggered** | ${context.eventName} |`,
+                `| **SHA** | \`${context.sha.slice(0, 8)}\` |`,
+                ``,
+                `Please investigate the logs and resolve the issue.`,
+              ].join('\n'),
+              labels: ['bug', 'agents'],
+            });
