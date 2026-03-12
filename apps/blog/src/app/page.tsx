@@ -4,6 +4,8 @@ import { CHANNELS } from "@/lib/channels";
 import { EntityCard } from "@/components/entity-card";
 import Link from "next/link";
 
+export const revalidate = 120;
+
 export default async function IndexHome() {
   const trending = await getTrendingEntities(6);
   const recent = await getRecentEntities(9);

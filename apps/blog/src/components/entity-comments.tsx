@@ -74,12 +74,14 @@ function CommentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} aria-label={parentId ? "Reply to comment" : "Post a comment"} className="space-y-3">
       <input
         type="text"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Your name"
+        aria-label="Your name"
+        aria-required="true"
         maxLength={50}
         className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-circuit"
       />
@@ -87,6 +89,8 @@ function CommentForm({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={parentId ? "Write a reply..." : "Join the discussion..."}
+        aria-label={parentId ? "Reply content" : "Comment content"}
+        aria-required="true"
         maxLength={1000}
         rows={parentId ? 2 : 3}
         className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-circuit resize-none"
@@ -131,7 +135,7 @@ function CommentItem({
 
   return (
     <div className={depth > 0 ? "ml-6 border-l border-border pl-4" : ""}>
-      <div className="py-3">
+      <article aria-label={`Comment by ${comment.author}`} className="py-3">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-medium text-text">{comment.author}</span>
           <span className="text-xs text-text-muted font-mono">
@@ -184,7 +188,7 @@ function CommentItem({
             />
           </div>
         )}
-      </div>
+      </article>
       {replies.map((reply) => (
         <CommentItem
           key={reply.id}

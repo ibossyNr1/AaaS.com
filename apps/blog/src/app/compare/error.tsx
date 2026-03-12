@@ -1,0 +1,20 @@
+"use client";
+
+import { ErrorFallback } from "@/components/error-fallback";
+
+export default function CompareError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <ErrorFallback
+      error={error}
+      reset={reset}
+      title="Comparison failed"
+      suggestion="We couldn't load the comparison data. Try selecting different entities or retry."
+    />
+  );
+}

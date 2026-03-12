@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: "/api/",
+        allow: ["/", "/api-docs"],
+        disallow: ["/api/", "/admin/", "/embed/"],
       },
     ],
     sitemap: "https://aaas.blog/sitemap.xml",

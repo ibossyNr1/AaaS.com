@@ -3,6 +3,8 @@ import { getTrendingEntities } from "@/lib/entities";
 import { ExploreClient } from "./explore-client";
 import type { Metadata } from "next";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Explore — AaaS Knowledge Index",
   description: "Search and filter the complete AI ecosystem database.",

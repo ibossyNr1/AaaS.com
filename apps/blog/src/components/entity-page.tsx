@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Section, Container, Button } from "@aaas/ui";
 import type { EntityType } from "@/lib/types";
+import { ENTITY_TYPES } from "@/lib/types";
 import { getEntity } from "@/lib/entities";
+import { Breadcrumbs } from "./breadcrumbs";
 import { EntityHeader } from "./entity-header";
 import { EntitySchemaTable } from "./entity-schema-table";
 import { EntityScores } from "./entity-scores";
@@ -14,6 +16,8 @@ import { EntityDiffViewer } from "./entity-diff-viewer";
 import { SimilarEntities } from "./similar-entities";
 import { EntityComments } from "./entity-comments";
 import { EntityLinkPreview } from "./entity-link-preview";
+import { EntitySummary } from "./entity-summary";
+import { LazySection } from "./lazy-section";
 
 interface EntityPageProps {
   type: EntityType;
@@ -24,26 +28,50 @@ export async function EntityPage({ type, slug }: EntityPageProps) {
   const entity = await getEntity(type, slug);
   if (!entity) return notFound();
 
+  const typeInfo = ENTITY_TYPES[type];
+
   return (
     <>
       <EntityJsonLd entity={entity} />
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: typeInfo.plural, href: `/explore?type=${type}` },
+          { label: entity.name },
+        ]}
+      />
       <EntityHeader entity={entity} />
       {entity.url && entity.url !== "[unverified]" && (
         <EntityLinkPreview type={type} slug={slug} />
       )}
       <EntitySchemaTable entity={entity} />
+      <EntitySummary type={type} slug={slug} />
       <EntityScores entity={entity} />
-      <ScoreHistoryChart type={type} slug={slug} />
-      <EntityRelations entity={entity} />
-      <Section className="py-8">
-        <Container className="max-w-4xl">
-          <RelationshipEditor entity={entity} />
-        </Container>
-      </Section>
-      <EntityChangelog type={type} slug={slug} />
-      <EntityDiffViewer type={type} slug={slug} />
-      <SimilarEntities type={type} slug={slug} />
-      <EntityComments type={type} slug={slug} />
+      <LazySection>
+        <ScoreHistoryChart type={type} slug={slug} />
+      </LazySection>
+      <LazySection>
+        <EntityRelations entity={entity} />
+      </LazySection>
+      <LazySection>
+        <Section className="py-8">
+          <Container className="max-w-4xl">
+            <RelationshipEditor entity={entity} />
+          </Container>
+        </Section>
+      </LazySection>
+      <LazySection>
+        <EntityChangelog type={type} slug={slug} />
+      </LazySection>
+      <LazySection>
+        <EntityDiffViewer type={type} slug={slug} />
+      </LazySection>
+      <LazySection>
+        <SimilarEntities type={type} slug={slug} />
+      </LazySection>
+      <LazySection>
+        <EntityComments type={type} slug={slug} />
+      </LazySection>
       <Section variant="surface" className="py-12">
         <Container className="max-w-4xl text-center">
           <p className="text-text-muted mb-4">

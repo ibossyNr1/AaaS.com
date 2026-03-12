@@ -21,6 +21,7 @@
  *   changelog      — Changelog agent (detect entity changes)
  *   digest-email   — Digest email agent (weekly subscriber digest)
  *   trending       — Trending agent (detect significant score changes)
+ *   summary        — Summary agent (generate structured entity summaries)
  *   all            — Run all agents sequentially in dependency order
  *
  * Examples:
@@ -103,6 +104,10 @@ const AGENT_REGISTRY: Record<string, { label: string; load: () => Promise<{ run:
     label: "Similarity Agent",
     load: () => import("./similarity-agent"),
   },
+  summary: {
+    label: "Summary Agent",
+    load: () => import("./summary-agent"),
+  },
 };
 
 /**
@@ -128,6 +133,7 @@ const EXECUTION_ORDER = [
   "audit",
   "heal",
   "enrich",
+  "summary",
   "freshness",
   "changelog",
   "rank",

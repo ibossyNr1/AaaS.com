@@ -19,9 +19,19 @@ const STATIC_PAGES = [
   { path: "/", changeFrequency: "daily" as const, priority: 1.0 },
   { path: "/explore", changeFrequency: "daily" as const, priority: 0.9 },
   { path: "/leaderboard", changeFrequency: "daily" as const, priority: 0.8 },
-  { path: "/submit", changeFrequency: "monthly" as const, priority: 0.5 },
-  { path: "/me", changeFrequency: "weekly" as const, priority: 0.4 },
   { path: "/listen", changeFrequency: "weekly" as const, priority: 0.7 },
+  { path: "/graph", changeFrequency: "weekly" as const, priority: 0.7 },
+  { path: "/compare", changeFrequency: "weekly" as const, priority: 0.6 },
+  { path: "/stats", changeFrequency: "daily" as const, priority: 0.6 },
+  { path: "/activity", changeFrequency: "daily" as const, priority: 0.6 },
+  { path: "/submit", changeFrequency: "monthly" as const, priority: 0.5 },
+  { path: "/api-docs", changeFrequency: "monthly" as const, priority: 0.5 },
+  { path: "/developer", changeFrequency: "monthly" as const, priority: 0.5 },
+  { path: "/subscribe", changeFrequency: "monthly" as const, priority: 0.4 },
+  { path: "/me", changeFrequency: "weekly" as const, priority: 0.4 },
+  { path: "/profile", changeFrequency: "weekly" as const, priority: 0.3 },
+  { path: "/watchlist", changeFrequency: "weekly" as const, priority: 0.3 },
+  { path: "/dashboard", changeFrequency: "weekly" as const, priority: 0.3 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

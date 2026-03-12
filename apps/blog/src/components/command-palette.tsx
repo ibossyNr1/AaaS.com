@@ -195,7 +195,7 @@ export function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh]">
+    <div role="dialog" aria-modal="true" aria-label="Command palette" className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh]">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -225,6 +225,10 @@ export function CommandPalette() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onInputKeyDown}
             placeholder="Search pages and entities..."
+            aria-label="Search pages and entities"
+            aria-autocomplete="list"
+            aria-controls="command-palette-results"
+            aria-activedescendant={results[activeIndex] ? `command-palette-item-${activeIndex}` : undefined}
             className="flex-1 bg-transparent py-3.5 text-sm text-text placeholder:text-text-muted outline-none"
           />
           <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-base text-[10px] font-mono text-text-muted border border-border">
@@ -233,7 +237,7 @@ export function CommandPalette() {
         </div>
 
         {/* Results */}
-        <div ref={listRef} className="max-h-[50vh] overflow-y-auto py-2">
+        <div ref={listRef} id="command-palette-results" role="listbox" aria-label="Search results" className="max-h-[50vh] overflow-y-auto py-2">
           {results.length === 0 && !loading && (
             <p className="px-4 py-6 text-center text-sm text-text-muted">
               {query.length >= 2 ? "No results found." : "Start typing to search..."}
@@ -258,6 +262,9 @@ export function CommandPalette() {
                 return (
                   <button
                     key={`${item.type}-${item.slug}`}
+                    id={`command-palette-item-${globalIndex}`}
+                    role="option"
+                    aria-selected={globalIndex === activeIndex}
                     data-active={globalIndex === activeIndex}
                     onClick={() => navigate(item)}
                     onMouseEnter={() => setActiveIndex(globalIndex)}
@@ -303,6 +310,9 @@ export function CommandPalette() {
                 return (
                   <button
                     key={item.href}
+                    id={`command-palette-item-${globalIndex}`}
+                    role="option"
+                    aria-selected={globalIndex === activeIndex}
                     data-active={globalIndex === activeIndex}
                     onClick={() => navigate(item)}
                     onMouseEnter={() => setActiveIndex(globalIndex)}

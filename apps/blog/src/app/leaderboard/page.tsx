@@ -3,6 +3,8 @@ import { getTrendingEntities } from "@/lib/entities";
 import { LeaderboardClient } from "./leaderboard-client";
 import type { Metadata } from "next";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Leaderboard — AaaS Knowledge Index",
   description:

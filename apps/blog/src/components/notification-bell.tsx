@@ -155,6 +155,8 @@ export function NotificationBell() {
         onClick={() => setOpen(!open)}
         className="relative p-1.5 rounded-md hover:bg-surface transition-colors"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
+        aria-expanded={open}
+        aria-haspopup="true"
       >
         <svg
           className="w-5 h-5 text-text-muted"
@@ -174,7 +176,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 max-h-[420px] overflow-y-auto z-[55] rounded-lg border border-border bg-base/95 backdrop-blur-xl shadow-lg">
+        <div role="menu" aria-label="Notifications" className="absolute right-0 top-full mt-2 w-80 max-h-[420px] overflow-y-auto z-[55] rounded-lg border border-border bg-base/95 backdrop-blur-xl shadow-lg">
           <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-2 border-b border-border bg-base/95 backdrop-blur-xl">
             <span className="text-xs font-mono font-semibold text-text uppercase tracking-wider">
               Notifications
@@ -208,6 +210,7 @@ export function NotificationBell() {
               {notifications.map((n) => (
                 <button
                   key={n.id}
+                  role="menuitem"
                   onClick={() => handleNotificationClick(n)}
                   className={cn(
                     "w-full text-left px-3 py-2.5 flex gap-2.5 items-start hover:bg-surface/50 transition-colors",

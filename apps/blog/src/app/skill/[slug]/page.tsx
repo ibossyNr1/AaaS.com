@@ -2,6 +2,8 @@ import { EntityPage } from "@/components/entity-page";
 import { getAllSlugs, getEntity } from "@/lib/entities";
 import type { Metadata } from "next";
 
+export const revalidate = 300;
+
 export async function generateStaticParams() {
   const slugs = await getAllSlugs("skill");
   return slugs.map((slug) => ({ slug }));

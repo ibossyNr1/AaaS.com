@@ -5,6 +5,8 @@ import { getEntitiesByChannel } from "@/lib/entities";
 import { EntityCard } from "@/components/entity-card";
 import type { Metadata } from "next";
 
+export const revalidate = 300;
+
 export function generateStaticParams() {
   return CHANNELS.map((ch) => ({ topic: ch.slug }));
 }
