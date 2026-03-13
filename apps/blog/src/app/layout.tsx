@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { AuraBlobs } from "@aaas/ui";
+import { AuraBlobs, OrbitalBackground, MergeBackground, CircuitBackground } from "@aaas/ui";
 import { IndexNavbar } from "@/components/index-navbar";
 import { SkipToContent } from "@/components/skip-to-content";
 import { BlogFooter } from "@/components/blog-footer";
@@ -32,6 +32,15 @@ export const metadata: Metadata = {
   title: "AaaS Knowledge Index | The AI Ecosystem Database",
   description:
     "Schema-first knowledge index of AI tools, models, agents, skills, and benchmarks. Machine-readable, agent-maintained, always current.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "AaaS Knowledge Index",
     description: "The AI Ecosystem Database",
@@ -80,6 +89,10 @@ export default function RootLayout({
                 <SkipToContent />
                 <IndexNavbar />
                 <OfflineBanner />
+                {/* Background animation layers — matching agents-as-a-service.com visual depth */}
+                <MergeBackground />
+                <CircuitBackground />
+                <OrbitalBackground minimal planetScale={0.6} offset={{ x: 30, y: -15 }} />
                 <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
                   <AuraBlobs />
                 </div>

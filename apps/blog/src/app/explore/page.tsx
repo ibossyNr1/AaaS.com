@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
 import { getTrendingEntities } from "@/lib/entities";
 import { ExploreClient } from "./explore-client";
 import { RecommendedEntities } from "@/components/recommended-entities";
@@ -18,8 +18,14 @@ export default async function ExplorePage() {
 
   return (
     <>
-      <Section className="pt-28 pb-8 hero-glow">
-        <Container className="max-w-6xl">
+      <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
+        <div className="absolute top-20 right-[8%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={40} color="circuit" followMouse />
+        </div>
+        <div className="absolute bottom-4 left-[5%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={28} color="red" />
+        </div>
+        <Container className="max-w-6xl relative z-10">
           <div className="section-topic"><span>Discovery</span></div>
           <h1 className="monolith-title text-4xl md:text-5xl lg:text-6xl mb-4">
             Explore

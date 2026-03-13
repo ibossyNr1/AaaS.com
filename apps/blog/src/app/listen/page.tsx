@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
 import {
   collection,
   getDocs,
@@ -36,8 +36,11 @@ export default async function ListenPage() {
 
   return (
     <>
-      <Section className="pt-28 pb-8 hero-glow">
-        <Container className="max-w-6xl">
+      <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
+        <div className="absolute top-20 right-[8%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={36} color="red" followMouse />
+        </div>
+        <Container className="max-w-6xl relative z-10">
           <div className="section-topic"><span>Media</span></div>
           <h1 className="monolith-title text-4xl md:text-5xl lg:text-6xl mb-4">
             Audio Hub

@@ -1,4 +1,4 @@
-import { Container, Section, Card, KineticBar, DataTape } from "@aaas/ui";
+import { Container, Section, Card, KineticBar, DataTape, MetaballField, OrbitalOrb, DeployFeed, TerminalFeed, AgentRoster } from "@aaas/ui";
 import { getTrendingEntities, getRecentEntities } from "@/lib/entities";
 import { CHANNELS } from "@/lib/channels";
 import { EntityCard } from "@/components/entity-card";
@@ -31,6 +31,15 @@ export default async function IndexHome() {
         {/* Dual accent glows */}
         <div className="absolute top-0 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-circuit/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-accent-red/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
+        {/* Metaball field — right side hero glow */}
+        <MetaballField />
+        {/* Floating orbital orbs */}
+        <div className="absolute top-16 right-[10%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={48} color="circuit" followMouse />
+        </div>
+        <div className="absolute bottom-12 left-[5%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={32} color="red" />
+        </div>
 
         <Container className="relative z-10 max-w-5xl hero-glow">
           <div className="section-topic">
@@ -134,6 +143,47 @@ export default async function IndexHome() {
         </Container>
       </Section>
 
+      {/* Live Agent Feeds — showcasing autonomous maintenance */}
+      <KineticBar />
+      <Section parallax className="py-16">
+        <Container className="max-w-6xl">
+          <div className="section-topic">
+            <span>Live Systems</span>
+          </div>
+          <h2 className="monolith-title text-2xl md:text-3xl mb-8">
+            AUTONOMOUS AGENTS AT WORK
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card variant="glass" spotlight>
+              <div className="p-4">
+                <h3 className="text-xs font-mono text-circuit uppercase tracking-widest mb-3">Deploy Feed</h3>
+                <DeployFeed maxItems={5} />
+              </div>
+            </Card>
+            <Card variant="glass" spotlight>
+              <div className="p-4">
+                <h3 className="text-xs font-mono text-circuit uppercase tracking-widest mb-3">Terminal</h3>
+                <TerminalFeed maxLines={6} />
+              </div>
+            </Card>
+            <Card variant="glass" spotlight>
+              <div className="p-4">
+                <h3 className="text-xs font-mono text-circuit uppercase tracking-widest mb-3">Agent Roster</h3>
+                <AgentRoster
+                  agents={[
+                    { name: "schema-auditor", role: "Data integrity", status: "active", model: "claude-4" },
+                    { name: "ranking-agent", role: "Score computation", status: "active", model: "claude-4" },
+                    { name: "freshness-agent", role: "Endpoint monitoring", status: "idle" },
+                    { name: "media-agent", role: "TTS generation", status: "active", model: "gpt-5" },
+                    { name: "similarity-agent", role: "Embeddings", status: "learning", model: "claude-4" },
+                  ]}
+                />
+              </div>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
       {/* Latest */}
       {recent.length > 0 && (
         <>
@@ -162,6 +212,10 @@ export default async function IndexHome() {
         {/* Accent aura */}
         <div className="absolute top-1/2 left-1/4 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-circuit/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none animate-aura-drift" />
         <div className="absolute top-1/3 right-1/4 w-[150px] md:w-[300px] h-[150px] md:h-[300px] bg-accent-red/5 rounded-full blur-[100px] pointer-events-none animate-aura-drift" style={{ animationDelay: "3s" }} />
+        {/* Floating orb accent */}
+        <div className="absolute top-1/2 right-[15%] -translate-y-1/2 hidden lg:block pointer-events-none">
+          <OrbitalOrb size={64} color="circuit" followMouse />
+        </div>
 
         <Container className="relative z-10 max-w-3xl text-center">
           <p className="font-mono text-xs text-accent-red uppercase tracking-widest mb-6">

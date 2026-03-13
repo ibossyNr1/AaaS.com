@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
 import { getTrendingEntities } from "@/lib/entities";
 import { LeaderboardClient } from "./leaderboard-client";
 import { CollaborativeRecommendations } from "@/components/collaborative-recommendations";
@@ -17,8 +17,11 @@ export default async function LeaderboardPage() {
 
   return (
     <>
-      <Section className="pt-28 pb-8 hero-glow">
-        <Container className="max-w-6xl">
+      <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
+        <div className="absolute top-16 right-[10%] hidden lg:block pointer-events-none">
+          <OrbitalOrb size={44} color="circuit" followMouse />
+        </div>
+        <Container className="max-w-6xl relative z-10">
           <div className="section-topic"><span>Rankings</span></div>
           <h1 className="monolith-title text-4xl md:text-5xl lg:text-6xl mb-4">
             Leaderboard
