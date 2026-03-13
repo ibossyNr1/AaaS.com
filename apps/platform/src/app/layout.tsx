@@ -21,6 +21,15 @@ export const metadata: Metadata = {
   title: "Agent-as-a-Service | AaaS Framework",
   description:
     "Deploy autonomous AI agents that learn, adapt, and operate your business. Context-engineered intelligence forged in basalt-grade reliability.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "Agent-as-a-Service | AaaS Framework",
     description:

@@ -39,7 +39,7 @@ export function Footer() {
                 <span className="border-l-2 border-circuit pl-3 flex items-center gap-2.5">
                   <span className="w-2 h-2 rounded-full animate-logo-pulse shrink-0" />
                   <span className="font-mono text-xs tracking-[0.3rem] uppercase text-text group-hover:text-circuit transition-colors duration-300">
-                    Agents as a Service
+                    AaaS
                   </span>
                 </span>
               </Link>

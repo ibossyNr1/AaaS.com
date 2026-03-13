@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AaaS — Ultimate Agentic Workflow & Assets Building Plan</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3d;
+    --accent: #7c5cfc;
+    --accent2: #5c9cfc;
+    --accent3: #fc5c7c;
+    --text: #e0e0e8;
+    --text-muted: #8888a0;
+    --success: #4caf50;
+    --warning: #ff9800;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; }
+  h1 {
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+  h2 {
+    font-size: 1.6rem;
+    color: var(--accent2);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 1.2rem; color: var(--accent); margin: 1.5rem 0 0.75rem; }
+  h4 { font-size: 1rem; color: var(--text); margin: 1rem 0 0.5rem; }
+  p { margin-bottom: 1rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-warning { border-left: 4px solid var(--warning); }
+  .card-success { border-left: 4px solid var(--success); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    margin: 2px;
+  }
+  .tag-hot { background: rgba(252,92,124,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .tag-go { background: rgba(76,175,80,0.15); border-color: var(--success); color: var(--success); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+  }
+  th { background: var(--surface2); color: var(--accent2); font-weight: 600; }
+  td { background: var(--surface); }
+  .layer-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 1rem 0;
+  }
+  .layer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .layer-num {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+  .layer-title { font-weight: 600; color: var(--text); }
+  .layer-desc { color: var(--text-muted); font-size: 0.85rem; margin-left: auto; }
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    position: relative;
+  }
+  .phase-badge {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 2px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 0;
+    padding-left: 28px;
+    position: relative;
+    border-bottom: 1px solid rgba(42,42,61,0.5);
+  }
+  .checklist li::before {
+    content: '□';
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+  .toc { column-count: 2; column-gap: 2rem; margin: 1rem 0; }
+  .toc a { color: var(--accent2); text-decoration: none; display: block; padding: 4px 0; font-size: 0.9rem; }
+  .toc a:hover { color: var(--accent); }
+  .diagram {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--text-muted);
+  }
+  .highlight { color: var(--accent); font-weight: 600; }
+  .highlight2 { color: var(--accent2); font-weight: 600; }
+  .highlight3 { color: var(--accent3); font-weight: 600; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  .meta { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+
+<h1>The Ultimate Agentic Workflow & Assets Building Plan</h1>
+<p class="subtitle">Agent-as-a-Service (AaaS) — Claude Code × Agent Zero × Antigravity IDE</p>
+<p class="meta">Prepared: March 12, 2026 &nbsp;|&nbsp; Version 1.0 &nbsp;|&nbsp; Classification: Internal Strategy Document</p>
+
+<div class="card card-accent">
+<h3>Executive Summary</h3>
+<p>This document is the comprehensive building plan for the AaaS ecosystem — the convergence of your DOE (Department of Engineering) architecture running in Agent Zero, Claude Code's agentic coding power, and Google Antigravity IDE's multi-agent orchestration surface. The goal: a fully autonomous system that can spin up, operate, and scale any business through templated assets, agentic workflows, and a self-optimizing skill repository of 260+ capabilities.</p>
+<p>The plan covers: system architecture audit, the all-protocol call pipeline, the complete templated asset library to be built, the skill-to-product pipeline, and a phased execution roadmap with concrete deliverables.</p>
+</div>
+
+<h2>Table of Contents</h2>
+<div class="toc">
+<a href="#s1">1. System Audit: What You Have</a>
+<a href="#s2">2. Architecture: The 3-Runtime Stack</a>
+<a href="#s3">3. The All-Protocol Call Pipeline</a>
+<a href="#s4">4. The Templated Asset Library</a>
+<a href="#s5">5. Skill-to-Product Pipeline</a>
+<a href="#s6">6. The AaaS Platform Build</a>
+<a href="#s7">7. The Marketing Engine (aaas.blog)</a>
+<a href="#s8">8. GravityClaw: The Intelligence Layer</a>
+<a href="#s9">9. Enora.ai: The Lighthouse</a>
+<a href="#s10">10. Phased Execution Roadmap</a>
+<a href="#s11">11. The Asset Manifest (Full List)</a>
+<a href="#s12">12. Risk Matrix & Mitigations</a>
+</div>
+
+<hr>
+
+<!-- SECTION 1 -->
+<h2 id="s1">1. System Audit: What You Currently Have</h2>
+
+<p>Your ecosystem is already remarkably built out. Here's what exists across your workspace today:</p>
+
+<div class="grid">
+<div class="card">
+<h4>AaaS (Core Platform)</h4>
+<p>Firebase-hosted monorepo with Next.js platform app and blog app. DOE 6-layer architecture. Firestore rules, design prototypes (15+ HTML concepts), context/directives/execution scripts.</p>
+<span class="tag">Next.js</span> <span class="tag">Firebase</span> <span class="tag">Firestore</span> <span class="tag">Turbo</span>
+</div>
+
+<div class="card">
+<h4>AaaS.blog (SEO Engine)</h4>
+<p>Standalone Next.js blog with Tailwind, Firebase hosting via App Hosting. Designed as the inbound content marketing engine.</p>
+<span class="tag">Next.js</span> <span class="tag">Tailwind</span> <span class="tag">Firebase App Hosting</span>
+</div>
+
+<div class="card">
+<h4>Antigravity IDE Config</h4>
+<p>Full Antigravity workspace: brain (65+ memories), conversations (66+ threads), annotations (49+), skills, MCP config, global skills, knowledge base, and browser recordings.</p>
+<span class="tag">Antigravity</span> <span class="tag">Brain Memory</span> <span class="tag">MCP</span>
+</div>
+
+<div class="card">
+<h4>Antigravity Vault</h4>
+<p>The master skill repository. 260+ de-branded, portable skills extracted from Skool courses (Jack content) plus 40+ production skills from Enora. Directives, execution scripts, workflows.</p>
+<span class="tag tag-hot">260+ Skills</span> <span class="tag">De-branded</span> <span class="tag">Portable</span>
+</div>
+
+<div class="card">
+<h4>GravityClaw</h4>
+<p>The intelligence/automation backbone. TypeScript monorepo with: WhatsApp bot, A0 bridge (Agent Zero integration), MCP server, intake pipeline, intelligence module, research, digest, scheduler, forge, recommendations, publisher, school downloader, and a full dashboard UI (justus-platform-ui).</p>
+<span class="tag tag-hot">Core Engine</span> <span class="tag">TypeScript</span> <span class="tag">Cloudflare Workers</span>
+</div>
+
+<div class="card">
+<h4>Enora.ai (Lighthouse)</h4>
+<p>Manufacturing compliance AI for Tier-1 automotive (ASPICE, ISO 26262). Full brand context, investor materials, concepts library, Firebase deployment, FAL video generation, content briefs.</p>
+<span class="tag">Manufacturing AI</span> <span class="tag">ASPICE</span> <span class="tag">ISO 26262</span>
+</div>
+
+<div class="card">
+<h4>SQUR (Supra-Forge)</h4>
+<p>The website template system with AGENTS.MD, Claude profile, Playwright MCP, design assets, Pinecone integration, and the template that powers supra-forge.com.</p>
+<span class="tag">Website Templates</span> <span class="tag">Pinecone</span> <span class="tag">Playwright</span>
+</div>
+
+<div class="card">
+<h4>Base (Template Repo)</h4>
+<p>The canonical DOE project template. Cloned for every new project. 6-layer architecture, context/directives/execution pattern, automated backup, init script.</p>
+<span class="tag tag-go">Foundation</span> <span class="tag">DOE Standard</span>
+</div>
+</div>
+
+<div class="card card-warning">
+<h3>Gaps Identified</h3>
+<p><strong>1. No unified orchestration layer</strong> — GravityClaw, the Antigravity IDE, and Claude Code operate as separate surfaces. They need a shared context bus.</p>
+<p><strong>2. AaaS platform is still in design/prototype phase</strong> — 15+ HTML design concepts exist but no production frontend is wired to the GravityClaw backend.</p>
+<p><strong>3. Vault skills are raw</strong> — 260+ skills exist but lack standardized SKILL.md frontmatter, test coverage, and categorization for the Global Skill Repository.</p>
+<p><strong>4. All-protocol call exists as a concept</strong> but isn't codified into a reproducible pipeline with standardized templates at each stage.</p>
+<p><strong>5. Templated business assets</strong> (pitch decks, financial models, contracts, brand kits) don't exist yet as a coherent library.</p>
+</div>
+
+<!-- SECTION 2 -->
+<h2 id="s2">2. Architecture: The 3-Runtime Stack</h2>
+
+<p>The ultimate agentic system runs across three coordinated runtimes, each playing to its strengths:</p>
+
+<div class="diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                    <span class="highlight">ANTIGRAVITY IDE</span> (Manager View)                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │ Agent A  │  │ Agent B  │  │ Agent C  │  │ Agent D  │       │
+│  │ Research │  │ Frontend │  │ Backend  │  │  Design  │       │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘       │
+│       │              │              │              │             │
+│       └──────────────┴──────┬───────┴──────────────┘             │
+│                             │                                    │
+│                    ┌────────▼────────┐                           │
+│                    │  <span class="highlight2">SKILL.md</span> Standard │  ← Shared contract       │
+│                    └────────┬────────┘                           │
+└─────────────────────────────┼───────────────────────────────────┘
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+┌─────────▼─────────┐ ┌──────▼──────┐ ┌──────────▼──────────┐
+│   <span class="highlight">CLAUDE CODE</span>       │ │ <span class="highlight">AGENT ZERO</span>  │ │   <span class="highlight">GRAVITYCLAW</span>       │
+│                   │ │             │ │                     │
+│ • Agentic coding  │ │ • Docker VM │ │ • WhatsApp intake   │
+│ • Git workflows   │ │ • Tool gen  │ │ • Research pipeline │
+│ • MCP servers     │ │ • Memory    │ │ • Digest / publish  │
+│ • Subagents       │ │ • SearXNG   │ │ • MCP bridge        │
+│ • SKILL execution │ │ • Multi-LLM │ │ • Scheduler         │
+│ • Cowork mode     │ │ • Browsing  │ │ • Forge (asset gen) │
+└───────────────────┘ └─────────────┘ └─────────────────────┘
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              │
+                    ┌─────────▼─────────┐
+                    │   <span class="highlight3">SHARED CONTEXT BUS</span>  │
+                    │                   │
+                    │  • Firestore DB   │
+                    │  • Pinecone VDB   │
+                    │  • Vault Skills   │
+                    │  • MCP Protocol   │
+                    │  • Git (source)   │
+                    └───────────────────┘
+</div>
+
+<h3>The DOE 6-Layer Model (Your Foundation)</h3>
+<div class="layer-stack">
+<div class="layer"><div class="layer-num">1</div><div><span class="layer-title">Directive</span> — Living SOPs in SKILL.md and directives/</div><div class="layer-desc">The What & Why</div></div>
+<div class="layer"><div class="layer-num">2</div><div><span class="layer-title">Context</span> — brand.md, goals.md, best_practices.md</div><div class="layer-desc">Project Memory</div></div>
+<div class="layer"><div class="layer-num">3</div><div><span class="layer-title">Knowledge</span> — Distilled strategy & domain expertise</div><div class="layer-desc">The Strategy</div></div>
+<div class="layer"><div class="layer-num">4</div><div><span class="layer-title">Security</span> — security_protocol.md, guardrails</div><div class="layer-desc">The Guardrails</div></div>
+<div class="layer"><div class="layer-num">5</div><div><span class="layer-title">Orchestration</span> — The agent (Architect or Engineer)</div><div class="layer-desc">The Brain</div></div>
+<div class="layer"><div class="layer-num">6</div><div><span class="layer-title">Execution</span> — Deterministic scripts in execution/ and skills/*/scripts/</div><div class="layer-desc">The Hands</div></div>
+</div>
+
+<h3>The SKILL.md Interop Standard</h3>
+<p>This is the critical shared contract. Agent Zero, Claude Code, Antigravity, Cursor, and Codex all support the SKILL.md standard. Every skill you build is portable across all these runtimes. The vault's 260+ skills become immediately deployable in any environment.</p>
+
+<div class="card">
+<h4>Interop Matrix</h4>
+<table>
+<tr><th>Runtime</th><th>SKILL.md</th><th>MCP</th><th>Docker</th><th>Browser</th><th>Multi-Agent</th><th>Memory</th></tr>
+<tr><td>Antigravity</td><td>Native</td><td>Native</td><td>No</td><td>3-Surface</td><td>Manager View</td><td>Brain + Knowledge</td></tr>
+<tr><td>Claude Code</td><td>Native</td><td>Native</td><td>No</td><td>Via MCP</td><td>Subagents</td><td>Session-based</td></tr>
+<tr><td>Agent Zero</td><td>Native</td><td>Auto-discover</td><td>Native</td><td>SearXNG</td><td>Subordinates</td><td>Hybrid (facts/solutions)</td></tr>
+<tr><td>GravityClaw</td><td>Custom</td><td>Server</td><td>No</td><td>Playwright</td><td>Channels</td><td>SQLite + Pinecone</td></tr>
+</table>
+</div>
+
+<!-- SECTION 3 -->
+<h2 id="s3">3. The All-Protocol Call Pipeline</h2>
+
+<p>Your "all-protocol call" is the master workflow that takes any business idea from zero to a fully operational, agent-powered company. Each stage produces templated artifacts that feed the next stage.</p>
+
+<div class="diagram">
+  <span class="highlight3">GOALS</span> → <span class="highlight2">CONTACTS</span> → <span class="highlight">REQUIREMENTS</span> → <span class="highlight3">SPECIFICATIONS</span> → <span class="highlight2">CONTEXTUAL ENG.</span> → <span class="highlight">EXECUTION</span> → <span class="highlight3">DELIVERY</span>
+    │          │             │                │                 │              │           │
+    ▼          ▼             ▼                ▼                 ▼              ▼           ▼
+ Vision    Stakeholder   PRD / User       Technical         DOE Layer      Skill      Deployed
+ Canvas    Map &amp;         Stories &amp;       Architecture       Injection      Chain      Product
+           CRM Setup    Acceptance       &amp; API Design       (6 Layers)     Execution  &amp; Metrics
+                        Criteria
+</div>
+
+<h3>Stage 1: Goals → Vision & Strategy Assets</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>Vision Canvas</strong> — One-page strategic vision (problem, solution, market, moat)</li>
+<li><strong>Business Model Canvas</strong> — Revenue streams, key partners, cost structure</li>
+<li><strong>OKR Framework</strong> — Quarterly objectives with measurable key results</li>
+<li><strong>Competitive Landscape Map</strong> — Auto-generated via research skills (Perplexity, SearXNG)</li>
+<li><strong>Go-to-Market Strategy Brief</strong> — Channel strategy, launch sequence, viral loop design</li>
+</ul>
+</div>
+
+<h3>Stage 2: Contacts → Stakeholder & CRM Setup</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>Stakeholder Map Template</strong> — Roles, influence matrix, communication cadence</li>
+<li><strong>CRM Pipeline Config</strong> — Automated pipeline stages (lead → qualified → proposal → close)</li>
+<li><strong>Lead Scoring Model</strong> — Weighted criteria for qualification</li>
+<li><strong>Outreach Sequence Templates</strong> — 5-touch cold email sequences via Instantly</li>
+<li><strong>LinkedIn Automation Playbook</strong> — Connection → DM → Call booking flow</li>
+</ul>
+</div>
+
+<h3>Stage 3: Requirements → Product Definition</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>PRD Template</strong> — Product Requirements Document with user stories, acceptance criteria</li>
+<li><strong>User Persona Library</strong> — Archetype cards with jobs-to-be-done</li>
+<li><strong>Feature Prioritization Matrix</strong> — ICE scoring (Impact × Confidence × Ease)</li>
+<li><strong>Regulatory Compliance Checklist</strong> — GDPR, SOC2, industry-specific requirements</li>
+<li><strong>Integration Requirements Map</strong> — API dependencies, data flow diagrams</li>
+</ul>
+</div>
+
+<h3>Stage 4: Specifications → Technical Design</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>System Architecture Document</strong> — Diagrammed with deployment topology</li>
+<li><strong>API Specification</strong> — OpenAPI/Swagger templates auto-populated from requirements</li>
+<li><strong>Database Schema Template</strong> — ERD generation from domain model</li>
+<li><strong>Security Specification</strong> — Auth flows, encryption standards, threat model</li>
+<li><strong>Infrastructure-as-Code Templates</strong> — Firebase, Cloudflare Workers, Modal configs</li>
+</ul>
+</div>
+
+<h3>Stage 5: Contextual Engineering → DOE Injection</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>AGENTS.MD Generator</strong> — Auto-populate from goals + brand + tech stack</li>
+<li><strong>Context Pack Generator</strong> — brand.md + goals.md + best_practices.md from intake</li>
+<li><strong>Security Protocol Generator</strong> — Industry-specific guardrails</li>
+<li><strong>Skill Discovery Index</strong> — Match requirements to existing vault skills</li>
+<li><strong>DOE Base Fork Script</strong> — Clone Base, inject context, configure .env, init Git</li>
+</ul>
+</div>
+
+<h3>Stage 6: Execution → Build & Deploy</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>Sprint Board Template</strong> — Auto-generated from PRD user stories</li>
+<li><strong>CI/CD Pipeline Config</strong> — GitHub Actions + Firebase deploy</li>
+<li><strong>Testing Harness Template</strong> — Unit + integration + E2E (Playwright)</li>
+<li><strong>Monitoring Dashboard Config</strong> — Error tracking, uptime, usage metrics</li>
+<li><strong>Launch Checklist</strong> — DNS, SSL, analytics, error handling, backup verification</li>
+</ul>
+</div>
+
+<h3>Stage 7: Delivery → Operations & Growth</h3>
+<div class="card">
+<ul class="checklist">
+<li><strong>Client Handoff Package</strong> — Access credentials, runbooks, escalation procedures</li>
+<li><strong>Monthly Report Template</strong> — KPI dashboard, recommendations, cost analysis</li>
+<li><strong>Retention Playbook</strong> — NPS triggers, expansion opportunities, churn indicators</li>
+<li><strong>Skill Contribution Pipeline</strong> — Client skill → sanitize → vault ingest</li>
+<li><strong>Invoice & Billing Templates</strong> — Token usage reports, subscription tracking</li>
+</ul>
+</div>
+
+<!-- SECTION 4 -->
+<h2 id="s4">4. The Templated Asset Library (Business-in-a-Box)</h2>
+
+<p>This is the complete library of templated assets that any founder or business needs, organized by category. Each asset should be an agent-producible template stored as a skill.</p>
+
+<h3>4.1 — Legal & Governance</h3>
+<div class="grid">
+<div class="card">
+<h4>Documents</h4>
+<ul class="checklist">
+<li>NDA Template (Mutual & One-Way)</li>
+<li>SaaS Terms of Service Template</li>
+<li>Privacy Policy Generator (GDPR-compliant)</li>
+<li>Freelancer/Contractor Agreement</li>
+<li>Equity Vesting Agreement (4yr cliff)</li>
+<li>IP Assignment Agreement</li>
+<li>Data Processing Agreement (DPA)</li>
+<li>Cookie Policy Template</li>
+<li>Shareholder Agreement Template</li>
+<li>Operating Agreement (LLC)</li>
+</ul>
+</div>
+<div class="card">
+<h4>Skills to Build</h4>
+<ul class="checklist">
+<li><code>legal-doc-generator</code> — PRD input → legal doc output</li>
+<li><code>compliance-checker</code> — Scan codebase for compliance gaps</li>
+<li><code>gdpr-audit-agent</code> — Automated GDPR compliance scan</li>
+</ul>
+</div>
+</div>
+
+<h3>4.2 — Financial & Accounting</h3>
+<div class="grid">
+<div class="card">
+<h4>Templates</h4>
+<ul class="checklist">
+<li>Financial Model (3-Statement, 5-Year)</li>
+<li>Unit Economics Calculator</li>
+<li>Cap Table Manager</li>
+<li>Invoice Template (Branded)</li>
+<li>Expense Report Template</li>
+<li>Revenue Forecasting Model</li>
+<li>Burn Rate Dashboard</li>
+<li>Funding Round Comparison Sheet</li>
+<li>Token Economics Model (for AaaS pricing)</li>
+</ul>
+</div>
+<div class="card">
+<h4>Skills to Build</h4>
+<ul class="checklist">
+<li><code>financial-model-generator</code> — Input metrics → 3-statement model</li>
+<li><code>invoice-automation</code> — Time tracking → invoice → send</li>
+<li><code>token-cost-calculator</code> — Estimate AaaS token costs per workflow</li>
+</ul>
+</div>
+</div>
+
+<h3>4.3 — Brand & Design</h3>
+<div class="grid">
+<div class="card">
+<h4>Assets</h4>
+<ul class="checklist">
+<li>Brand Identity Kit (logo, colors, typography, voice)</li>
+<li>Brand Guidelines Document</li>
+<li>Business Card Templates</li>
+<li>Email Signature Generator</li>
+<li>Social Media Banner Pack (LinkedIn, X, YouTube)</li>
+<li>Presentation Master Template</li>
+<li>Letterhead & Stationery</li>
+<li>Favicon & App Icon Set</li>
+</ul>
+</div>
+<div class="card">
+<h4>Existing Skills</h4>
+<p>Already in vault: <code>brand-identity-pro</code>, <code>brand-qa</code>, and multiple design skills from the Jack extraction.</p>
+<span class="tag tag-go">Partially Built</span>
+</div>
+</div>
+
+<h3>4.4 — Sales & Marketing</h3>
+<div class="grid">
+<div class="card">
+<h4>Templates</h4>
+<ul class="checklist">
+<li>Pitch Deck Template (10-slide framework)</li>
+<li>One-Pager / Sell Sheet</li>
+<li>Case Study Template</li>
+<li>Proposal Template (from meeting notes)</li>
+<li>Cold Email Sequence Pack (5 variants)</li>
+<li>Sales Battlecard</li>
+<li>Pricing Page Copy Template</li>
+<li>LinkedIn Content Calendar</li>
+<li>Lead Magnet Template (PDF report)</li>
+<li>Webinar Script Template</li>
+</ul>
+</div>
+<div class="card">
+<h4>Existing Skills (Vault)</h4>
+<p>Heavy coverage already: <code>jack-sales-grand-slam-offer</code>, <code>jack-sales-whale-leadgen</code>, <code>jack-sales-proposal-generator</code>, <code>jack-email-personalized-outreach</code>, <code>jack-leadgen-lead-magnet-testing</code>, <code>jack-content-linkedin-master-agent</code>, and 40+ more.</p>
+<span class="tag tag-go">Well Covered</span>
+</div>
+</div>
+
+<h3>4.5 — Product & Engineering</h3>
+<div class="grid">
+<div class="card">
+<h4>Templates</h4>
+<ul class="checklist">
+<li>Website Template (Supra-Forge based)</li>
+<li>Dashboard UI Template (React/Tailwind)</li>
+<li>Landing Page Generator</li>
+<li>Admin Panel Template</li>
+<li>API Documentation Template</li>
+<li>README Template</li>
+<li>GitHub Repo Scaffold (CI/CD, tests, docs)</li>
+<li>Firebase Project Scaffold</li>
+<li>Cloudflare Workers Template</li>
+<li>WhatsApp Bot Scaffold (from GravityClaw)</li>
+</ul>
+</div>
+<div class="card">
+<h4>Existing Assets</h4>
+<p>Supra-Forge website template exists. GravityClaw has bot, dashboard, and worker scaffolds. Base provides the DOE project template.</p>
+<span class="tag tag-go">Strong Foundation</span>
+</div>
+</div>
+
+<h3>4.6 — Operations & HR</h3>
+<div class="grid">
+<div class="card">
+<h4>Templates</h4>
+<ul class="checklist">
+<li>Employee Onboarding Checklist</li>
+<li>Standard Operating Procedure (SOP) Template</li>
+<li>Meeting Notes / Action Items Template</li>
+<li>OKR Tracking Sheet</li>
+<li>Project Status Report</li>
+<li>Client Onboarding Workflow</li>
+<li>Knowledge Base Article Template</li>
+<li>Incident Response Playbook</li>
+</ul>
+</div>
+<div class="card">
+<h4>Existing Skills</h4>
+<p><code>jack-nocode-onboarding-system</code>, <code>jack-leadgen-client-onboarding-autopilot</code>, <code>jack-content-meeting-transcript-formatter</code>, <code>jack-rag-action-item-extraction-prompt</code></p>
+<span class="tag tag-go">Partial</span>
+</div>
+</div>
+
+<!-- SECTION 5 -->
+<h2 id="s5">5. Skill-to-Product Pipeline</h2>
+
+<p>The vault contains 260+ raw skills. Here's the pipeline to transform them into production-ready capabilities for the AaaS platform.</p>
+
+<div class="phase">
+<div class="phase-badge">Phase A — Audit & Categorize</div>
+<br>
+<p><strong>Action:</strong> Build a <code>vault-auditor</code> skill that crawls the vault, reads each SKILL.md, extracts metadata, and generates a categorized index.</p>
+<table>
+<tr><th>Category</th><th>Count (est.)</th><th>Priority</th></tr>
+<tr><td>Lead Generation & Sales</td><td>45+</td><td>P0 — Revenue-driving</td></tr>
+<tr><td>Content Creation & Marketing</td><td>60+</td><td>P0 — Viral loop fuel</td></tr>
+<tr><td>Research & Intelligence</td><td>25+</td><td>P1 — Value demonstrator</td></tr>
+<tr><td>Email Automation</td><td>35+</td><td>P0 — Core workflow</td></tr>
+<tr><td>No-Code / Integrations</td><td>40+</td><td>P1 — Platform capability</td></tr>
+<tr><td>Design & Video</td><td>20+</td><td>P2 — Differentiator</td></tr>
+<tr><td>RAG & Knowledge</td><td>25+</td><td>P1 — Intelligence layer</td></tr>
+<tr><td>Voice & Audio</td><td>10+</td><td>P2 — Premium feature</td></tr>
+</table>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase B — Standardize</div>
+<br>
+<p><strong>Action:</strong> Build a <code>skill-standardizer</code> agent that:</p>
+<ul class="checklist">
+<li>Ensures every skill has proper YAML frontmatter (name, description, version, dependencies, inputs, outputs)</li>
+<li>Adds <code>test.sh</code> health checks to any skill missing one</li>
+<li>Normalizes naming to gerund form</li>
+<li>Adds <code>.env.template</code> for any skill using API keys</li>
+<li>Generates a <code>README.md</code> with usage examples</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase C — Compose into Workflows</div>
+<br>
+<p><strong>Action:</strong> Chain individual skills into end-to-end workflows that map to the All-Protocol Call stages.</p>
+<p>Example workflow: <strong>"New Client Onboarding"</strong></p>
+<p><code>intake → lead-scoring → CRM-setup → context-pack-generator → base-fork → skill-discovery → sprint-board-generator → deploy</code></p>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase D — Expose via Platform</div>
+<br>
+<p><strong>Action:</strong> Build the AaaS platform UI that surfaces categorized skills as "agents you can hire" with one-click activation.</p>
+</div>
+
+<!-- SECTION 6 -->
+<h2 id="s6">6. The AaaS Platform Build</h2>
+
+<h3>Architecture</h3>
+<div class="diagram">
+┌─────────────────────────────────────────────────┐
+│              <span class="highlight">AaaS PLATFORM UI</span>                   │
+│         (Next.js + Tailwind + Firebase)          │
+│                                                  │
+│  ┌────────┐ ┌────────┐ ┌────────┐ ┌──────────┐ │
+│  │ Agent  │ │ Skill  │ │ Dash-  │ │ Settings │ │
+│  │ Market │ │ Builder│ │ board  │ │ & Billing│ │
+│  └───┬────┘ └───┬────┘ └───┬────┘ └────┬─────┘ │
+└──────┼──────────┼──────────┼───────────┼────────┘
+       │          │          │           │
+       └──────────┴────┬─────┴───────────┘
+                       │
+              ┌────────▼────────┐
+              │   <span class="highlight2">API GATEWAY</span>    │
+              │  (Firebase Fn)  │
+              └────────┬────────┘
+                       │
+       ┌───────────────┼───────────────┐
+       │               │               │
+┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
+│ <span class="highlight">GravityClaw</span> │ │  <span class="highlight">Firestore</span>  │ │<span class="highlight">Open Router</span> │
+│ (Workers)   │ │  (State)    │ │ (LLM API)   │
+└─────────────┘ └─────────────┘ └─────────────┘
+</div>
+
+<h3>Core Platform Modules</h3>
+<table>
+<tr><th>Module</th><th>Description</th><th>Status</th></tr>
+<tr><td>Agent Marketplace</td><td>Browse/search categorized skills, one-click activate</td><td>Design phase</td></tr>
+<tr><td>Workflow Builder</td><td>Visual chain of skills with drag-drop, triggers, conditions</td><td>Not started</td></tr>
+<tr><td>Dashboard</td><td>Active agents, token usage, logs, cost tracking</td><td>justus-platform-ui exists</td></tr>
+<tr><td>Context Engine</td><td>brand.md/goals.md input wizard → DOE context pack</td><td>Manual process today</td></tr>
+<tr><td>Project Forge</td><td>One-click new project from Base template with context injection</td><td><code>init_new_project.py</code> exists</td></tr>
+<tr><td>Skill Studio</td><td>Create/test/publish custom skills (meta-skill UI)</td><td>Creating-skills SKILL exists</td></tr>
+<tr><td>Billing & Tokens</td><td>Subscription management + token consumption tracking</td><td>Not started</td></tr>
+<tr><td>WhatsApp Interface</td><td>Chat-first UX for non-technical users via GravityClaw bot</td><td>Bot operational</td></tr>
+</table>
+
+<!-- SECTION 7 -->
+<h2 id="s7">7. The Marketing Engine (aaas.blog)</h2>
+
+<div class="card card-accent">
+<h3>Content Strategy</h3>
+<p>The blog is the SEO inbound engine. Every skill in the vault is also a potential blog post, lead magnet, or LinkedIn carousel. The content factory should operate on a 3-tier system:</p>
+</div>
+
+<table>
+<tr><th>Tier</th><th>Content Type</th><th>Source</th><th>Cadence</th></tr>
+<tr><td>T1 — SEO Pillar</td><td>Long-form guides (2000+ words)</td><td>Research skills + vault workflows</td><td>2/week</td></tr>
+<tr><td>T2 — Lead Magnet</td><td>Downloadable prompt packs, workflow templates</td><td>Vault skill extraction</td><td>1/week</td></tr>
+<tr><td>T3 — Social</td><td>LinkedIn posts, Twitter threads, carousels</td><td>Auto-generated from T1/T2</td><td>Daily</td></tr>
+</table>
+
+<h3>Existing Content Skills in Vault</h3>
+<p><code>jack-content-factory</code>, <code>jack-content-linkedin-master-agent</code>, <code>jack-content-linkedin-performance-agent</code>, <code>jack-content-linkedin-script-agent</code>, <code>jack-content-viral-hook-generator</code>, <code>jack-content-youtube-copilot-prompt</code>, <code>jack-content-content-repurposing-engine</code>, <code>jack-social-linkedin-content-generator</code>, <code>jack-social-post-creator</code></p>
+
+<h3>Blog-to-Lead Pipeline</h3>
+<div class="diagram">
+Blog Post → CTA ("Get the Agent Pack") → Email Capture → Drip Sequence → Trial → Conversion
+     ↓                                          ↓
+LinkedIn Carousel ←── Auto-Repurpose ──→ YouTube Script → Short Video
+</div>
+
+<!-- SECTION 8 -->
+<h2 id="s8">8. GravityClaw: The Intelligence Layer</h2>
+
+<p>GravityClaw is your operational backbone. Here's how its modules map to the AaaS vision:</p>
+
+<table>
+<tr><th>Module</th><th>Current Function</th><th>AaaS Role</th></tr>
+<tr><td><code>src/intake</code></td><td>Ingest requests</td><td>Client onboarding intake, WhatsApp-first UX</td></tr>
+<tr><td><code>src/intelligence</code></td><td>Analysis engine</td><td>Competitive intelligence, market scanning</td></tr>
+<tr><td><code>src/research</code></td><td>Research pipeline</td><td>Feed vault with new techniques, tools, trends</td></tr>
+<tr><td><code>src/forge</code></td><td>Asset generation</td><td>Templated asset factory (websites, decks, docs)</td></tr>
+<tr><td><code>src/digest</code></td><td>Content digest</td><td>Auto-generated client reports & blog content</td></tr>
+<tr><td><code>src/scheduler</code></td><td>Task scheduling</td><td>Recurring agent jobs (audits, reports, monitoring)</td></tr>
+<tr><td><code>src/publisher</code></td><td>Content publishing</td><td>Auto-publish to blog, LinkedIn, social</td></tr>
+<tr><td><code>src/a0-bridge</code></td><td>Agent Zero bridge</td><td>Route complex tasks to A0's Docker environment</td></tr>
+<tr><td><code>src/mcp</code></td><td>MCP server</td><td>Expose GravityClaw capabilities to any MCP client</td></tr>
+<tr><td><code>src/memory</code></td><td>Persistent memory</td><td>Long-term client context, preference learning</td></tr>
+<tr><td><code>src/school</code></td><td>Course downloader</td><td>Skill extraction from educational content</td></tr>
+</table>
+
+<!-- SECTION 9 -->
+<h2 id="s9">9. Enora.ai: The Lighthouse Proof-of-Concept</h2>
+
+<div class="card card-accent">
+<p>Enora demonstrates the full AaaS thesis: if agents can handle ISO 26262 automotive compliance audits — arguably one of the most complex, high-stakes domains — they can handle anything. Enora is the ultimate credibility engine for investor conversations.</p>
+</div>
+
+<h3>Enora Asset Checklist</h3>
+<ul class="checklist">
+<li>Website (supra-forge.com based template) — <strong>In progress</strong></li>
+<li>90-Minute Audit Risk Baseline Agent</li>
+<li>ASPICE Process Assessment Workflow</li>
+<li>Jira/Polarion/DOORS Integration Connectors</li>
+<li>Investor Pitch Deck (leveraging jack-sales-proposal-generator)</li>
+<li>Digital Gateway One-Pager (20% equity model)</li>
+<li>Compliance Dashboard UI</li>
+<li>Concept Visualizations (7 already created: sentinel eye, neural quality layer, risk radar, etc.)</li>
+</ul>
+
+<!-- SECTION 10 -->
+<h2 id="s10">10. Phased Execution Roadmap</h2>
+
+<div class="phase">
+<div class="phase-badge">Phase 1 — Foundation (Weeks 1-3)</div>
+<br>
+<h4>Objective: Wire the stack together and standardize the vault</h4>
+<ul class="checklist">
+<li><strong>Vault Audit:</strong> Build <code>vault-auditor</code> skill. Crawl 260+ skills, generate categorized index with metadata quality scores.</li>
+<li><strong>Skill Standardizer:</strong> Build <code>skill-standardizer</code> agent. Fix frontmatter, add tests, normalize naming across all vault skills.</li>
+<li><strong>Context Bus:</strong> Implement shared Firestore context store accessible from GravityClaw, Claude Code (via MCP), and Antigravity.</li>
+<li><strong>A0 Bridge Hardening:</strong> Ensure GravityClaw's <code>a0-bridge</code> reliably routes complex tasks to Agent Zero's Docker VM.</li>
+<li><strong>MCP Unification:</strong> Publish GravityClaw as an MCP server consumable by both Antigravity and Claude Code.</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase 2 — Assets Factory (Weeks 3-6)</div>
+<br>
+<h4>Objective: Build the templated asset library</h4>
+<ul class="checklist">
+<li><strong>Legal Pack:</strong> 10 legal document templates as generative skills (NDA, ToS, Privacy, etc.)</li>
+<li><strong>Financial Pack:</strong> Financial model generator, invoice automation, burn rate dashboard.</li>
+<li><strong>Brand Pack:</strong> Extend existing <code>brand-identity-pro</code>. Add business card, email sig, social banner generators.</li>
+<li><strong>Sales Pack:</strong> Pitch deck generator, proposal from meeting notes, battlecard creator.</li>
+<li><strong>Engineering Pack:</strong> Website scaffold (from Supra-Forge), dashboard template, API doc generator.</li>
+<li><strong>Operations Pack:</strong> SOP template, onboarding workflow, meeting notes agent, OKR tracker.</li>
+<li><strong>All-Protocol Call Templates:</strong> One template per stage (7 total), auto-populated from intake.</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase 3 — Platform MVP (Weeks 6-10)</div>
+<br>
+<h4>Objective: Ship the AaaS platform with core modules</h4>
+<ul class="checklist">
+<li><strong>Pick a design:</strong> Select from the 15+ HTML prototypes in AaaS/design/ and build the production frontend.</li>
+<li><strong>Agent Marketplace:</strong> Categorized skill browser with search, filtering, one-click activation.</li>
+<li><strong>Context Wizard:</strong> Onboarding flow that generates brand.md + goals.md from a questionnaire.</li>
+<li><strong>Project Forge:</strong> UI wrapper around <code>init_new_project.py</code> — clone Base, inject context, deploy.</li>
+<li><strong>Dashboard:</strong> Adapt justus-platform-ui for agent monitoring, token usage, logs.</li>
+<li><strong>Auth & Billing:</strong> Firebase Auth + Stripe integration for tiered subscriptions + token metering.</li>
+<li><strong>WhatsApp Entry Point:</strong> GravityClaw bot as the "chat-first" interface for the platform.</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase 4 — Content & Growth (Weeks 8-12)</div>
+<br>
+<h4>Objective: Launch the marketing engine</h4>
+<ul class="checklist">
+<li><strong>Blog Launch:</strong> Deploy aaas.blog with initial 10 pillar posts generated from vault skills.</li>
+<li><strong>Lead Magnet Factory:</strong> Extract top 5 vault workflows as downloadable prompt packs.</li>
+<li><strong>Social Automation:</strong> Wire content-repurposing-engine to auto-post LinkedIn + X daily.</li>
+<li><strong>Ambassador Framework:</strong> Create co-branded instance template for influencer partnerships.</li>
+<li><strong>SEO Pipeline:</strong> keyword research → content brief → draft → review → publish → repurpose.</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase 5 — Enora & Investor (Weeks 10-14)</div>
+<br>
+<h4>Objective: Package Enora for Digital Gateway pitch</h4>
+<ul class="checklist">
+<li><strong>Enora Website:</strong> Polish and deploy on supra-forge.com template.</li>
+<li><strong>90-Min Audit Agent:</strong> Build the signature product — automated ASPICE risk baseline.</li>
+<li><strong>Investor Deck:</strong> Generate from existing context using pitch deck skill.</li>
+<li><strong>Demo Environment:</strong> Sandboxed demo with sample audit data for investor walkthrough.</li>
+<li><strong>Financial Model:</strong> Enora-specific 5-year projection with AaaS infrastructure costs.</li>
+</ul>
+</div>
+
+<div class="phase">
+<div class="phase-badge">Phase 6 — Scale & Self-Optimize (Ongoing)</div>
+<br>
+<h4>Objective: Activate the collective intelligence flywheel</h4>
+<ul class="checklist">
+<li><strong>Skill Ingestion Pipeline:</strong> Automated client skill → sanitize → vault push.</li>
+<li><strong>Equity-for-Service Playbook:</strong> Standardized term sheet + onboarding for startup partners.</li>
+<li><strong>Market Scanner:</strong> Continuous SaaS market scanning for emerging tools to reverse-engineer as skills.</li>
+<li><strong>Agent Performance Analytics:</strong> Track skill success rates, optimize prompts, A/B test workflows.</li>
+<li><strong>Multi-Tenant Architecture:</strong> Isolate client workspaces while sharing the Global Skill Repository.</li>
+</ul>
+</div>
+
+<!-- SECTION 11 -->
+<h2 id="s11">11. The Asset Manifest (Master Checklist)</h2>
+
+<p>Every deliverable that needs to exist for the complete AaaS ecosystem:</p>
+
+<h3>Templates (To Build)</h3>
+<table>
+<tr><th>#</th><th>Asset</th><th>Format</th><th>Priority</th><th>Skill Dependency</th></tr>
+<tr><td>1</td><td>Vision Canvas</td><td>DOCX/PDF</td><td>P0</td><td>New skill needed</td></tr>
+<tr><td>2</td><td>Business Model Canvas</td><td>XLSX</td><td>P0</td><td>New skill needed</td></tr>
+<tr><td>3</td><td>Pitch Deck (10 slides)</td><td>PPTX</td><td>P0</td><td>jack-sales-proposal-generator</td></tr>
+<tr><td>4</td><td>Financial Model (3-stmt)</td><td>XLSX</td><td>P0</td><td>New skill needed</td></tr>
+<tr><td>5</td><td>NDA Template</td><td>DOCX</td><td>P1</td><td>legal-doc-generator (new)</td></tr>
+<tr><td>6</td><td>SaaS Terms of Service</td><td>DOCX</td><td>P1</td><td>legal-doc-generator (new)</td></tr>
+<tr><td>7</td><td>Privacy Policy</td><td>DOCX</td><td>P1</td><td>legal-doc-generator (new)</td></tr>
+<tr><td>8</td><td>PRD Template</td><td>DOCX</td><td>P0</td><td>New skill needed</td></tr>
+<tr><td>9</td><td>API Specification</td><td>YAML/JSON</td><td>P1</td><td>New skill needed</td></tr>
+<tr><td>10</td><td>Brand Identity Kit</td><td>Multi-format</td><td>P0</td><td>brand-identity-pro (exists)</td></tr>
+<tr><td>11</td><td>Cold Email Sequence Pack</td><td>JSON/TXT</td><td>P0</td><td>Multiple exist</td></tr>
+<tr><td>12</td><td>Website Template</td><td>Next.js</td><td>P0</td><td>Supra-Forge (exists)</td></tr>
+<tr><td>13</td><td>Dashboard Template</td><td>React</td><td>P1</td><td>justus-platform-ui (exists)</td></tr>
+<tr><td>14</td><td>Client Onboarding Workflow</td><td>Workflow</td><td>P0</td><td>onboarding skills (exist)</td></tr>
+<tr><td>15</td><td>SOP Template</td><td>DOCX</td><td>P1</td><td>DOE pattern (exists)</td></tr>
+<tr><td>16</td><td>Invoice Template</td><td>DOCX/PDF</td><td>P1</td><td>New skill needed</td></tr>
+<tr><td>17</td><td>One-Pager / Sell Sheet</td><td>PDF</td><td>P0</td><td>New skill needed</td></tr>
+<tr><td>18</td><td>Case Study Template</td><td>DOCX</td><td>P1</td><td>New skill needed</td></tr>
+<tr><td>19</td><td>Meeting Notes Agent</td><td>Workflow</td><td>P1</td><td>action-item-extraction (exists)</td></tr>
+<tr><td>20</td><td>OKR Tracking Sheet</td><td>XLSX</td><td>P2</td><td>New skill needed</td></tr>
+</table>
+
+<h3>Skills (To Build or Upgrade)</h3>
+<table>
+<tr><th>#</th><th>Skill Name</th><th>Category</th><th>Priority</th><th>Dependencies</th></tr>
+<tr><td>1</td><td>vault-auditor</td><td>Meta</td><td>P0</td><td>bash, jq</td></tr>
+<tr><td>2</td><td>skill-standardizer</td><td>Meta</td><td>P0</td><td>python3</td></tr>
+<tr><td>3</td><td>all-protocol-call-runner</td><td>Workflow</td><td>P0</td><td>All stage skills</td></tr>
+<tr><td>4</td><td>context-pack-generator</td><td>Setup</td><td>P0</td><td>bash</td></tr>
+<tr><td>5</td><td>legal-doc-generator</td><td>Legal</td><td>P1</td><td>docx-js, python3</td></tr>
+<tr><td>6</td><td>financial-model-generator</td><td>Finance</td><td>P1</td><td>python3, openpyxl</td></tr>
+<tr><td>7</td><td>pitch-deck-builder</td><td>Sales</td><td>P0</td><td>python-pptx</td></tr>
+<tr><td>8</td><td>website-scaffold</td><td>Engineering</td><td>P0</td><td>node, next.js</td></tr>
+<tr><td>9</td><td>blog-post-factory</td><td>Marketing</td><td>P0</td><td>content skills</td></tr>
+<tr><td>10</td><td>lead-magnet-extractor</td><td>Marketing</td><td>P0</td><td>vault access</td></tr>
+<tr><td>11</td><td>token-cost-calculator</td><td>Platform</td><td>P1</td><td>Open Router API</td></tr>
+<tr><td>12</td><td>client-skill-sanitizer</td><td>Platform</td><td>P1</td><td>python3</td></tr>
+<tr><td>13</td><td>market-scanner</td><td>Intelligence</td><td>P2</td><td>SearXNG, Firecrawl</td></tr>
+<tr><td>14</td><td>ambassador-instance-creator</td><td>Growth</td><td>P2</td><td>Base template</td></tr>
+</table>
+
+<!-- SECTION 12 -->
+<h2 id="s12">12. Risk Matrix & Mitigations</h2>
+
+<table>
+<tr><th>Risk</th><th>Impact</th><th>Likelihood</th><th>Mitigation</th></tr>
+<tr><td>Token cost overruns</td><td>High</td><td>Medium</td><td>Open Router arbitrage, daily burn limits, model fallback chains (Opus → Sonnet → Haiku)</td></tr>
+<tr><td>Skill quality variance</td><td>Medium</td><td>High</td><td>Mandatory test.sh, automated QA via skill-standardizer, human review for P0 skills</td></tr>
+<tr><td>Context window limits</td><td>Medium</td><td>Medium</td><td>Agent Zero's hybrid memory, Pinecone for long-term, session scoping in Claude Code</td></tr>
+<tr><td>Multi-runtime drift</td><td>High</td><td>Medium</td><td>SKILL.md as single contract, shared Firestore state, MCP as communication protocol</td></tr>
+<tr><td>Security exposure</td><td>Critical</td><td>Low</td><td>DOE Layer 4 enforcement, Docker isolation in A0, Cloudflare Workers sandboxing</td></tr>
+<tr><td>Enora investor timeline</td><td>High</td><td>Medium</td><td>Parallel track with dedicated sprint, demo environment using synthetic data</td></tr>
+<tr><td>Platform UI delay</td><td>Medium</td><td>Medium</td><td>WhatsApp-first UX as fallback, justus-platform-ui as accelerator</td></tr>
+</table>
+
+<hr>
+
+<div class="card card-success">
+<h3>Summary: The Vision Realized</h3>
+<p>When fully built, this system represents the most autonomous business-building machine possible today. A founder walks in with a goal. The all-protocol call pipeline produces every asset they need — from legal documents to a deployed website to a running CRM with automated outreach. The agent team (Architect on Opus, Engineers on Sonnet, Agent Zero for complex tool creation, GravityClaw for persistent operations) works across Antigravity's multi-agent Manager View, Claude Code's terminal, and the WhatsApp bot interface simultaneously.</p>
+<p>Every successful workflow gets sanitized and pushed to the Global Skill Repository, making the next founder's experience faster. The platform's collective intelligence compounds. The lock-on deepens. The venture portfolio grows.</p>
+<p><strong>This is not an IDE. This is a company factory.</strong></p>
+</div>
+
+<hr>
+<p class="meta">
+Sources consulted: Agent Zero (agent-zero.ai), Google Antigravity IDE (developers.googleblog.com), Anthropic Claude Code documentation,
+AaaS workspace analysis (local files), Antigravity Vault (260+ skills), GravityClaw source code, Enora.ai context,
+Agentic Trust Framework (CSA), IBM Agent Protocols, W3C Agent Protocol Community Group,
+CIO agents-as-a-service industry analysis, Omnichat AaaS business model,
+PromptEngineering.org 2026 Playbook, StackAI Agentic Workflow Guide.
+</p>
+
+</body>
+</html>

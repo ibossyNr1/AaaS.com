@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoresearch Integration — Self-Optimizing AaaS Protocol</title>
+<style>
+  :root {
+    --bg:#08080d; --surface:#10101a; --surface2:#18182a; --surface3:#20203a;
+    --border:#2a2a44; --accent:#7c5cfc; --accent2:#5c9cfc; --accent3:#fc5c7c;
+    --green:#4caf50; --amber:#ff9800; --text:#e0e0ea; --muted:#7878a0; --cyan:#5cf0e0;
+    --lime:#a0fc5c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.72;padding:2.5rem;max-width:1280px;margin:0 auto;}
+  h1{font-size:2.4rem;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--accent3),var(--amber),var(--lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.4rem;}
+  h2{font-size:1.6rem;color:var(--accent2);margin:2.8rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);font-weight:700;}
+  h3{font-size:1.15rem;color:var(--accent);margin:1.6rem 0 0.7rem;font-weight:700;}
+  h4{font-size:1rem;color:var(--text);margin:1rem 0 0.5rem;font-weight:600;}
+  p{margin-bottom:1rem;}
+  .sub{color:var(--muted);font-size:1.05rem;margin-bottom:2rem;}
+  .meta{color:var(--muted);font-size:0.85rem;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0;}
+  .card-a{border-left:4px solid var(--accent);}
+  .card-g{border-left:4px solid var(--green);}
+  .card-w{border-left:4px solid var(--amber);}
+  .card-r{border-left:4px solid var(--accent3);}
+  .card-l{border-left:4px solid var(--lime);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1rem;margin:1rem 0;}
+  .tag{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 10px;font-size:0.78rem;color:var(--accent2);margin:2px;}
+  .tag-hot{background:rgba(252,92,124,0.12);border-color:var(--accent3);color:var(--accent3);}
+  .tag-go{background:rgba(76,175,80,0.12);border-color:var(--green);color:var(--green);}
+  .tag-lime{background:rgba(160,252,92,0.12);border-color:var(--lime);color:var(--lime);}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem;}
+  th,td{text-align:left;padding:10px 14px;border:1px solid var(--border);}
+  th{background:var(--surface2);color:var(--accent2);font-weight:600;}
+  td{background:var(--surface);}
+  .flow{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:1.5rem 0;font-family:monospace;font-size:0.82rem;line-height:1.5;white-space:pre;overflow-x:auto;color:var(--muted);}
+  .hi{color:var(--accent);font-weight:600;} .h2{color:var(--accent2);font-weight:600;} .h3{color:var(--accent3);font-weight:600;} .hc{color:var(--cyan);font-weight:600;} .hg{color:var(--green);font-weight:600;} .hl{color:var(--lime);font-weight:600;}
+  hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+  .checklist{list-style:none;padding:0;}
+  .checklist li{padding:8px 0 8px 28px;position:relative;border-bottom:1px solid rgba(42,42,68,0.5);font-size:0.92rem;}
+  .checklist li::before{content:'□';position:absolute;left:4px;top:8px;color:var(--accent);}
+  .loop-block{background:var(--surface);border:2px solid var(--lime);border-radius:14px;padding:0;margin:1.5rem 0;overflow:hidden;}
+  .loop-header{background:rgba(160,252,92,0.08);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:2px solid rgba(160,252,92,0.2);}
+  .loop-icon{font-size:1.5rem;}
+  .loop-title{font-size:1.1rem;font-weight:700;color:var(--lime);}
+  .loop-body{padding:1.5rem;}
+</style>
+</head>
+<body>
+
+<h1>Autoresearch Integration Plan</h1>
+<p class="sub">Making the AaaS Protocol Self-Optimizing — Every Asset Defines Its KPIs, Every Workflow Runs Autonomous Experiments</p>
+<p class="meta">Integrating Karpathy's autoresearch pattern into the 11-Step Universal Protocol &bull; March 12, 2026</p>
+
+<hr>
+
+<h2>1. The Autoresearch Pattern — Distilled</h2>
+
+<div class="card card-a">
+<h3>Karpathy's Core Insight</h3>
+<p>Autoresearch gives an AI agent a real system, lets it modify one file, runs for a fixed time budget, measures one metric (val_bpb), and applies a binary decision: <strong>if improved → keep (git commit), if equal or worse → discard (git reset)</strong>. Repeat indefinitely. The human sleeps while the agent runs ~100 experiments overnight.</p>
+</div>
+
+<h3>The Three-File Architecture</h3>
+<div class="grid">
+<div class="card">
+<h4>prepare.py <span class="tag">Human-controlled</span></h4>
+<p>Constants, data preparation, runtime utilities. The <strong>fixed environment</strong>. The agent cannot touch this.</p>
+</div>
+<div class="card">
+<h4>train.py <span class="tag tag-lime">Agent-modified</span></h4>
+<p>The model, optimizer, training loop. The <strong>single file the agent mutates</strong>. All experiments are diffs to this file.</p>
+</div>
+<div class="card">
+<h4>program.md <span class="tag">Human-controlled</span></h4>
+<p>Agent instructions and research directives. The <strong>"research org code"</strong> — tells the agent what to explore, what constraints to respect, and how to evaluate.</p>
+</div>
+</div>
+
+<h3>The Autonomous Loop</h3>
+<div class="flow">
+  ┌──────────────────────────────────────────────────────────────┐
+  │                   <span class="hl">THE AUTORESEARCH LOOP</span>                      │
+  │                                                              │
+  │   <span class="hi">① HYPOTHESIZE</span>  →  <span class="hi">② MUTATE</span>  →  <span class="hi">③ RUN</span>  →  <span class="hi">④ MEASURE</span>  →  <span class="hi">⑤ DECIDE</span>  │
+  │   "What if I      Edit the     Execute      Read the     improved?     │
+  │    try X?"        target file  (5-min        metric       │  │         │
+  │                                 budget)      (val_bpb)    ▼  ▼         │
+  │                                                        <span class="hg">KEEP</span>  <span class="h3">DISCARD</span>   │
+  │                                                     git commit  git reset │
+  │                                                        │                 │
+  │                                                        └────────►┐       │
+  │                                                                  │       │
+  │   ◄──────────────────────────────────────────────────────────────┘       │
+  │                          REPEAT INDEFINITELY                             │
+  └──────────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h3>The Generalization (AutoExp)</h3>
+<p>The community has already generalized this into <strong>AutoExp</strong> — autonomous experimentation for any quantifiable metric. The pattern works whenever three conditions hold:</p>
+<div class="grid">
+<div class="card card-l">
+<h4>1. Measurable Fitness Signal</h4>
+<p>You can define a quantitative metric: conversion rate, latency, defect rate, revenue lift, content engagement, framework alignment score, etc.</p>
+</div>
+<div class="card card-l">
+<h4>2. Repeatable Experiment</h4>
+<p>You can run a controlled experiment with a fixed time/resource budget, producing comparable results each time.</p>
+</div>
+<div class="card card-l">
+<h4>3. Automatic Survival Decision</h4>
+<p>The system can decide what survives (improved) and what gets reverted (equal or worse) — without human intervention.</p>
+</div>
+</div>
+
+<hr>
+
+<h2>2. The Integration: Autoresearch × The 11-Step Protocol</h2>
+
+<p>The key insight is this: <strong>every step in your 11-step protocol already produces measurable artifacts</strong>. The autoresearch pattern can be layered on top so that each step doesn't just produce output — it produces output, measures it, and iteratively improves it before advancing to the next step.</p>
+
+<h3>Two Levels of Integration</h3>
+
+<div class="grid">
+<div class="card card-w">
+<h4>Level 1: Intra-Step Optimization</h4>
+<p>Within each step, the agent runs an autoresearch loop on its own output. For example, Step 9 (Context Synthesis) doesn't just produce the CLIENT_CONTEXT_FRAMEWORK.md once — it produces it, measures the completeness scores, mutates its synthesis approach, re-runs, and keeps the version with the highest scores. Each step becomes self-optimizing.</p>
+<span class="tag tag-lime">Per-step loops</span>
+</div>
+<div class="card card-r">
+<h4>Level 2: Cross-Step Optimization</h4>
+<p>Across the entire pipeline, the system tracks which experiment variants at each step produced the best downstream results. Over multiple project runs, the pipeline learns which prompt templates, skill chains, and research configurations yield the highest-quality final deliverables. The <strong>program.md for the entire protocol</strong> evolves.</p>
+<span class="tag tag-hot">Pipeline-level learning</span>
+</div>
+</div>
+
+<hr>
+
+<h2>3. The KPI Auto-Definition Layer</h2>
+
+<p>This is the critical new architecture component. Every artifact produced by every step must auto-define its own KPIs — the measurable fitness signals that the autoresearch loop will optimize against.</p>
+
+<h3>The ARTIFACT_KPI Schema</h3>
+
+<p>Every output document gets a KPI block appended (or tracked in a parallel <code>_kpi_state.json</code>):</p>
+
+<div class="flow">
+<span class="hl">ARTIFACT_KPI</span>: {
+  "artifact": "CLIENT_CONTEXT_FRAMEWORK.md",
+  "step": 9,
+  "version": 3,                          <span class="hg">← autoresearch iteration count</span>
+  "timestamp": "2026-03-12T14:30:00Z",
+
+  <span class="hi">"primary_kpi"</span>: {
+    "name": "avg_section_completeness",
+    "value": 0.82,
+    "target": 0.85,
+    "direction": "higher_is_better"       <span class="hg">← equivalent to "lower is better" for val_bpb</span>
+  },
+
+  <span class="h2">"secondary_kpis"</span>: [
+    { "name": "section_1_depth", "value": 0.9, "target": 0.8 },
+    { "name": "section_2_depth", "value": 0.7, "target": 0.7 },
+    { "name": "section_3_depth", "value": 0.85, "target": 0.8 },
+    { "name": "section_5_depth", "value": 0.75, "target": 0.8 },
+    { "name": "source_citation_count", "value": 12, "target": 10 },
+    { "name": "placeholder_count", "value": 0, "target": 0, "direction": "lower_is_better" }
+  ],
+
+  <span class="h3">"experiment_log"</span>: [
+    { "version": 1, "primary": 0.68, "action": "keep", "hypothesis": "baseline synthesis" },
+    { "version": 2, "primary": 0.65, "action": <span class="h3">"discard"</span>, "hypothesis": "tried aggressive summarization" },
+    { "version": 3, "primary": 0.82, "action": <span class="hg">"keep"</span>, "hypothesis": "added industry cross-references to section 3" }
+  ]
+}
+</div>
+
+<h3>Auto-Defined KPIs Per Step</h3>
+
+<table>
+<tr><th>Step</th><th>Artifact</th><th>Primary KPI</th><th>Secondary KPIs</th><th>Autoresearch Budget</th></tr>
+<tr>
+<td>1. Goal Definition</td>
+<td>GOAL_BRIEF.md</td>
+<td><strong>field_completeness</strong> — % of 5 fields populated with substantive content (not [TBD])</td>
+<td>word_count, specificity_score (ratio of concrete metrics to vague statements), constraint_count</td>
+<td>3 iterations (fast — intake is human-driven)</td>
+</tr>
+<tr>
+<td>2. Proposal Research</td>
+<td>PROPOSAL_RESEARCH_BRIEF.md</td>
+<td><strong>coverage_score</strong> — % of required sections (company, competitors, market, precedents) with substantive content</td>
+<td>competitor_count, source_count, word_count_per_section, freshness (days since source publication)</td>
+<td>5 iterations (agent can try different search strategies)</td>
+</tr>
+<tr>
+<td>3. Strategy Routes</td>
+<td>STRATEGY_ROUTES.md</td>
+<td><strong>route_differentiation</strong> — semantic distance between routes (higher = more distinct options)</td>
+<td>route_count (must be 2–3), tradeoff_clarity (are pros/cons explicit), effort_estimate_precision</td>
+<td>3 iterations</td>
+</tr>
+<tr>
+<td>4. Requirements</td>
+<td>PROJECT_REQUIREMENTS.md</td>
+<td><strong>traceability_score</strong> — % of deliverables that trace back to goal + strategy</td>
+<td>skill_coverage (% deliverables with matching DOE skill), priority_score_variance, risk_count</td>
+<td>5 iterations (most structurally complex)</td>
+</tr>
+<tr>
+<td>5. Proposal</td>
+<td>CLIENT_PROPOSAL.md</td>
+<td><strong>requirements_coverage</strong> — % of Part B deliverables represented in proposal scope</td>
+<td>section_completeness, word_count, pricing_coherence, timeline_feasibility</td>
+<td>3 iterations</td>
+</tr>
+<tr>
+<td>6. Activation</td>
+<td>ACTIVATION_RECORD.md</td>
+<td colspan="3"><em>Human gate — no autoresearch loop. Binary: approved or not.</em></td>
+</tr>
+<tr>
+<td>7. Competitive Research</td>
+<td>COMPETITIVE_ANALYSIS.md</td>
+<td><strong>competitor_depth</strong> — avg words per competitor analysis</td>
+<td>competitor_count, feature_comparison_completeness, gap_identification_count, source_diversity</td>
+<td>8 iterations (deep research allows many approaches)</td>
+</tr>
+<tr>
+<td>8. Industry Knowledge</td>
+<td>INDUSTRY_KNOWLEDGE_BASE.md</td>
+<td><strong>topic_coverage</strong> — % of industry sub-topics covered (trends, regs, tech, players)</td>
+<td>source_count, recency_score, regulation_coverage, technology_landscape_depth</td>
+<td>8 iterations</td>
+</tr>
+<tr>
+<td>9. Context Synthesis</td>
+<td>CLIENT_CONTEXT_FRAMEWORK.md</td>
+<td><strong>avg_section_completeness</strong> — mean completeness across sections 1.0–5.0</td>
+<td>per_section_depth (6 values), placeholder_count (target: 0), cross_reference_density</td>
+<td>10 iterations (this is THE critical artifact)</td>
+</tr>
+<tr>
+<td>10. Sub-Project Goals</td>
+<td>PROMPT_EXECUTION_PLAN.md</td>
+<td><strong>requirement_coverage</strong> — % of requirements addressed by at least one sub-goal</td>
+<td>step_count, dependency_chain_depth, framework_alignment_avg, circular_dependency_count (target: 0)</td>
+<td>5 iterations</td>
+</tr>
+<tr>
+<td>11. Tool Selection</td>
+<td>EXECUTION_MANIFEST.md</td>
+<td><strong>skill_match_score</strong> — avg relevance score of selected skill per sub-goal</td>
+<td>gap_count (sub-goals needing new skills), model_cost_estimate, estimated_execution_time</td>
+<td>5 iterations</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>4. The Three-File Pattern Applied to Each Step</h2>
+
+<p>Karpathy's genius is in the constraint: <strong>three files, one mutable</strong>. We apply this same pattern to every step in the protocol.</p>
+
+<table>
+<tr><th>Autoresearch Role</th><th>Original (ML)</th><th>AaaS Protocol Equivalent</th><th>What It Does</th></tr>
+<tr>
+<td><strong>prepare.py</strong><br>(fixed environment)</td>
+<td>Data prep, constants</td>
+<td><strong>All upstream artifacts</strong><br>(GOAL_BRIEF.md, RESEARCH_BRIEF.md, etc.)</td>
+<td>The immutable inputs. The agent reads these but cannot modify them. They are the "dataset."</td>
+</tr>
+<tr>
+<td><strong>train.py</strong><br>(agent-mutated)</td>
+<td>Model + training loop</td>
+<td><strong>The step's execution script / prompt template</strong><br>(e.g., context_intelligence_engine's synthesis prompt)</td>
+<td>The single file the agent experiments on. It modifies the approach, reruns, measures, keeps or discards.</td>
+</tr>
+<tr>
+<td><strong>program.md</strong><br>(human-directed)</td>
+<td>Research instructions</td>
+<td><strong>The step's SKILL.md / project.json instructions</strong><br>(e.g., active_reasoning's 4-phase spec)</td>
+<td>The human-authored instructions that tell the agent what to explore and what constraints to respect.</td>
+</tr>
+</table>
+
+<div class="card card-l">
+<h3>Example: Step 9 (Context Synthesis) as an Autoresearch Loop</h3>
+<p><strong>prepare.py equivalent:</strong> The 6 upstream documents (GOAL_BRIEF.md through INDUSTRY_KNOWLEDGE_BASE.md) — read-only inputs.</p>
+<p><strong>train.py equivalent:</strong> The synthesis prompt template + the RAG query strategy in <code>context_intelligence_engine</code>. The agent mutates: chunk size, embedding strategy, section-merging logic, cross-reference density, summarization vs. extraction balance.</p>
+<p><strong>program.md equivalent:</strong> The project.json instructions for context_intelligence_engine — the human-authored directives.</p>
+<p><strong>Metric (val_bpb equivalent):</strong> <code>avg_section_completeness</code> — the mean of completeness scores across sections 1.0–5.0.</p>
+<p><strong>Budget:</strong> 10 iterations. Each iteration runs the full synthesis, scores the output, and keeps or discards.</p>
+<p><strong>Result:</strong> Instead of one synthesis pass, the agent autonomously tries 10 different approaches and keeps the best one. The human wakes up to a framework document that's been self-optimized.</p>
+</div>
+
+<hr>
+
+<h2>5. Pipeline-Level Learning (Cross-Project Memory)</h2>
+
+<p>This is where it gets powerful. The autoresearch loop doesn't just optimize within one project — it learns across ALL projects.</p>
+
+<div class="loop-block">
+<div class="loop-header">
+<div class="loop-icon">🔄</div>
+<div class="loop-title">The Pipeline Evolution Loop</div>
+</div>
+<div class="loop-body">
+<p>After every completed project, the system records the final KPI scores for all 11 steps plus the client satisfaction score (the ultimate downstream metric). Over time, it builds a dataset:</p>
+
+<div class="flow">
+<span class="hl">PIPELINE_EXPERIMENT_LOG</span>: [
+  {
+    "project": "client_alpha",
+    "date": "2026-02-15",
+    "step_9_synthesis_variant": "v3_cross_reference_heavy",
+    "step_9_completeness": 0.82,
+    "step_10_coverage": 0.91,
+    "final_client_satisfaction": 4.5,        <span class="hg">← the ultimate metric</span>
+    "total_revisions_requested": 1
+  },
+  {
+    "project": "client_beta",
+    "date": "2026-03-01",
+    "step_9_synthesis_variant": "v7_industry_first",
+    "step_9_completeness": 0.88,
+    "step_10_coverage": 0.95,
+    "final_client_satisfaction": 4.8,
+    "total_revisions_requested": 0
+  },
+  ...
+]
+</div>
+
+<p>The system can now answer: "Which synthesis approach at Step 9 correlates with the highest client satisfaction?" and auto-promote the winning variant to the default.</p>
+</div>
+</div>
+
+<h3>What Gets Tracked Across Projects</h3>
+<table>
+<tr><th>Dimension</th><th>Tracked How</th><th>Optimized For</th></tr>
+<tr><td>Prompt template variants</td><td>Git-versioned per step, tagged with KPI scores</td><td>Highest primary KPI</td></tr>
+<tr><td>Skill chain compositions</td><td>EXECUTION_MANIFEST.md versions correlated with delivery quality</td><td>Fewest revision rounds</td></tr>
+<tr><td>Research depth configurations</td><td>Step 2 (fast) vs Steps 7–8 (deep) — time invested vs. quality gained</td><td>Optimal depth-to-quality ratio</td></tr>
+<tr><td>Context framework section weights</td><td>Which sections most predict downstream quality</td><td>Focus research on high-impact sections</td></tr>
+<tr><td>Template effectiveness</td><td>Which drive_structure_builder templates get client approval fastest</td><td>Template selection optimization</td></tr>
+<tr><td>Model routing decisions</td><td>Which model (Opus/Sonnet/Haiku) produced best results per step</td><td>Cost-to-quality optimization</td></tr>
+</table>
+
+<hr>
+
+<h2>6. Implementation Architecture</h2>
+
+<h3>New Components to Build</h3>
+
+<div class="grid">
+<div class="card card-l">
+<h4>1. KPI Extractor Agent</h4>
+<p>A new skill that runs after every step's output and automatically computes the KPI scores from the artifact content. Uses the scoring rubrics defined in the KPI schema.</p>
+<p><strong>Input:</strong> Any artifact .md file + the step's KPI definition</p>
+<p><strong>Output:</strong> ARTIFACT_KPI JSON block</p>
+<span class="tag tag-lime">New skill needed</span>
+</div>
+
+<div class="card card-l">
+<h4>2. Experiment Runner</h4>
+<p>A wrapper around each step that implements the autoresearch loop: run step → extract KPIs → compare to best → keep or discard → repeat N times.</p>
+<p><strong>Input:</strong> Step config + iteration budget + upstream artifacts</p>
+<p><strong>Output:</strong> Best-scoring artifact + experiment log</p>
+<span class="tag tag-lime">New skill needed</span>
+</div>
+
+<div class="card card-l">
+<h4>3. Pipeline Memory Store</h4>
+<p>A Firestore collection (or SQLite in GravityClaw) that persists experiment logs across all projects. Enables cross-project learning.</p>
+<p><strong>Schema:</strong> project_id, step, variant_hash, kpi_scores, downstream_outcomes</p>
+<span class="tag">Firestore / SQLite</span>
+</div>
+
+<div class="card card-l">
+<h4>4. Evolution Engine</h4>
+<p>Periodic (weekly/monthly) process that analyzes the pipeline memory, identifies winning variants, and promotes them to defaults. Updates the program.md equivalents (project.json instructions) for each step.</p>
+<p><strong>Trigger:</strong> Scheduled via GravityClaw scheduler</p>
+<span class="tag">GravityClaw module</span>
+</div>
+</div>
+
+<h3>Modified Pipeline Flow</h3>
+<div class="flow">
+  <span class="hi">FOR EACH STEP (1-11, except 6):</span>
+
+  1. Load upstream artifacts (read-only — the <span class="hg">"prepare.py"</span>)
+  2. Load step instructions (human-authored — the <span class="hg">"program.md"</span>)
+  3. Load the execution approach (agent-mutable — the <span class="hg">"train.py"</span>)
+  4. <span class="hl">ENTER AUTORESEARCH LOOP:</span>
+     │
+     │  for i in range(iteration_budget):
+     │    ├── <span class="hi">HYPOTHESIZE:</span> Agent proposes a mutation to its approach
+     │    ├── <span class="hi">MUTATE:</span> Agent modifies the execution approach
+     │    ├── <span class="hi">RUN:</span> Execute the step with the mutated approach
+     │    ├── <span class="hi">MEASURE:</span> KPI Extractor computes scores from output
+     │    ├── <span class="hi">DECIDE:</span>
+     │    │   ├── IF primary_kpi improved → <span class="hg">KEEP</span> (commit variant, update best)
+     │    │   └── IF primary_kpi equal/worse → <span class="h3">DISCARD</span> (revert to best)
+     │    └── <span class="h2">LOG:</span> Record hypothesis + variant + scores in experiment log
+     │
+  5. Output: best-scoring artifact + complete experiment log
+  6. Update _pipeline_state.json with KPI scores
+  7. Advance to next step
+</div>
+
+<hr>
+
+<h2>7. Concrete KPI Definitions — How Each Asset Auto-Defines Them</h2>
+
+<p>The crucial design decision: KPIs are not manually specified per project. They are <strong>auto-defined by asset type</strong>. Every template in the master library carries a KPI specification.</p>
+
+<h3>Template-Level KPI Registry</h3>
+
+<p>Each template in <code>drive_structure_builder/master_templates/</code> gets a companion <code>_kpi.json</code>:</p>
+
+<div class="flow">
+<span class="hl">master_templates/30-39_Growth_Marketing/30.01_Marketing_Strategy/</span>
+├── Comprehensive_Marketing_Plan_&_Budget.md          ← the template
+└── Comprehensive_Marketing_Plan_&_Budget._kpi.json   ← auto-defined KPIs
+
+<span class="h2">_kpi.json contents:</span>
+{
+  "template": "Comprehensive_Marketing_Plan_&_Budget",
+  "department": "30-39_Growth_Marketing",
+  "primary_kpi": {
+    "name": "section_completeness",
+    "method": "count_filled_sections / total_sections",
+    "target": 0.9
+  },
+  "secondary_kpis": [
+    { "name": "budget_table_populated", "method": "has_numeric_values_in_budget_section", "target": true },
+    { "name": "timeline_specificity", "method": "count_dated_milestones", "target": 5 },
+    { "name": "channel_coverage", "method": "count_distinct_channels_mentioned", "target": 4 },
+    { "name": "word_count", "method": "total_words", "target": 2000, "direction": "range", "min": 1500, "max": 4000 }
+  ],
+  "autoresearch": {
+    "iteration_budget": 5,
+    "mutable_dimensions": ["tone", "depth_per_section", "example_density", "data_citation_frequency"]
+  }
+}
+</div>
+
+<h3>Auto-Definition Rules</h3>
+<p>For templates that don't yet have a <code>_kpi.json</code>, the KPI Extractor agent auto-generates one by analyzing the template structure:</p>
+
+<table>
+<tr><th>Template Pattern</th><th>Auto-Inferred KPIs</th></tr>
+<tr><td>Template has numbered sections (## 1.0, ## 2.0...)</td><td><code>section_completeness</code> = filled sections / total sections</td></tr>
+<tr><td>Template has tables with [Insert] placeholders</td><td><code>table_fill_rate</code> = filled cells / total cells</td></tr>
+<tr><td>Template references competitors</td><td><code>competitor_count</code> = number of distinct competitors named</td></tr>
+<tr><td>Template has a SWOT section</td><td><code>swot_balance</code> = min(S,W,O,T item counts) / max(...)</td></tr>
+<tr><td>Template has bullet lists with [Value] placeholders</td><td><code>placeholder_elimination</code> = 1 - (remaining placeholders / original)</td></tr>
+<tr><td>Any document</td><td><code>word_count</code>, <code>reading_level</code>, <code>source_citation_count</code></td></tr>
+</table>
+
+<hr>
+
+<h2>8. Integration with Existing Agent Projects</h2>
+
+<h3>What Changes in Each Project</h3>
+
+<table>
+<tr><th>Agent Project</th><th>Current State</th><th>Autoresearch Enhancement</th></tr>
+<tr>
+<td><code>active_reasoning</code></td>
+<td>reasoning_engine.py produces one execution plan</td>
+<td>Wraps in autoresearch loop: tries N decomposition strategies, scores each on <code>requirement_coverage</code>, keeps best</td>
+</tr>
+<tr>
+<td><code>context_intelligence_engine</code></td>
+<td>5-phase protocol produces one framework</td>
+<td>Phase 3 (generate) enters autoresearch loop: tries N synthesis approaches, scores on <code>avg_section_completeness</code></td>
+</tr>
+<tr>
+<td><code>deep_research_analyst</code></td>
+<td>Orchestrates NotebookLM deep research</td>
+<td>Tries different research query formulations, scores on <code>competitor_depth</code> / <code>topic_coverage</code></td>
+</tr>
+<tr>
+<td><code>prompt_library_agent</code></td>
+<td>Selects prompts from index</td>
+<td>Tries different prompt-skill-model combinations per sub-goal, scores on <code>skill_match_score</code></td>
+</tr>
+<tr>
+<td><code>drive_structure_builder</code></td>
+<td>Deploys Golden Template to Drive</td>
+<td>Each template now carries <code>_kpi.json</code>. Builder verifies KPIs are defined for all populated templates</td>
+</tr>
+<tr>
+<td><code>skill_foundry</code></td>
+<td>Creates new skills from input</td>
+<td>Every new skill auto-generates a KPI definition in its SKILL.md frontmatter</td>
+</tr>
+<tr>
+<td><code>GravityClaw (scheduler)</code></td>
+<td>Schedules recurring tasks</td>
+<td>New scheduled job: <strong>Evolution Engine</strong> — weekly analysis of pipeline memory, promotes winning variants</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>9. The SKILL.md KPI Extension</h2>
+
+<p>Every skill in the vault (260+ existing + all new) gets a KPI block in its SKILL.md frontmatter. This ensures that <strong>any time a skill is executed, its output is automatically measurable</strong>.</p>
+
+<div class="flow">
+---
+name: brand-identity-pro
+version: 2.1
+description: Generates comprehensive brand identity documentation
+<span class="hl">kpi:</span>
+  <span class="hi">primary:</span>
+    name: identity_completeness
+    method: count_filled_subsections / total_subsections
+    target: 0.9
+    direction: higher_is_better
+  <span class="h2">secondary:</span>
+    - name: color_palette_defined
+      method: has_hex_values_in_output
+      target: true
+    - name: voice_differentiation
+      method: semantic_distance_from_generic
+      target: 0.7
+    - name: tagline_count
+      target: 3
+  <span class="hg">autoresearch:</span>
+    enabled: true
+    iteration_budget: 5
+    mutable: [tone, depth, example_count, industry_specificity]
+---
+</div>
+
+<hr>
+
+<h2>10. The Feedback Flywheel</h2>
+
+<div class="flow">
+   <span class="hl">PROJECT N</span>                              <span class="hl">PROJECT N+1</span>
+   ┌───────────────┐                       ┌───────────────┐
+   │ Run 11 Steps  │                       │ Run 11 Steps  │
+   │ with auto-    │                       │ with winning  │
+   │ research per  │                       │ variants from │
+   │ step          │                       │ Project N     │
+   └──────┬────────┘                       └──────┬────────┘
+          │                                       │
+          ▼                                       ▼
+   ┌──────────────┐                       ┌──────────────┐
+   │ KPI scores   │                       │ KPI scores   │
+   │ per step     │                       │ per step     │
+   └──────┬───────┘                       └──────┬───────┘
+          │                                       │
+          ▼                                       ▼
+   ┌──────────────┐                       ┌──────────────┐
+   │ Client       │                       │ Client       │
+   │ satisfaction │                       │ satisfaction │
+   │ (ultimate    │                       │ (should be   │
+   │  metric)     │                       │  higher)     │
+   └──────┬───────┘                       └──────┬───────┘
+          │                                       │
+          └────────────────┬──────────────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │ <span class="hl">PIPELINE</span>    │
+                    │ <span class="hl">MEMORY</span>      │
+                    │ (Firestore) │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │ <span class="hg">EVOLUTION</span>   │
+                    │ <span class="hg">ENGINE</span>      │ ← weekly/monthly
+                    │             │
+                    │ Promotes    │
+                    │ winning     │
+                    │ variants    │
+                    └──────┬──────┘
+                           │
+                           ▼
+                    Updated program.md equivalents
+                    (project.json instructions)
+                    for Project N+2
+</div>
+
+<div class="card card-g">
+<h3>The Compounding Effect</h3>
+<p>This is the lock-on. Every project makes every subsequent project better. The system literally gets smarter with every client. Karpathy's autoresearch runs ~100 experiments overnight on one ML training setup. Your system runs ~50–100 experiments per step × 11 steps × every project, all feeding a shared pipeline memory that optimizes the entire protocol.</p>
+<p>After 10 projects, your Step 9 synthesis isn't running the generic approach — it's running the variant that emerged as the winner across 10 projects' worth of autonomous experimentation. After 50 projects, the entire protocol is self-optimized to a degree no human could achieve through manual iteration.</p>
+</div>
+
+<hr>
+
+<h2>11. Implementation Roadmap</h2>
+
+<table>
+<tr><th>Wave</th><th>Deliverable</th><th>Effort</th><th>Dependencies</th></tr>
+<tr>
+<td><strong>Wave 1</strong><br>KPI Infrastructure</td>
+<td>
+1. Build <code>kpi-extractor</code> skill (auto-computes KPIs from any .md artifact)<br>
+2. Define _kpi.json for all 70+ master templates<br>
+3. Add KPI block to SKILL.md frontmatter standard<br>
+4. Create <code>_kpi_state.json</code> schema alongside <code>_pipeline_state.json</code>
+</td>
+<td>1 week</td>
+<td>None — can start immediately</td>
+</tr>
+<tr>
+<td><strong>Wave 2</strong><br>Experiment Runner</td>
+<td>
+1. Build <code>experiment-runner</code> wrapper skill<br>
+2. Integrate with Steps 9, 10, 11 first (highest-impact steps)<br>
+3. Add git-based versioning for experiment variants<br>
+4. Build experiment log format and storage
+</td>
+<td>1–2 weeks</td>
+<td>Wave 1 (KPI Extractor)</td>
+</tr>
+<tr>
+<td><strong>Wave 3</strong><br>Full Step Integration</td>
+<td>
+1. Wrap all 10 automatable steps (1–5, 7–11) in experiment runner<br>
+2. Configure iteration budgets per step<br>
+3. Define mutable dimensions per step<br>
+4. End-to-end test: run one project through the full autoresearch-enhanced pipeline
+</td>
+<td>2 weeks</td>
+<td>Wave 2</td>
+</tr>
+<tr>
+<td><strong>Wave 4</strong><br>Pipeline Memory</td>
+<td>
+1. Create Firestore pipeline_experiments collection<br>
+2. Build cross-project aggregation queries<br>
+3. Build the Evolution Engine (variant analysis + promotion)<br>
+4. Schedule weekly evolution runs via GravityClaw
+</td>
+<td>1–2 weeks</td>
+<td>Wave 3 + at least 3 completed projects</td>
+</tr>
+<tr>
+<td><strong>Wave 5</strong><br>Dashboard & Visibility</td>
+<td>
+1. Add KPI visualization to justus-platform-ui dashboard<br>
+2. Per-step experiment history viewer<br>
+3. Cross-project trend charts (are we getting better?)<br>
+4. Winning variant leaderboard<br>
+5. Client-facing quality scorecard in deliverables
+</td>
+<td>1–2 weeks</td>
+<td>Wave 4</td>
+</tr>
+</table>
+
+<hr>
+
+<div class="card card-l" style="border-width:2px">
+<h3>The Bottom Line</h3>
+<p>Karpathy built autoresearch for one metric (val_bpb) on one file (train.py) in one domain (ML training). Your system generalizes this to <strong>11 metrics across 11 steps across every business domain your templates cover</strong>. The three-file pattern (fixed inputs / agent-mutable approach / human-directed instructions) maps perfectly onto your DOE 6-layer architecture — where Layer 1 (Directive) is program.md, Layer 6 (Execution) is train.py, and Layers 2–3 (Context + Knowledge) are prepare.py.</p>
+<p>The result: a protocol that doesn't just produce assets — it <strong>produces assets, measures them, experiments with alternatives, keeps the best, and learns across every project it ever runs</strong>. This is the difference between a workflow and an intelligence.</p>
+</div>
+
+<hr>
+<p class="meta">
+Sources: <a href="https://github.com/karpathy/autoresearch" style="color:var(--accent2)">Karpathy/autoresearch (GitHub)</a> &bull;
+<a href="https://github.com/karpathy/autoresearch/blob/master/program.md" style="color:var(--accent2)">program.md (agent instructions)</a> &bull;
+<a href="https://gist.github.com/adhishthite/16d8fd9076e85c033b75e187e8a6b94e" style="color:var(--accent2)">AutoExp — generalized autoresearch for any metric</a> &bull;
+<a href="https://kingy.ai/ai/autoresearch-karpathys-minimal-agent-loop-for-autonomous-llm-experimentation/" style="color:var(--accent2)">Kingy AI — autoresearch minimal agent loop analysis</a>
+</p>
+
+</body>
+</html>

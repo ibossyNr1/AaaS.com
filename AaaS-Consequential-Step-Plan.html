@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Consequential Step-Plan — AaaS Agentic Production Protocol</title>
+<style>
+  :root {
+    --bg: #08080d;
+    --surface: #10101a;
+    --surface2: #18182a;
+    --surface3: #20203a;
+    --border: #2a2a44;
+    --accent: #7c5cfc;
+    --accent2: #5c9cfc;
+    --accent3: #fc5c7c;
+    --green: #4caf50;
+    --amber: #ff9800;
+    --text: #e0e0ea;
+    --muted: #7878a0;
+    --cyan: #5cf0e0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.72;
+    padding: 2.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1 { font-size:2.6rem; font-weight:800; letter-spacing:-0.03em; background:linear-gradient(135deg,var(--accent),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.4rem; }
+  h2 { font-size:1.7rem; color:var(--accent2); margin:3rem 0 1.2rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); font-weight:700; }
+  h3 { font-size:1.2rem; color:var(--accent); margin:1.8rem 0 0.8rem; font-weight:700; }
+  h4 { font-size:1rem; color:var(--text); margin:1rem 0 0.5rem; font-weight:600; }
+  p { margin-bottom:1rem; }
+  .sub { color:var(--muted); font-size:1.1rem; margin-bottom:2rem; }
+  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:2.5rem; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin:1rem 0; }
+  .card-a { border-left:4px solid var(--accent); }
+  .card-g { border-left:4px solid var(--green); }
+  .card-w { border-left:4px solid var(--amber); }
+  .card-c { border-left:4px solid var(--cyan); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:1rem; margin:1rem 0; }
+  .tag { display:inline-block; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:2px 10px; font-size:0.78rem; color:var(--accent2); margin:2px; }
+  .tag-hot { background:rgba(252,92,124,0.12); border-color:var(--accent3); color:var(--accent3); }
+  .tag-go { background:rgba(76,175,80,0.12); border-color:var(--green); color:var(--green); }
+  .tag-cy { background:rgba(92,240,224,0.12); border-color:var(--cyan); color:var(--cyan); }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:0.88rem; }
+  th,td { text-align:left; padding:10px 14px; border:1px solid var(--border); }
+  th { background:var(--surface2); color:var(--accent2); font-weight:600; }
+  td { background:var(--surface); }
+  .step-block { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:0; margin:1.5rem 0; overflow:hidden; }
+  .step-header { background:var(--surface2); padding:1rem 1.5rem; display:flex; align-items:center; gap:1rem; border-bottom:1px solid var(--border); }
+  .step-num { background:var(--accent); color:#fff; font-weight:800; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0; }
+  .step-num.gate { background:var(--accent3); }
+  .step-num.parallel { background:var(--cyan); color:var(--bg); }
+  .step-title { font-size:1.15rem; font-weight:700; color:var(--text); }
+  .step-subtitle { color:var(--muted); font-size:0.85rem; }
+  .step-body { padding:1.5rem; }
+  .step-body p { margin-bottom:0.8rem; }
+  .artifact { background:var(--surface3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin:6px 0; display:flex; align-items:center; gap:10px; font-size:0.88rem; }
+  .artifact-icon { color:var(--accent); font-weight:700; font-size:1.1rem; }
+  .artifact-label { color:var(--text); font-weight:600; }
+  .artifact-desc { color:var(--muted); font-size:0.82rem; margin-left:auto; }
+  .flow { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:2rem; margin:1.5rem 0; font-family:monospace; font-size:0.82rem; line-height:1.5; white-space:pre; overflow-x:auto; color:var(--muted); }
+  .hi { color:var(--accent); font-weight:600; }
+  .h2 { color:var(--accent2); font-weight:600; }
+  .h3 { color:var(--accent3); font-weight:600; }
+  .hc { color:var(--cyan); font-weight:600; }
+  .hg { color:var(--green); font-weight:600; }
+  hr { border:none; border-top:1px solid var(--border); margin:2.5rem 0; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid rgba(42,42,68,0.5); font-size:0.92rem; }
+  .checklist li::before { content:'□'; position:absolute; left:4px; top:8px; color:var(--accent); }
+  .toc { column-count:2; column-gap:2rem; margin:1rem 0; }
+  .toc a { color:var(--accent2); text-decoration:none; display:block; padding:3px 0; font-size:0.88rem; }
+  .toc a:hover { color:var(--accent); }
+  .accretion { display:grid; grid-template-columns:auto repeat(6,1fr); gap:2px; margin:1rem 0; font-size:0.75rem; }
+  .accretion > div { padding:6px 8px; background:var(--surface); border:1px solid var(--border); border-radius:4px; }
+  .accretion .head { background:var(--surface2); color:var(--accent2); font-weight:600; }
+  .accretion .fill-1 { background:rgba(124,92,252,0.15); }
+  .accretion .fill-2 { background:rgba(124,92,252,0.30); }
+  .accretion .fill-3 { background:rgba(124,92,252,0.50); }
+  .accretion .fill-4 { background:rgba(124,92,252,0.75); }
+  .accretion .manual { background:rgba(252,92,124,0.15); color:var(--accent3); }
+  .context-section { display:flex; gap:1rem; align-items:stretch; flex-wrap:wrap; margin:1rem 0; }
+  .ctx-card { flex:1; min-width:160px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; }
+  .ctx-card .num { font-size:1.8rem; font-weight:800; color:var(--accent); }
+  .ctx-card .label { font-size:0.82rem; color:var(--muted); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<h1>Universal Consequential Step-Plan</h1>
+<p class="sub">The Complete Agentic Production Protocol — Context Engineering × Consequential Prompting × Templated Asset Production</p>
+<p class="meta">Based on: agent-system-core/usr/projects/ (30 agent projects) &bull; UNIVERSAL_PROTOCOL_ARCHITECTURE.md &bull; DOE 6-Layer Model &bull; 70+ Master Templates &bull; 260+ Vault Skills<br>Version 1.0 &bull; March 12, 2026</p>
+
+<div class="card card-a">
+<h3>What This Document Is</h3>
+<p>This is the <strong>runnable blueprint</strong> — the consequential step-plan that any agent (Claude Code, Agent Zero, or Antigravity) can follow to take a project from a raw business goal to fully delivered assets. Each step specifies: what context it needs, what it produces, which agent project runs it, what templates feed it, and what the quality gates are.</p>
+<p>It synthesizes the 11-step Universal Protocol Architecture already designed in your <code>commit/</code> governance repo with the actual running agent projects, the master template library in <code>drive_structure_builder/</code>, the context framework synthesizer pipeline, and the DOE asset library — into one coherent, executable plan.</p>
+</div>
+
+<h2>Table of Contents</h2>
+<div class="toc">
+<a href="#overview">1. Protocol Overview & Architecture</a>
+<a href="#context">2. The Context Engineering Model</a>
+<a href="#steps">3. The 11 Consequential Steps (Full Spec)</a>
+<a href="#templates">4. The Template Library Map</a>
+<a href="#drive">5. Google Drive Structure & Deployment</a>
+<a href="#accretion">6. Context Accretion Matrix</a>
+<a href="#agents">7. Agent Project → Step Mapping</a>
+<a href="#artifacts">8. Complete Artifact Registry</a>
+<a href="#execution">9. Execution Modes & Quality Gates</a>
+<a href="#running">10. How to Run This Plan</a>
+</div>
+
+<hr>
+
+<!-- SECTION 1 -->
+<h2 id="overview">1. Protocol Overview & Architecture</h2>
+
+<div class="flow">
+                             <span class="h3">PRE-ACTIVATION</span>                                    <span class="hg">POST-ACTIVATION</span>
+                        (Sales Pipeline — Fast/Cheap)                        (Production Pipeline — Deep/Thorough)
+
+   <span class="hi">①</span> GOAL ──► <span class="hi">②</span> RESEARCH ──► <span class="hi">③</span> STRATEGY ──► <span class="hi">④</span> REQUIREMENTS ──► <span class="hi">⑤</span> PROPOSAL ──► <span class="h3">⑥ GATE</span> ──► <span class="hc">⑦</span> COMPETITIVE ──┐
+   DEFINITION   (fast)        ROUTES       ENGINEERING       GENERATION     (human)    RESEARCH      │ parallel
+                                                                                       <span class="hc">⑧</span> INDUSTRY ───┘
+                                                                                          KNOWLEDGE     │ join
+                                                                                                        ▼
+                                                                                       <span class="hg">⑨</span> CONTEXT ──► <span class="hg">⑩</span> SUB-PROJECT ──► <span class="hg">⑪</span> TOOL
+                                                                                          SYNTHESIS      GOALS            SELECTION
+                                                                                                                           │
+                                                                                                                           ▼
+                                                                                                                     <span class="hg">EXECUTION</span>
+                                                                                                                     (skill chains)
+</div>
+
+<h3>The Two-Block Architecture</h3>
+<div class="grid">
+<div class="card">
+<h4>Pre-Activation (Steps 1–6)</h4>
+<p><strong>Purpose:</strong> Win the deal. Fast, lightweight, client-facing. Uses "proposal-grade" research — enough to scope and price. Low cost, hours-to-days timeline.</p>
+<p><strong>Outputs:</strong> Goal Brief, Research Brief, Strategy Routes, Requirements, Proposal</p>
+<span class="tag">Fast</span> <span class="tag">Client-facing</span> <span class="tag">Low cost</span>
+</div>
+<div class="card">
+<h4>Post-Activation (Steps 7–11)</h4>
+<p><strong>Purpose:</strong> Deliver the work. Thorough, deep, internal-execution. Uses "production-grade" research — full competitive + industry intelligence. High cost, days-to-weeks timeline.</p>
+<p><strong>Outputs:</strong> Competitive Analysis, Industry Knowledge, Context Framework, Execution Plan, Execution Manifest</p>
+<span class="tag tag-hot">Deep</span> <span class="tag">Internal execution</span> <span class="tag">High quality</span>
+</div>
+</div>
+
+<h3>Why Research Happens Twice</h3>
+<p>This is deliberate — not redundancy. Step 2 asks "Do we know enough to write a credible proposal?" (surface-level scan, top 3 competitors, market sizing). Steps 7–8 ask "Do we know enough to execute at the highest quality?" (20-page competitive analysis per competitor, industry trend deep-dives, regulatory landscape). Step 6 — the human activation gate — is the bridge that prevents wasting deep-research resources on proposals that haven't converted.</p>
+
+<!-- SECTION 2 -->
+<h2 id="context">2. The Context Engineering Model</h2>
+
+<h3>The CLIENT_CONTEXT_FRAMEWORK.md — The Central Artifact</h3>
+<p>Every project revolves around a single, ever-growing document: the Client Context Framework. It has 6 sections that accrete across all 11 steps. Early steps seed shallow data; later steps deepen it. By Step 9, it reaches full depth and becomes the source of truth for all execution.</p>
+
+<div class="context-section">
+<div class="ctx-card"><div class="num">1.0</div><div class="label">Core Identity</div><div style="color:var(--muted);font-size:0.75rem;margin-top:4px">Mission, Vision, Values, Elevator Pitch</div></div>
+<div class="ctx-card"><div class="num">2.0</div><div class="label">Brand Voice & Persona</div><div style="color:var(--muted);font-size:0.75rem;margin-top:4px">Persona, Tone, Messaging, Do's & Don'ts</div></div>
+<div class="ctx-card"><div class="num">3.0</div><div class="label">Target Audience</div><div style="color:var(--muted);font-size:0.75rem;margin-top:4px">Personas, Demographics, Pain Points, Channels</div></div>
+<div class="ctx-card"><div class="num">4.0</div><div class="label">Product/Service</div><div style="color:var(--muted);font-size:0.75rem;margin-top:4px">Offerings, USP, Features & Benefits</div></div>
+<div class="ctx-card"><div class="num">5.0</div><div class="label">Market Landscape</div><div style="color:var(--muted);font-size:0.75rem;margin-top:4px">Competitors, Position, SWOT</div></div>
+<div class="ctx-card" style="border-color:var(--accent3)"><div class="num" style="color:var(--accent3)">6.0</div><div class="label">Visual Guidelines</div><div style="color:var(--accent3);font-size:0.75rem;margin-top:4px">ALWAYS MANUAL — never auto-generated</div></div>
+</div>
+
+<h3>Completeness Scoring</h3>
+<table>
+<tr><th>Score</th><th>Label</th><th>Word Count</th><th>Criteria</th></tr>
+<tr><td>0.2</td><td>Stub</td><td>0–50</td><td>Contains [DESCRIBE:] or [MANUAL:] placeholders</td></tr>
+<tr><td>0.5</td><td>Shallow</td><td>50–200</td><td>Some placeholders remain, surface-level</td></tr>
+<tr><td>0.7</td><td>Adequate</td><td>200–500</td><td>No placeholders, basic research-backed coverage</td></tr>
+<tr><td>0.9</td><td>Deep</td><td>500+</td><td>Comprehensive, multi-source, production-ready</td></tr>
+</table>
+
+<h3>The Accretion Principle</h3>
+<p>Context is not built once — it <strong>accretes</strong>. Each step that touches the framework can only add or deepen — never delete or overwrite existing content without explicit instruction. This means the framework grows richer with every step, and quality only increases.</p>
+
+<!-- SECTION 3 -->
+<h2 id="steps">3. The 11 Consequential Steps (Full Specification)</h2>
+
+<!-- STEP 1 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">1</div>
+<div>
+<div class="step-title">Goal Definition</div>
+<div class="step-subtitle">Pipeline key: goal_definition &bull; Agent: client_orchestrator &bull; Block: Pre-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Accept a business goal from the user and structure it into a formal goal brief with success criteria, constraints, and scope boundaries. Also handle client account setup (company info, contacts, billing tier).</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">User-provided business goal</span> <span class="artifact-desc">Text (conversation or intake form)</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">CLIENT_ACCOUNTS.md</span> <span class="artifact-desc">If returning client — existing account data</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">GOAL_BRIEF.md</span> <span class="artifact-desc">Structured goal: statement, success metrics, constraints, timeline, scope</span></div>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">CLIENT_ACCOUNTS.md</span> <span class="artifact-desc">4-tier client identity (company, contacts, billing, preferences)</span></div>
+
+<h4>Context Engineering</h4>
+<p>Seeds <strong>Section 1.0 (Core Identity)</strong> of the framework with mission fragments extracted from the goal. This is the first accretion — completeness at this stage is typically 0.2–0.4 (stub to shallow).</p>
+
+<h4>Agent Project Details</h4>
+<p><code>client_orchestrator</code> handles the 4-tier intake and produces CLIENT_ACCOUNTS.md. Needs refactoring to add a goal-structuring sub-phase that produces GOAL_BRIEF.md with: goal statement, success metrics, constraints, timeline expectations, scope boundaries.</p>
+
+<h4>Quality Gate</h4>
+<p>GOAL_BRIEF.md must have all 5 fields populated. If any field is marked [TBD], the step cannot advance — the user must provide the missing information.</p>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">2</div>
+<div>
+<div class="step-title">Proposal Research (Fast Mode)</div>
+<div class="step-subtitle">Pipeline key: proposal_research &bull; Agent: research_initiator (--mode fast) + browser_research_agent &bull; Block: Pre-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Collect enough information to write a credible proposal — market context, competitive landscape overview, relevant precedents. This is "proposal-grade" research: fast, surface-level, sufficient but not exhaustive.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md</span> <span class="artifact-desc">From Step 1</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">PROPOSAL_RESEARCH_BRIEF.md</span> <span class="artifact-desc">Lightweight: company overview, top 3 competitors, market size, relevant precedents</span></div>
+
+<h4>Context Engineering</h4>
+<p>Seeds Sections <strong>1.0, 2.0, 3.0, 4.0, 5.0</strong> with web-sourced data. Completeness typically reaches 0.3–0.5 (shallow) across all sections. This is the first broad-but-thin pass.</p>
+
+<h4>Method</h4>
+<p>Firecrawl surface-level scraping: company website + top 3 competitor websites. Skips NotebookLM deep research. Skips deep analysis. Produces a slimmer brief in hours, not days.</p>
+
+<h4>Quality Gate</h4>
+<p>PROPOSAL_RESEARCH_BRIEF.md must contain at least: company overview (100+ words), 3 competitor names with brief descriptions, market size estimate, and 2+ relevant precedents.</p>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">3</div>
+<div>
+<div class="step-title">Strategy Routes</div>
+<div class="step-subtitle">Pipeline key: strategy_routes &bull; Agent: active_reasoning (decomposition only) &bull; Block: Pre-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Decompose the goal into 2–3 viable execution approaches with trade-offs, letting the client choose a direction before committing to requirements. This is strategic, not tactical.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md</span> <span class="artifact-desc">From Step 1</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROPOSAL_RESEARCH_BRIEF.md</span> <span class="artifact-desc">From Step 2</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">goal_taxonomy.json</span> <span class="artifact-desc">Decomposition templates for common goal types</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">STRATEGY_ROUTES.md</span> <span class="artifact-desc">2–3 execution approaches with trade-offs, recommended route highlighted</span></div>
+
+<h4>Context Engineering</h4>
+<p>No direct framework accretion. Operates <em>on top of</em> the framework data to produce strategic options. The selected route becomes a constraint that shapes all downstream steps.</p>
+
+<h4>Method</h4>
+<p>Uses <code>reasoning_engine.py</code> Phase 2 logic (goal decomposition). Matches the goal against <code>goal_taxonomy.json</code> to find pre-built decomposition templates. If no match, decomposes manually following: research → analysis → strategy → creation pattern.</p>
+
+<h4>Quality Gate</h4>
+<p>Must produce 2–3 routes (not 1, not 4+). Each route must specify: approach description, estimated effort, key risks, and trade-offs vs. other routes. One route must be marked [RECOMMENDED].</p>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">4</div>
+<div>
+<div class="step-title">Requirements Engineering</div>
+<div class="step-subtitle">Pipeline key: requirements_engineering &bull; Agent: requirements_generator (NEW) &bull; Block: Pre-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Produce a combined document that serves as both the execution blueprint (Part A: what the system needs) AND the client deliverable specification (Part B: what the client receives). This is the most structurally critical step.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md</span> <span class="artifact-desc">From Step 1</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROPOSAL_RESEARCH_BRIEF.md</span> <span class="artifact-desc">From Step 2</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">STRATEGY_ROUTES.md</span> <span class="artifact-desc">From Step 3 (selected route)</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">PROJECT_REQUIREMENTS.md</span> <span class="artifact-desc">Two-part document: Part A (execution) + Part B (client deliverables)</span></div>
+
+<h4>Part A: Execution Requirements</h4>
+<p>A.1 Resource Plan (skills/tools/models needed), A.2 Skill Mapping (deliverable → DOE skill match), A.3 Dependency Chain (execution order), A.4 Timeline Estimate, A.5 Risk Register</p>
+
+<h4>Part B: Client Deliverable Specification</h4>
+<p>B.1 Deliverables List (format, quality criteria, acceptance criteria), B.2 Format Specifications (Google Docs, Drive folder structure), B.3 Quality Criteria (0.7+ framework alignment), B.4 Acceptance Process (QA → client review → revision → sign-off)</p>
+
+<h4>Methodology</h4>
+<p>Draws from DOE skills: <strong>JTBD</strong> (Jobs to Be Done) for understanding the "job" being hired, <strong>RICE Scoring</strong> (Reach × Impact × Confidence / Effort) for prioritization, <strong>MoSCoW</strong> (Must/Should/Could/Won't) for categorization.</p>
+
+<h4>Priority Scoring Formula</h4>
+<p><code>Priority = (Business Impact × Confidence) / Effort</code> — Business Impact (1–5), Confidence (0.5–1.0), Effort (1–5)</p>
+
+<h4>Context Engineering</h4>
+<p>Part A.2 (Skill Mapping) cross-references the 260+ vault skills and the DOE asset library (2.2 GB). This is the first point where the system's skill inventory directly shapes project scope.</p>
+
+<h4>Quality Gate</h4>
+<p>Part A must have all 5 subsections populated. Part B must list at least 3 deliverables with format + acceptance criteria. Priority scores must be computed for all deliverables.</p>
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">5</div>
+<div>
+<div class="step-title">Proposal Generation</div>
+<div class="step-subtitle">Pipeline key: proposal_generation &bull; Agent: proposal_generator &bull; Block: Pre-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Generate a client-facing proposal document from the requirements, suitable for review, negotiation, and signature.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROJECT_REQUIREMENTS.md (Part B)</span> <span class="artifact-desc">Client deliverable spec from Step 4</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">STRATEGY_ROUTES.md</span> <span class="artifact-desc">Selected route from Step 3</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">CLIENT_PROPOSAL.md</span> <span class="artifact-desc">Internal markdown version of proposal</span></div>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">PandaDoc / Upwork Proposal</span> <span class="artifact-desc">External, client-facing document</span></div>
+
+<h4>Template Mapping</h4>
+<table>
+<tr><th>Requirements Section</th><th>Proposal Section</th></tr>
+<tr><td>B.1 Deliverables List</td><td>Scope of Work</td></tr>
+<tr><td>B.4 Acceptance Process</td><td>Terms & Conditions</td></tr>
+<tr><td>A.4 Timeline Estimate</td><td>Timeline & Milestones</td></tr>
+<tr><td>Selected Strategy Route</td><td>Approach & Methodology</td></tr>
+</table>
+
+<h4>Method</h4>
+<p>Wraps the existing PandaDoc API integration from <code>antigravity-vault/execution/create_proposal.py</code>. Supports multiple output formats: PandaDoc (for formal engagements), Upwork proposal (for platform bids), plain markdown (for email/chat proposals).</p>
+
+<h4>Quality Gate</h4>
+<p>Proposal must contain: Executive Summary, Scope of Work (mapping to all Part B deliverables), Timeline, Pricing, Terms. All sections must be populated — no [TBD] markers.</p>
+</div>
+</div>
+
+<!-- STEP 6 — HUMAN GATE -->
+<div class="step-block" style="border-color:var(--accent3)">
+<div class="step-header" style="background:rgba(252,92,124,0.1)">
+<div class="step-num gate">6</div>
+<div>
+<div class="step-title">Client Activation — HUMAN GATE</div>
+<div class="step-subtitle">Pipeline key: client_activation &bull; Agent: none (orchestration only) &bull; Block: THE BRIDGE</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Mandatory human approval checkpoint. The client (or internal decision-maker) reviews the proposal and explicitly approves project activation. This unlocks production-grade resources.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">Signed proposal / client approval</span> <span class="artifact-desc">External event — cannot be automated</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">ACTIVATION_RECORD.md</span> <span class="artifact-desc">Approval timestamp, scope lock, budget allocation, authorized phases</span></div>
+
+<h4>What This Gate Does</h4>
+<ul class="checklist">
+<li><strong>Prevents wasted production resources</strong> — deep research is expensive; don't start until committed</li>
+<li><strong>Locks the scope</strong> — requirements become the contract; changes require formal change requests</li>
+<li><strong>Creates accountability</strong> — both sides agree on what will be delivered</li>
+<li><strong>Enables budgeting</strong> — production-grade resources allocated only after approval</li>
+</ul>
+
+<h4>Enforcement</h4>
+<p><code>pipeline_state.py</code> must enforce: phases with <code>human_gate: true</code> cannot be auto-advanced. The system pauses, presents a summary, and waits for explicit human trigger (UI button, CLI command, or manual state update).</p>
+</div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num parallel">7</div>
+<div>
+<div class="step-title">Competitive Research (PARALLEL with Step 8)</div>
+<div class="step-subtitle">Pipeline key: competitive_research &bull; Agent: deep_research_analyst + browser_research_agent + notebooklm_operator &bull; Block: Post-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Deep competitive landscape analysis — who are the competitors, what do they offer, where are the gaps, what are the opportunities. This is "production-grade" research: thorough, multi-day, expensive.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md + PROJECT_REQUIREMENTS.md + ACTIVATION_RECORD.md</span> <span class="artifact-desc">Scope + approval</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">COMPETITIVE_ANALYSIS.md</span> <span class="artifact-desc">Deep competitive landscape — per-competitor analysis, feature comparison, gap map</span></div>
+
+<h4>Context Engineering</h4>
+<p>Deepens <strong>Section 5.0 (Market Landscape)</strong> from 0.3–0.5 to 0.8–0.9. This is where the competitive section reaches production depth.</p>
+
+<h4>Parallel Execution</h4>
+<p>Runs concurrently with Step 8 (Industry Knowledge) — both are gated on Step 6 completion. They join at Step 9.</p>
+
+<h4>Agent Stack</h4>
+<p><code>deep_research_analyst</code> orchestrates NotebookLM deep research. <code>browser_research_agent</code> handles Firecrawl web scraping. <code>notebooklm_operator</code> provides the MCP bridge to NotebookLM for deep source synthesis.</p>
+</div>
+</div>
+
+<!-- STEP 8 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num parallel">8</div>
+<div>
+<div class="step-title">Industry Knowledge (PARALLEL with Step 7)</div>
+<div class="step-subtitle">Pipeline key: industry_knowledge &bull; Agent: deep_research_analyst + content_ingestion_engine + notebooklm_operator &bull; Block: Post-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Deep industry intelligence — trends, regulations, best practices, key players, technology landscape. Produces the domain expertise that makes deliverables authoritative.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md + PROJECT_REQUIREMENTS.md + ACTIVATION_RECORD.md</span> <span class="artifact-desc">Scope + approval</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">Uploaded industry documents (optional)</span> <span class="artifact-desc">Via content_ingestion_engine</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">INDUSTRY_KNOWLEDGE_BASE.md</span> <span class="artifact-desc">Deep industry intelligence — trends, regulations, best practices, tech landscape</span></div>
+
+<h4>Context Engineering</h4>
+<p>Deepens <strong>Sections 3.0 (Audience)</strong> and <strong>4.0 (Product/Service)</strong> with industry-specific depth. Also enriches 5.0 from the industry angle (vs. Step 7's competitive angle).</p>
+
+<h4>Supplementary Input</h4>
+<p><code>content_ingestion_engine</code> can ingest uploaded industry reports, whitepapers, or regulatory documents. These get chunked → embedded → added to the knowledge base, supplementing the web research with proprietary sources.</p>
+</div>
+</div>
+
+<!-- STEP 9 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">9</div>
+<div>
+<div class="step-title">Context Synthesis</div>
+<div class="step-subtitle">Pipeline key: context_synthesis &bull; Agent: context_intelligence_engine + context_synthesizer &bull; Block: Post-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Synthesize ALL upstream outputs into the finalized CLIENT_CONTEXT_FRAMEWORK.md — the 6-section deep context that drives all subsequent execution. This is the culmination of all context engineering.</p>
+
+<h4>Inputs (ALL upstream documents)</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">GOAL_BRIEF.md</span> <span class="artifact-desc">Step 1</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROPOSAL_RESEARCH_BRIEF.md</span> <span class="artifact-desc">Step 2</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">STRATEGY_ROUTES.md</span> <span class="artifact-desc">Step 3</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROJECT_REQUIREMENTS.md</span> <span class="artifact-desc">Step 4</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">COMPETITIVE_ANALYSIS.md</span> <span class="artifact-desc">Step 7</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">INDUSTRY_KNOWLEDGE_BASE.md</span> <span class="artifact-desc">Step 8</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">CLIENT_CONTEXT_FRAMEWORK.md</span> <span class="artifact-desc">Finalized 6-section framework at deep completeness (0.7–0.9 across all auto sections)</span></div>
+
+<h4>Context Engineering — THE CULMINATION</h4>
+<p>This is where all accretion reaches its peak. The context_intelligence_engine runs a 5-phase protocol:</p>
+<ol style="padding-left:1.5rem;margin:0.5rem 0">
+<li>Parse all upstream documents</li>
+<li>Extract insights per framework section</li>
+<li>Merge with existing framework data (deepen, never overwrite)</li>
+<li>Score completeness per section</li>
+<li>Present gaps for human review (Section 6.0 is always manual)</li>
+</ol>
+
+<h4>The Synthesizer Pipeline (from squr-contextual-framework-synthesizer)</h4>
+<table>
+<tr><th>Script</th><th>Action</th></tr>
+<tr><td>01_fetch_source_data.py</td><td>Download source documents from Google Drive input folders</td></tr>
+<tr><td>02_build_knowledge_base.py</td><td>Chunk → embed → FAISS vector index</td></tr>
+<tr><td>03_generate_framework_content.py</td><td>For each framework section, query KB → LLM synthesis → complete section</td></tr>
+<tr><td>04_upload_completed_docs.py</td><td>Upload finalized framework back to Google Drive</td></tr>
+</table>
+
+<h4>Quality Gate</h4>
+<p>Sections 1.0–5.0 must all score ≥ 0.7 (adequate). If any section scores below 0.5, the step flags it for additional research before proceeding. Section 6.0 must have user-provided content or be explicitly marked [AWAITING MANUAL INPUT].</p>
+</div>
+</div>
+
+<!-- STEP 10 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">10</div>
+<div>
+<div class="step-title">Sub-Project Goals (Prompt Sequencing)</div>
+<div class="step-subtitle">Pipeline key: subproject_goals &bull; Agent: active_reasoning (sequencing only) &bull; Block: Post-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> Decompose the requirements into an ordered sequence of executable sub-projects, each mapped to specific framework sections and scored for dependency order. This is tactical, not strategic.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">CLIENT_CONTEXT_FRAMEWORK.md</span> <span class="artifact-desc">From Step 9 — the full context</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROJECT_REQUIREMENTS.md</span> <span class="artifact-desc">From Step 4 — the requirements</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">prompt_index.json + doe_snippet_index.json</span> <span class="artifact-desc">Available prompts and DOE assets</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">PROMPT_EXECUTION_PLAN.md</span> <span class="artifact-desc">Ordered sequence of execution steps with dependency chains, scored for framework alignment</span></div>
+
+<h4>The Sequencing Algorithm</h4>
+<p>For each sub-goal, score candidate prompts on 4 dimensions:</p>
+<table>
+<tr><th>Dimension</th><th>Range</th><th>Logic</th></tr>
+<tr><td>Framework Alignment</td><td>0–5</td><td>Which section does the prompt target? Boost for low-completeness sections</td></tr>
+<tr><td>Research Depth Awareness</td><td>0–3</td><td>If section already deep, prefer creation over research prompts</td></tr>
+<tr><td>Skill Availability</td><td>0–3</td><td>Boost prompts that leverage existing vault skills</td></tr>
+<tr><td>Dependency Satisfaction</td><td>0–3</td><td>Can this prompt run now, or does it need earlier outputs?</td></tr>
+</table>
+
+<h4>Sort Order</h4>
+<p>All selected prompts sorted by dependency: <strong>research → analysis → strategy → creation</strong>. Each step traces back to a specific requirement from Part A.</p>
+
+<h4>Quality Gate</h4>
+<p>Each sub-goal must map to at least one requirement. Circular dependencies must be flagged. Total estimated steps should be ≤ 15 for a standard engagement.</p>
+</div>
+</div>
+
+<!-- STEP 11 -->
+<div class="step-block">
+<div class="step-header">
+<div class="step-num">11</div>
+<div>
+<div class="step-title">Tool Selection & Execution Manifest</div>
+<div class="step-subtitle">Pipeline key: tool_selection &bull; Agent: prompt_library_agent + skill_runner + skill_foundry &bull; Block: Post-Activation</div>
+</div>
+</div>
+<div class="step-body">
+<p><strong>Purpose:</strong> For each sub-project goal, select the optimal combination of tools (prompts, DOE skills, models, MCP servers) to execute it. Produces the final execution manifest — the machine-readable run plan.</p>
+
+<h4>Inputs</h4>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">PROMPT_EXECUTION_PLAN.md</span> <span class="artifact-desc">From Step 10</span></div>
+<div class="artifact"><span class="artifact-icon">→</span> <span class="artifact-label">prompt_index.json + doe_snippet_index.json + vault skill index</span> <span class="artifact-desc">All available tools</span></div>
+
+<h4>Outputs</h4>
+<div class="artifact"><span class="artifact-icon">←</span> <span class="artifact-label">EXECUTION_MANIFEST.md</span> <span class="artifact-desc">Per-goal: which prompt/skill, which model, which MCP servers, expected output format</span></div>
+
+<h4>Unified Selection Layer</h4>
+<p>Evaluates three tool types together: <strong>Prompts</strong> (from prompt_index.json), <strong>DOE Skills</strong> (from vault — 260+ available), <strong>Models</strong> (Opus for architecture, Sonnet for execution, Haiku for fast iteration). The manifest specifies all three for each sub-goal.</p>
+
+<h4>Skill Gap Detection</h4>
+<p>If no existing skill matches a sub-goal, <code>skill_foundry</code> flags it for skill creation. The manifest marks these as [NEEDS SKILL CREATION] and estimates the creation cost.</p>
+
+<h4>Execution Modes</h4>
+<table>
+<tr><th>Mode</th><th>Behavior</th></tr>
+<tr><td>Auto-execute</td><td>Run all steps autonomously, pause only on errors</td></tr>
+<tr><td>Step-by-step</td><td>Pause after each step for human review</td></tr>
+<tr><td>Dry run</td><td>Generate the manifest but don't execute — for planning/costing</td></tr>
+</table>
+</div>
+</div>
+
+<!-- SECTION 4 -->
+<h2 id="templates">4. The Template Library Map</h2>
+
+<p>The master template library in <code>drive_structure_builder/master_templates/</code> contains 70+ pre-built business framework templates organized by department. These are the contextual frameworks that get populated by the pipeline.</p>
+
+<div class="grid">
+<div class="card">
+<h4>00–09: Admin, Strategy & Brand</h4>
+<ul class="checklist">
+<li>Brand Identity Vault</li>
+<li>Brand Strategy</li>
+<li>Competitive Positioning</li>
+<li>Corporate Identity</li>
+<li>Customer Relationship Management</li>
+<li>Metrics & Forecasting</li>
+<li>Pricing Strategy</li>
+<li>Sales Management</li>
+</ul>
+<span class="tag tag-go">Step 9 populates</span>
+</div>
+
+<div class="card">
+<h4>10–19: Finance, Legal & Compliance</h4>
+<ul class="checklist">
+<li>Marketing Plan & Budget</li>
+</ul>
+<span class="tag">Needs expansion</span>
+</div>
+
+<div class="card">
+<h4>20–29: Product Engineering & AI Labs</h4>
+<ul class="checklist">
+<li>Product Roadmap & Management</li>
+<li>Product Launch & GTM</li>
+<li>Creative Development</li>
+</ul>
+<span class="tag tag-go">Step 4 feeds</span>
+</div>
+
+<div class="card">
+<h4>30–39: Growth Marketing & Revenue Ops</h4>
+<ul class="checklist">
+<li>Marketing Strategy & Planning</li>
+<li>Content Marketing Engine</li>
+<li>Digital Marketing Programs (SEO, Paid, Social)</li>
+<li>Sales Enablement Playbooks (Pitch Deck, Objection Handling)</li>
+<li>Content Brief & SEO Checklist</li>
+<li>Email Marketing, Campaign Planning, Inbound, SEM</li>
+<li>Marketing Automation, Collateral, Telemarketing</li>
+</ul>
+<span class="tag tag-hot">Highest volume</span>
+</div>
+
+<div class="card">
+<h4>50–59: Capital & Gov Relations</h4>
+<ul class="checklist">
+<li>[Folder exists but needs template population]</li>
+</ul>
+<span class="tag">Empty — needs investor templates</span>
+</div>
+
+<div class="card">
+<h4>60–69: Customer Success & Delivery</h4>
+<ul class="checklist">
+<li>Customer Onboarding Checklist</li>
+<li>Quarterly Business Review Template</li>
+<li>Customer Retention Strategy</li>
+<li>Customer Lifetime Value Analysis</li>
+</ul>
+<span class="tag tag-go">Post-delivery phase</span>
+</div>
+
+<div class="card">
+<h4>90–99: General Business Frameworks</h4>
+<ul class="checklist">
+<li>Websites, Vendors, Terms of Service</li>
+<li>SEO, ROI Analysis, Recruiting</li>
+<li>Publicity, Privacy Policy, Print Media</li>
+<li>Partnerships, Naming, Messaging</li>
+<li>Market Research, Lead Generation</li>
+<li>Events, Distribution, Direct Mail</li>
+<li>Campaign Examples/Measurement</li>
+<li>Competitive Positioning, Corporate Identity</li>
+<li>Copywriting & Graphic Design</li>
+</ul>
+<span class="tag">Universal frameworks</span>
+</div>
+</div>
+
+<!-- SECTION 5 -->
+<h2 id="drive">5. Google Drive Structure & Deployment</h2>
+
+<p>The <code>drive_structure_builder</code> deploys a standardized client Google Drive folder. This is the "Golden Template" — every client gets the same organizational structure, populated with their specific content.</p>
+
+<div class="flow">
+/clients/[CLIENT_NAME]/
+│
+├── <span class="hi">CLIENT_ACCOUNTS.md</span>                     ← Step 1
+├── <span class="hi">GOAL_BRIEF.md</span>                          ← Step 1
+├── <span class="hi">PROPOSAL_RESEARCH_BRIEF.md</span>             ← Step 2
+├── <span class="hi">STRATEGY_ROUTES.md</span>                     ← Step 3
+├── <span class="hi">PROJECT_REQUIREMENTS.md</span>                ← Step 4
+├── <span class="hi">CLIENT_PROPOSAL.md</span>                     ← Step 5
+├── <span class="h3">ACTIVATION_RECORD.md</span>                   ← Step 6
+├── <span class="hc">_pipeline_state.json</span>                   ← Runtime state
+├── client_secrets.env                        ← Gitignored
+│
+├── <span class="h2">01_Input/</span>                              ← Client-provided raw assets
+│   └── [brand assets, documents, briefs]
+│
+├── <span class="h2">02_Context/</span>                            ← Structured knowledge (Golden Template)
+│   ├── 00-09_Admin_Strategy_&_Brand/
+│   ├── 10-19_Finance_Legal_&_Compliance/
+│   ├── 20-29_Product_Engineering/
+│   ├── 30-39_Growth_Marketing/
+│   ├── 40-49_People_Culture/
+│   ├── 50-59_Capital_Gov_Relations/
+│   ├── 60-69_Customer_Success/
+│   └── 70-79_IT_Cloud_Security/
+│
+└── <span class="hg">03_Production/</span>                         ← All produced deliverables
+    ├── 00_Research/
+    │   ├── <span class="hc">COMPETITIVE_ANALYSIS.md</span>        ← Step 7
+    │   ├── <span class="hc">INDUSTRY_KNOWLEDGE_BASE.md</span>     ← Step 8
+    │   └── <span class="hg">CLIENT_CONTEXT_FRAMEWORK.md</span>    ← Step 9
+    ├── 01_Project_Management/
+    │   ├── <span class="hg">PROMPT_EXECUTION_PLAN.md</span>       ← Step 10
+    │   └── <span class="hg">EXECUTION_MANIFEST.md</span>          ← Step 11
+    ├── 02_Strategy_and_Framework/
+    ├── 03_Research_and_Analysis/
+    ├── 04_Marketing_and_Sales_Assets/
+    └── 05_Generated_Content_and_Logs/
+</div>
+
+<!-- SECTION 6 -->
+<h2 id="accretion">6. Context Accretion Matrix</h2>
+
+<p>This shows exactly which steps contribute to which framework sections, and at what depth. The framework grows richer with every step.</p>
+
+<div class="accretion">
+<div class="head">Step</div><div class="head">1.0 Core Identity</div><div class="head">2.0 Brand Voice</div><div class="head">3.0 Audience</div><div class="head">4.0 Product</div><div class="head">5.0 Market</div><div class="head">6.0 Visual</div>
+
+<div>Step 1</div><div class="fill-1">0.3 (from goal)</div><div>—</div><div>—</div><div>—</div><div>—</div><div>—</div>
+
+<div>Step 2</div><div class="fill-2">0.4 (+research)</div><div class="fill-1">0.3 (web)</div><div class="fill-1">0.3 (web)</div><div class="fill-2">0.4 (web)</div><div class="fill-2">0.4 (web)</div><div>—</div>
+
+<div>Step 7</div><div class="fill-2">0.4</div><div class="fill-1">0.3</div><div class="fill-1">0.3</div><div class="fill-2">0.4</div><div class="fill-3">0.7 (deep comp)</div><div>—</div>
+
+<div>Step 8</div><div class="fill-2">0.4</div><div class="fill-1">0.3</div><div class="fill-2">0.5 (industry)</div><div class="fill-3">0.6 (industry)</div><div class="fill-3">0.7</div><div>—</div>
+
+<div>Step 9</div><div class="fill-4">0.9 (synthesis)</div><div class="fill-3">0.7 (synthesis)</div><div class="fill-4">0.9 (synthesis)</div><div class="fill-4">0.9 (synthesis)</div><div class="fill-4">0.9 (synthesis)</div><div class="manual">MANUAL</div>
+</div>
+
+<!-- SECTION 7 -->
+<h2 id="agents">7. Agent Project → Step Mapping</h2>
+
+<table>
+<tr><th>Agent Project</th><th>Step(s)</th><th>Role</th><th>Status</th></tr>
+<tr><td><code>client_orchestrator</code></td><td>1</td><td>Goal structuring + client intake</td><td>Needs: add goal structuring sub-phase</td></tr>
+<tr><td><code>research_initiator</code></td><td>2, 7, 8</td><td>Research (fast + deep modes)</td><td>Needs: --mode fast for Step 2</td></tr>
+<tr><td><code>active_reasoning</code></td><td>3, 10</td><td>Strategy routes + prompt sequencing</td><td>Needs: split reasoning_engine.py</td></tr>
+<tr><td><code>requirements_generator</code></td><td>4</td><td>Requirements engineering</td><td><span class="tag tag-hot">NEW — build from stub</span></td></tr>
+<tr><td><code>proposal_generator</code></td><td>5</td><td>Proposal generation</td><td>Needs: create + import PandaDoc</td></tr>
+<tr><td><code>deep_research_analyst</code></td><td>7, 8</td><td>Deep research orchestration</td><td>Needs: focus templates only</td></tr>
+<tr><td><code>browser_research_agent</code></td><td>2, 7</td><td>Web research via Firecrawl</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>notebooklm_operator</code></td><td>7, 8</td><td>NotebookLM MCP bridge</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>content_ingestion_engine</code></td><td>8</td><td>Document ETL (uploaded sources)</td><td>Needs: wire to Step 8 input</td></tr>
+<tr><td><code>context_intelligence_engine</code></td><td>9</td><td>Framework synthesis (5-phase protocol)</td><td>Needs: accept richer input set</td></tr>
+<tr><td><code>context_synthesizer</code></td><td>9</td><td>RAG pipeline for synthesis</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>prompt_library_agent</code></td><td>11</td><td>Tool selection + execution</td><td>Needs: unified skill/model selection</td></tr>
+<tr><td><code>skill_runner</code></td><td>11</td><td>Universal skill execution</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>skill_foundry</code></td><td>11</td><td>Skill creation (gap filling)</td><td>Needs: integrate with tool selection</td></tr>
+<tr><td><code>drive_structure_builder</code></td><td>Post-exec</td><td>Google Drive deployment</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>documentation_generator</code></td><td>Post-exec</td><td>Markdown → PDF / formatted docs</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>project_architect</code></td><td>Infra</td><td>New project scaffolding</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>account_producer</code></td><td>Infra</td><td>Service account provisioning</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>doe</code></td><td>Reference</td><td>2.2 GB asset library (skills, prompts, snippets)</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>file_analyzer</code></td><td>Utility</td><td>File analysis + parsing</td><td><span class="tag tag-go">Ready</span></td></tr>
+<tr><td><code>justus</code></td><td>Platform</td><td>AaaS platform infrastructure</td><td>In development</td></tr>
+</table>
+
+<!-- SECTION 8 -->
+<h2 id="artifacts">8. Complete Artifact Registry</h2>
+
+<table>
+<tr><th>Artifact</th><th>Created By</th><th>Consumed By</th><th>Format</th><th>Location</th></tr>
+<tr><td>CLIENT_ACCOUNTS.md</td><td>Step 1</td><td>All steps</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>GOAL_BRIEF.md</td><td>Step 1</td><td>Steps 2, 3, 4, 7, 8, 9</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>PROPOSAL_RESEARCH_BRIEF.md</td><td>Step 2</td><td>Steps 3, 4, 9</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>STRATEGY_ROUTES.md</td><td>Step 3</td><td>Steps 4, 5</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>PROJECT_REQUIREMENTS.md</td><td>Step 4</td><td>Steps 5, 7, 8, 9, 10</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>CLIENT_PROPOSAL.md</td><td>Step 5</td><td>Step 6 (human)</td><td>Markdown + PandaDoc</td><td>/clients/[c]/</td></tr>
+<tr><td>ACTIVATION_RECORD.md</td><td>Step 6</td><td>Steps 7, 8</td><td>Markdown</td><td>/clients/[c]/</td></tr>
+<tr><td>COMPETITIVE_ANALYSIS.md</td><td>Step 7</td><td>Step 9</td><td>Markdown</td><td>/clients/[c]/03_Production/00_Research/</td></tr>
+<tr><td>INDUSTRY_KNOWLEDGE_BASE.md</td><td>Step 8</td><td>Step 9</td><td>Markdown</td><td>/clients/[c]/03_Production/00_Research/</td></tr>
+<tr><td>CLIENT_CONTEXT_FRAMEWORK.md</td><td>Step 9</td><td>Steps 10, 11, all execution</td><td>Markdown</td><td>/clients/[c]/03_Production/00_Research/</td></tr>
+<tr><td>PROMPT_EXECUTION_PLAN.md</td><td>Step 10</td><td>Step 11</td><td>Markdown</td><td>/clients/[c]/03_Production/01_PM/</td></tr>
+<tr><td>EXECUTION_MANIFEST.md</td><td>Step 11</td><td>Skill Runner</td><td>Markdown</td><td>/clients/[c]/03_Production/01_PM/</td></tr>
+<tr><td>_pipeline_state.json</td><td>All steps</td><td>Pipeline runner</td><td>JSON</td><td>/clients/[c]/</td></tr>
+</table>
+
+<!-- SECTION 9 -->
+<h2 id="execution">9. Execution Modes & Quality Gates</h2>
+
+<h3>Pipeline State v2 Configuration</h3>
+<p>The pipeline runner loads phases from <code>pipeline_phases.json</code> (not hardcoded). Supports parallel groups, human gates, artifact tracking, and backward-compatible migration from v1 state files.</p>
+
+<h3>Quality Gate Summary</h3>
+<table>
+<tr><th>Step</th><th>Gate Type</th><th>Criteria</th></tr>
+<tr><td>1</td><td>Completeness</td><td>GOAL_BRIEF.md: all 5 fields populated, no [TBD]</td></tr>
+<tr><td>2</td><td>Minimum content</td><td>Company overview 100+ words, 3 competitors, market size, 2 precedents</td></tr>
+<tr><td>3</td><td>Structure</td><td>2–3 routes, each with effort/risk/trade-offs, one [RECOMMENDED]</td></tr>
+<tr><td>4</td><td>Completeness + scoring</td><td>Part A (5 subsections) + Part B (3+ deliverables with criteria + priority scores)</td></tr>
+<tr><td>5</td><td>Completeness</td><td>All proposal sections populated, no [TBD]</td></tr>
+<tr><td>6</td><td><strong>HUMAN GATE</strong></td><td>Explicit human approval — cannot be automated</td></tr>
+<tr><td>7</td><td>Depth</td><td>Per-competitor analysis with features, pricing, positioning, gaps</td></tr>
+<tr><td>8</td><td>Depth</td><td>Industry trends, regulations, best practices, technology landscape covered</td></tr>
+<tr><td>9</td><td>Framework scores</td><td>Sections 1.0–5.0 all ≥ 0.7; Section 6.0 has content or [AWAITING MANUAL]</td></tr>
+<tr><td>10</td><td>Traceability</td><td>Every sub-goal maps to a requirement; no circular dependencies; ≤ 15 steps</td></tr>
+<tr><td>11</td><td>Coverage</td><td>Every sub-goal has tool assignment; gaps flagged for skill creation</td></tr>
+</table>
+
+<!-- SECTION 10 -->
+<h2 id="running">10. How to Run This Plan</h2>
+
+<div class="card card-g">
+<h3>For Any New Project</h3>
+<p>This plan is designed to be run by any agent (Claude Code via Cowork, Agent Zero, or Antigravity). Here's the sequence:</p>
+</div>
+
+<h3>Quick-Start Command Sequence</h3>
+<div class="flow">
+<span class="hg"># 1. Initialize new client project</span>
+Switch to <span class="hi">project_architect</span> → scaffold new client folder from CONTEXT_FRAMEWORK_TEMPLATE.md
+
+<span class="hg"># 2. Run Pre-Activation Block (Steps 1–5)</span>
+Switch to <span class="hi">client_orchestrator</span>      → produce GOAL_BRIEF.md + CLIENT_ACCOUNTS.md
+Switch to <span class="hi">research_initiator --mode fast</span> → produce PROPOSAL_RESEARCH_BRIEF.md
+Switch to <span class="hi">active_reasoning</span> (decompose) → produce STRATEGY_ROUTES.md
+Switch to <span class="hi">requirements_generator</span>       → produce PROJECT_REQUIREMENTS.md
+Switch to <span class="hi">proposal_generator</span>           → produce CLIENT_PROPOSAL.md + PandaDoc
+
+<span class="h3"># 3. HUMAN GATE — wait for client activation</span>
+→ Client reviews proposal → approves → ACTIVATION_RECORD.md
+
+<span class="hg"># 4. Run Post-Activation Block (Steps 7–11)</span>
+Switch to <span class="hc">deep_research_analyst</span> (competitive focus) ─┐
+Switch to <span class="hc">deep_research_analyst</span> (industry focus)   ─┘ parallel
+Switch to <span class="hi">context_intelligence_engine</span>  → produce CLIENT_CONTEXT_FRAMEWORK.md
+Switch to <span class="hi">active_reasoning</span> (sequence)   → produce PROMPT_EXECUTION_PLAN.md
+Switch to <span class="hi">prompt_library_agent</span>          → produce EXECUTION_MANIFEST.md
+
+<span class="hg"># 5. Execute the manifest</span>
+Switch to <span class="hi">skill_runner</span> → execute each step in EXECUTION_MANIFEST.md
+Switch to <span class="hi">drive_structure_builder</span> → deploy Golden Template to client Google Drive
+Switch to <span class="hi">documentation_generator</span> → format deliverables for client handoff
+</div>
+
+<h3>Context Injection Protocol</h3>
+<p>At every step, the agent must:</p>
+<ul class="checklist">
+<li>Read <code>_pipeline_state.json</code> to verify prerequisites are met</li>
+<li>Read all upstream artifacts listed in the step's input specification</li>
+<li>Read the current CLIENT_CONTEXT_FRAMEWORK.md (if it exists) for accumulated context</li>
+<li>After execution, update <code>_pipeline_state.json</code> with status + artifact checksums</li>
+<li>After execution, deepen the framework sections this step contributes to (accretion)</li>
+</ul>
+
+<h3>Cross-Runtime Execution</h3>
+<table>
+<tr><th>Runtime</th><th>Best For</th><th>Steps</th></tr>
+<tr><td>Claude Code (Cowork)</td><td>Document production, template population, SKILL execution</td><td>Steps 1, 3, 4, 5, 9, 10, 11</td></tr>
+<tr><td>Agent Zero</td><td>Browser research, tool creation, multi-agent orchestration</td><td>Steps 2, 7, 8 (research-heavy)</td></tr>
+<tr><td>Antigravity IDE</td><td>Multi-agent manager view, code-heavy deliverables</td><td>Steps 10, 11 (execution-heavy)</td></tr>
+<tr><td>GravityClaw</td><td>Persistent scheduling, WhatsApp intake, auto-publishing</td><td>Step 1 (intake), post-execution (delivery)</td></tr>
+</table>
+
+<hr>
+
+<div class="card card-c">
+<h3>This Is Not Documentation — It's a Runnable Plan</h3>
+<p>Every section of this document maps to a concrete agent project, a real template library, and a tested pipeline. The 11 steps are not aspirational — they're the codification of the workflow your 30 agent projects already partially implement. The gaps are identified, the refactoring paths are specified, and the implementation waves are prioritized.</p>
+<p>Run this plan for any project. The context engineering model ensures that every step deepens the shared understanding. The consequential prompting model ensures that each step's output is the exact input the next step needs. The template library ensures that the outputs conform to proven business frameworks.</p>
+<p><strong>Start with Step 1. The rest follows consequentially.</strong></p>
+</div>
+
+<hr>
+<p class="meta" style="margin-top:2rem">
+Synthesized from: UNIVERSAL_PROTOCOL_ARCHITECTURE.md (commit/ governance) &bull; 30 agent projects in usr/projects/ &bull;
+AGENTS.MD (DOE 6-Layer Model) &bull; CONTEXT_FRAMEWORK_TEMPLATE.md (project_architect/) &bull;
+drive_structure_builder/master_templates/ (70+ templates across 8 departments) &bull;
+squr-contextual-framework-synthesizer (4-script pipeline) &bull; active_reasoning project.json (full reasoning engine spec) &bull;
+antigravity-vault (260+ portable skills) &bull; DOE asset library (2.2 GB) &bull; pipeline_state.py v1 + v2 spec &bull;
+pipeline_phases.json configuration schema
+</p>
+
+</body>
+</html>
