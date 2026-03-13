@@ -93,7 +93,7 @@ const PERSONAS: Persona[] = [
   },
   {
     id: "business",
-    noun: "Business Owner",
+    noun: "Owner",
     audio: "/audio/aaas-pitch-business.mp3",
     duration: 115,
     pitch: [
@@ -250,7 +250,7 @@ export function DeliveryClient() {
 
   return (
     <>
-      <OrbitalBackground />
+      <OrbitalBackground planetScale={2} />
       <audio ref={audioRef} src={persona.audio} preload="auto" />
 
       {/* === Hero identity selector — visible when not scrolling === */}
@@ -364,19 +364,25 @@ export function DeliveryClient() {
         </div>
       )}
 
-      {/* === Scrolling content === */}
-      <div className="relative z-10 min-h-screen flex items-end justify-center overflow-hidden">
+      {/* === Scrolling content — starts centered in viewport === */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center overflow-hidden">
         <div
           ref={scrollRef}
-          className="max-w-2xl mx-auto px-6 pt-[100vh] pb-[60vh] text-center"
+          className="max-w-2xl mx-auto px-6 pt-[50vh] pb-[60vh] text-center"
           style={{ willChange: scrolling ? "transform" : "auto" }}
         >
           {persona.pitch.map((block, i) => {
+            const delay = scrolling ? 0 : Math.min(i * 0.1, 0.8);
+            const animStyle = {
+              animationDelay: `${delay}s`,
+              animationFillMode: "both" as const,
+            };
             if (block.type === "title") {
               return (
                 <h1
-                  key={i}
-                  className="monolith-title text-[clamp(2.5rem,8vw,5rem)] font-black leading-[0.9] tracking-[-0.04em] uppercase mb-16 whitespace-pre-line"
+                  key={`${persona.id}-${i}`}
+                  className="monolith-title text-[clamp(2.5rem,8vw,5rem)] font-black leading-[0.9] tracking-[-0.04em] uppercase mb-16 whitespace-pre-line animate-fade-up"
+                  style={animStyle}
                 >
                   {block.text}
                 </h1>
@@ -385,8 +391,9 @@ export function DeliveryClient() {
             if (block.type === "heading") {
               return (
                 <h2
-                  key={i}
-                  className="font-mono text-sm uppercase tracking-[0.4em] text-circuit mt-20 mb-6"
+                  key={`${persona.id}-${i}`}
+                  className="font-mono text-sm uppercase tracking-[0.4em] text-circuit mt-20 mb-6 animate-fade-up"
+                  style={animStyle}
                 >
                   {block.text}
                 </h2>
@@ -395,8 +402,9 @@ export function DeliveryClient() {
             if (block.type === "accent") {
               return (
                 <p
-                  key={i}
-                  className="text-2xl md:text-3xl font-light text-text leading-relaxed mb-12 whitespace-pre-line"
+                  key={`${persona.id}-${i}`}
+                  className="text-2xl md:text-3xl font-light text-text leading-relaxed mb-12 whitespace-pre-line animate-fade-up"
+                  style={animStyle}
                 >
                   {block.text}
                 </p>
@@ -404,8 +412,9 @@ export function DeliveryClient() {
             }
             return (
               <p
-                key={i}
-                className="text-lg text-text-muted leading-relaxed mb-10 max-w-xl mx-auto"
+                key={`${persona.id}-${i}`}
+                className="text-lg text-text-muted leading-relaxed mb-10 max-w-xl mx-auto animate-fade-up"
+                style={animStyle}
               >
                 {block.text}
               </p>

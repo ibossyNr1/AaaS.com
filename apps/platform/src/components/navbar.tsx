@@ -7,12 +7,12 @@ import { Button, ThemeToggle, cn } from "@aaas/ui";
 const BOOKING_LINK = "https://calendar.app.google/X2MjiFt1vkksn2ga8";
 
 const navItems = [
+  { label: "About", href: "/about" },
   { label: "Platform", href: "/platform" },
   { label: "Pricing", href: "/pricing" },
   { label: "Projects", href: "/projects" },
   { label: "Vault", href: "/vault" },
   { label: "Collaborate", href: "/collaborate" },
-  { label: "Delivery", href: "/delivery" },
 ];
 
 export function Navbar() {
