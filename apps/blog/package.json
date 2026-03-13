@@ -27,6 +27,7 @@
     "agent:run": "npx tsx src/agents/runner.ts",
     "seed:episodes": "npx tsx src/seed/seed-episodes.ts",
     "seed:first-publish": "npx tsx src/seed/first-publish.ts",
+    "seed:produce-audio": "npx tsx src/seed/produce-audio.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"

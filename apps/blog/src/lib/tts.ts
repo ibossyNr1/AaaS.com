@@ -67,7 +67,7 @@ export class GoogleCloudTTSProvider implements TTSProvider {
   name = "google-cloud";
   private storageBucket: string;
 
-  constructor(storageBucket = "aaas-platform.appspot.com") {
+  constructor(storageBucket = "aaas-platform-audio") {
     this.storageBucket = storageBucket;
   }
 
@@ -121,7 +121,7 @@ export class GoogleCloudTTSProvider implements TTSProvider {
       },
     });
 
-    await file.makePublic();
+    // Bucket uses uniform bucket-level access (allUsers = objectViewer)
     const audioUrl = `https://storage.googleapis.com/${this.storageBucket}/${filename}`;
 
     // Estimate duration from audio size (MP3 ~16kbps for speech)
@@ -169,7 +169,7 @@ export class ElevenLabsTTSProvider implements TTSProvider {
   private apiKey: string;
   private storageBucket: string;
 
-  constructor(apiKey: string, storageBucket = "aaas-platform.appspot.com") {
+  constructor(apiKey: string, storageBucket = "aaas-platform-audio") {
     this.apiKey = apiKey;
     this.storageBucket = storageBucket;
   }
@@ -220,7 +220,6 @@ export class ElevenLabsTTSProvider implements TTSProvider {
       },
     });
 
-    await file.makePublic();
     const audioUrl = `https://storage.googleapis.com/${this.storageBucket}/${filename}`;
     const duration = Math.round(audioBuffer.length / 2000);
 
@@ -327,7 +326,7 @@ export class EdgeTTSProvider implements TTSProvider {
   name = "edge-tts";
   private storageBucket: string;
 
-  constructor(storageBucket = "aaas-platform.appspot.com") {
+  constructor(storageBucket = "aaas-platform-audio") {
     this.storageBucket = storageBucket;
   }
 
