@@ -16,3 +16,8 @@ export { useMouseSpotlight } from "./use-mouse-spotlight";
 export { useParallaxTilt } from "./use-parallax-tilt";
 export { useScrollTheme } from "./use-scroll-theme";
 export { useCountUp } from "./use-count-up";
+export { OrbitalBackground } from "./orbital-background";
+export { MergeBackground } from "./merge-background";
+export { AuraBackground } from "./aura-background";
+export { CircuitBackground } from "./circuit-background";
+export { MetaballField } from "./metaball-field";

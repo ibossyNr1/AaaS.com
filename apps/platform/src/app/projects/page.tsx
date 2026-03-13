@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Button, Card, Badge, Container, Section, TerminalFeed } from "@aaas/ui";
 import { FadeUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
-import { OrbitalBackground } from "@/components/orbital-background";
+import { OrbitalBackground } from "@aaas/ui";
 import Link from "next/link";
 
 export const metadata: Metadata = {

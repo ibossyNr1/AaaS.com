@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Button, Card, Badge, Container, Section } from "@aaas/ui";
 import { FadeUp } from "@/components/motion";
 import { CTABlock } from "@/components/cta-block";
-import { AuraBackground } from "@/components/aura-background";
+import { AuraBackground } from "@aaas/ui";
 import { SectionTopic } from "@/components/section-topic";
 import { SectionDivider } from "@/components/section-divider";
 

@@ -1,4 +1,4 @@
-import { OrbitalBackground } from "@/components/orbital-background";
+import { OrbitalBackground } from "@aaas/ui";
 import { Hero } from "@/components/hero";
 import { ValueStrip } from "@/components/value-strip";
 import { ThreePillars } from "@/components/three-pillars";

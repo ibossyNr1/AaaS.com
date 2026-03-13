@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { OrbitalBackground } from "@/components/orbital-background";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { OrbitalBackground } from "@aaas/ui";
 
 interface PitchBlock {
   type: "title" | "heading" | "paragraph" | "accent";
@@ -11,8 +11,14 @@ interface PitchBlock {
 interface Persona {
   id: string;
   noun: string;
+  /** "a" or "an" — article before the noun */
+  article: string;
+  /** CTA label for the play button, e.g. "Start Wandering" */
+  cta: string;
   audio: string;
   duration: number;
+  /** Seconds before speech starts in the audio (default 0.2) */
+  speakOffset?: number;
   pitch: PitchBlock[];
 }
 
@@ -20,6 +26,8 @@ const PERSONAS: Persona[] = [
   {
     id: "general",
     noun: "Wanderer",
+    article: "a",
+    cta: "Start Wandering",
     audio: "/audio/aaas-pitch-kokoro.mp3",
     duration: 137,
     pitch: [
@@ -46,6 +54,8 @@ const PERSONAS: Persona[] = [
   {
     id: "founder",
     noun: "Founder",
+    article: "a",
+    cta: "Start Founding",
     audio: "/audio/aaas-pitch-founder.mp3",
     duration: 109,
     pitch: [
@@ -69,6 +79,8 @@ const PERSONAS: Persona[] = [
   {
     id: "investor",
     noun: "Investor",
+    article: "an",
+    cta: "Start Investing",
     audio: "/audio/aaas-pitch-investor.mp3",
     duration: 128,
     pitch: [
@@ -94,6 +106,8 @@ const PERSONAS: Persona[] = [
   {
     id: "business",
     noun: "Owner",
+    article: "an",
+    cta: "Start Owning",
     audio: "/audio/aaas-pitch-business.mp3",
     duration: 115,
     pitch: [
@@ -116,6 +130,8 @@ const PERSONAS: Persona[] = [
   {
     id: "user",
     noun: "User",
+    article: "a",
+    cta: "Start Using",
     audio: "/audio/aaas-pitch-user.mp3",
     duration: 100,
     pitch: [
@@ -137,6 +153,8 @@ const PERSONAS: Persona[] = [
   {
     id: "partner",
     noun: "Partner",
+    article: "a",
+    cta: "Start Partnering",
     audio: "/audio/aaas-pitch-partner.mp3",
     duration: 114,
     pitch: [
@@ -158,17 +176,103 @@ const PERSONAS: Persona[] = [
   },
 ];
 
+// Build a flat word list with proportional timestamps for a persona
+function buildWordTimeline(pitch: PitchBlock[], duration: number, speakOffset = 0.2) {
+  // Collect all words across all blocks, tracking which block they belong to
+  const words: { blockIdx: number; wordIdx: number; word: string }[] = [];
+  pitch.forEach((block, bi) => {
+    const blockWords = block.text.replace(/\n/g, " ").split(/\s+/).filter(Boolean);
+    blockWords.forEach((w, wi) => words.push({ blockIdx: bi, wordIdx: wi, word: w }));
+  });
+
+  const totalWords = words.length;
+  // speakOffset: seconds before speech starts; small tail buffer for trailing silence
+  const speakStart = speakOffset;
+  const speakEnd = duration - 0.5;
+  const speakDuration = speakEnd - speakStart;
+  const timePerWord = speakDuration / totalWords;
+
+  return words.map((w, i) => ({
+    ...w,
+    start: speakStart + i * timePerWord,
+    end: speakStart + (i + 1) * timePerWord,
+  }));
+}
+
+// Component that renders a block's text as individually highlightable words
+function HighlightedText({
+  text,
+  blockIdx,
+  activeBlockIdx,
+  activeWordIdx,
+  isScrolling,
+  baseClass,
+}: {
+  text: string;
+  blockIdx: number;
+  activeBlockIdx: number;
+  activeWordIdx: number;
+  isScrolling: boolean;
+  baseClass: string;
+}) {
+  // Split text preserving newlines for whitespace-pre-line blocks
+  const parts = text.split(/(\n)/);
+
+  let wordCounter = 0;
+  return (
+    <>
+      {parts.map((part, pi) => {
+        if (part === "\n") return <br key={`br-${pi}`} />;
+        const words = part.split(/(\s+)/);
+        return words.map((segment, si) => {
+          if (/^\s+$/.test(segment)) return <span key={`sp-${pi}-${si}`}>{segment}</span>;
+          if (!segment) return null;
+          const currentWordIdx = wordCounter++;
+          const isActive = isScrolling && blockIdx === activeBlockIdx && currentWordIdx === activeWordIdx;
+          const isPast = isScrolling && (
+            blockIdx < activeBlockIdx ||
+            (blockIdx === activeBlockIdx && currentWordIdx < activeWordIdx)
+          );
+          return (
+            <span
+              key={`w-${pi}-${si}`}
+              className={
+                isActive
+                  ? "text-circuit transition-colors duration-150"
+                  : isPast
+                    ? `${baseClass} transition-colors duration-300`
+                    : isScrolling
+                      ? "text-text-muted/40 transition-colors duration-300"
+                      : ""
+              }
+            >
+              {segment}{" "}
+            </span>
+          );
+        });
+      })}
+    </>
+  );
+}
+
 export function DeliveryClient() {
   const [personaIdx, setPersonaIdx] = useState(0);
   const [scrolling, setScrolling] = useState(false);
   const [progress, setProgress] = useState(0);
   const [selectorOpen, setSelectorOpen] = useState(false);
+  const [activeBlockIdx, setActiveBlockIdx] = useState(-1);
+  const [activeWordIdx, setActiveWordIdx] = useState(-1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const animRef = useRef<number>(0);
   const startTimeRef = useRef(0);
 
   const persona = PERSONAS[personaIdx];
+
+  const timeline = useMemo(
+    () => buildWordTimeline(persona.pitch, persona.duration, persona.speakOffset),
+    [persona]
+  );
 
   const stopScroll = useCallback(() => {
     setScrolling(false);
@@ -178,6 +282,8 @@ export function DeliveryClient() {
       audioRef.current.currentTime = 0;
     }
     setProgress(0);
+    setActiveBlockIdx(-1);
+    setActiveWordIdx(-1);
     if (scrollRef.current) {
       scrollRef.current.style.transform = "translateY(0)";
     }
@@ -212,15 +318,34 @@ export function DeliveryClient() {
       scrollEl.style.transform = `translateY(-${y}px)`;
       setProgress(t);
 
+      // Word highlighting: use audio currentTime for better sync
+      const currentTime = audioRef.current?.currentTime ?? elapsed;
+      // Binary-ish search: find the active word
+      let found = false;
+      for (let i = timeline.length - 1; i >= 0; i--) {
+        if (currentTime >= timeline[i].start) {
+          setActiveBlockIdx(timeline[i].blockIdx);
+          setActiveWordIdx(timeline[i].wordIdx);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        setActiveBlockIdx(-1);
+        setActiveWordIdx(-1);
+      }
+
       if (t < 1) {
         animRef.current = requestAnimationFrame(animate);
       } else {
         setScrolling(false);
+        setActiveBlockIdx(-1);
+        setActiveWordIdx(-1);
       }
     }
 
     animRef.current = requestAnimationFrame(animate);
-  }, [persona.duration]);
+  }, [persona.duration, timeline]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -264,7 +389,7 @@ export function DeliveryClient() {
               </span>
               <div className="flex items-baseline gap-4">
                 <span className="text-[clamp(1.5rem,4vw,2.5rem)] font-light text-text tracking-tight">
-                  I am a
+                  I am {persona.article}
                 </span>
                 <button
                   onClick={() => setSelectorOpen(!selectorOpen)}
@@ -304,7 +429,7 @@ export function DeliveryClient() {
                         : "text-text-muted hover:bg-white/5 hover:text-text"
                     }`}
                   >
-                    I am a <span className="font-bold">{p.noun}</span>
+                    I am {p.article} <span className="font-bold">{p.noun}</span>
                   </button>
                 ))}
               </div>
@@ -325,7 +450,7 @@ export function DeliveryClient() {
                     <path d="M8 5v14l11-7z" />
                   </svg>
                   <span className="font-mono text-sm uppercase tracking-wider text-text">
-                    Start Pitch
+                    {persona.cta}
                   </span>
                 </button>
                 <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
@@ -387,7 +512,14 @@ export function DeliveryClient() {
                   className="monolith-title text-[clamp(2.5rem,8vw,5rem)] font-black leading-[0.9] tracking-[-0.04em] uppercase mb-16 whitespace-pre-line animate-fade-up"
                   style={animStyle}
                 >
-                  {block.text}
+                  <HighlightedText
+                    text={block.text}
+                    blockIdx={i}
+                    activeBlockIdx={activeBlockIdx}
+                    activeWordIdx={activeWordIdx}
+                    isScrolling={scrolling}
+                    baseClass="text-text"
+                  />
                 </h1>
               );
             }
@@ -395,10 +527,17 @@ export function DeliveryClient() {
               return (
                 <h2
                   key={`${persona.id}-${i}`}
-                  className="font-mono text-sm uppercase tracking-[0.4em] text-circuit mt-20 mb-6 animate-fade-up"
+                  className="font-mono text-sm uppercase tracking-[0.4em] mt-20 mb-6 animate-fade-up"
                   style={animStyle}
                 >
-                  {block.text}
+                  <HighlightedText
+                    text={block.text}
+                    blockIdx={i}
+                    activeBlockIdx={activeBlockIdx}
+                    activeWordIdx={activeWordIdx}
+                    isScrolling={scrolling}
+                    baseClass="text-circuit"
+                  />
                 </h2>
               );
             }
@@ -406,20 +545,34 @@ export function DeliveryClient() {
               return (
                 <p
                   key={`${persona.id}-${i}`}
-                  className="text-2xl md:text-3xl font-light text-text leading-relaxed mb-12 whitespace-pre-line animate-fade-up"
+                  className="text-2xl md:text-3xl font-light leading-relaxed mb-12 whitespace-pre-line animate-fade-up"
                   style={animStyle}
                 >
-                  {block.text}
+                  <HighlightedText
+                    text={block.text}
+                    blockIdx={i}
+                    activeBlockIdx={activeBlockIdx}
+                    activeWordIdx={activeWordIdx}
+                    isScrolling={scrolling}
+                    baseClass="text-text"
+                  />
                 </p>
               );
             }
             return (
               <p
                 key={`${persona.id}-${i}`}
-                className="text-lg text-text-muted leading-relaxed mb-10 max-w-xl mx-auto animate-fade-up"
+                className="text-lg leading-relaxed mb-10 max-w-xl mx-auto animate-fade-up"
                 style={animStyle}
               >
-                {block.text}
+                <HighlightedText
+                  text={block.text}
+                  blockIdx={i}
+                  activeBlockIdx={activeBlockIdx}
+                  activeWordIdx={activeWordIdx}
+                  isScrolling={scrolling}
+                  baseClass="text-text-muted"
+                />
               </p>
             );
           })}
