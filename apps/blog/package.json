@@ -26,6 +26,7 @@
     "agent:run-all": "npx tsx src/agents/runner.ts all",
     "agent:run": "npx tsx src/agents/runner.ts",
     "seed:episodes": "npx tsx src/seed/seed-episodes.ts",
+    "seed:first-publish": "npx tsx src/seed/first-publish.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
