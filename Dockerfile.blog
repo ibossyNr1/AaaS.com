@@ -1,0 +1,38 @@
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json turbo.json ./
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/blog/package.json ./apps/blog/
+RUN npm ci
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY packages/ui ./packages/ui
+COPY apps/blog ./apps/blog
+COPY package.json package-lock.json turbo.json ./
+
+ARG NEXT_PUBLIC_FIREBASE_API_KEY
+ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID=aaas-platform
+ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=aaas-platform.firebaseapp.com
+ENV NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npx turbo build --filter=blog
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=8080
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+COPY --from=builder /app/apps/blog/.next/standalone ./
+COPY --from=builder /app/apps/blog/.next/static ./apps/blog/.next/static
+COPY --from=builder /app/apps/blog/public ./apps/blog/public
+USER nextjs
+EXPOSE 8080
+CMD ["node", "apps/blog/server.js"]

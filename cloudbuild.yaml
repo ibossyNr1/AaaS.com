@@ -1,0 +1,14 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyDwGJYeAb5AwEpPJURfKX04wdJq_UEoPzY'
+      - '-t'
+      - 'gcr.io/aaas-platform/blog'
+      - '-f'
+      - 'Dockerfile.blog'
+      - '.'
+images:
+  - 'gcr.io/aaas-platform/blog'
+timeout: '600s'
