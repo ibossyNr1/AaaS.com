@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb, MergeBackground } from "@aaas/ui";
 import { getTrendingEntities } from "@/lib/entities";
 import { ExploreClient } from "./explore-client";
 import { RecommendedEntities } from "@/components/recommended-entities";
@@ -18,6 +18,7 @@ export default async function ExplorePage() {
 
   return (
     <>
+      <MergeBackground />
       <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
         <div className="absolute top-20 right-[8%] hidden lg:block pointer-events-none">
           <OrbitalOrb size={40} color="circuit" followMouse />

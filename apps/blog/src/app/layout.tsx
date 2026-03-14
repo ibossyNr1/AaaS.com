@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { AuraBlobs, OrbitalBackground, MergeBackground, CircuitBackground } from "@aaas/ui";
+import { AuraBlobs } from "@aaas/ui";
 import { IndexNavbar } from "@/components/index-navbar";
 import { SkipToContent } from "@/components/skip-to-content";
 import { BlogFooter } from "@/components/blog-footer";
@@ -89,10 +89,7 @@ export default function RootLayout({
                 <SkipToContent />
                 <IndexNavbar />
                 <OfflineBanner />
-                {/* Background animation layers — matching agents-as-a-service.com visual depth */}
-                <MergeBackground />
-                <CircuitBackground />
-                <OrbitalBackground minimal planetScale={0.6} offset={{ x: 30, y: -15 }} />
+                {/* Subtle global aura — page-specific backgrounds live in each route */}
                 <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
                   <AuraBlobs />
                 </div>

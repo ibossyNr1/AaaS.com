@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb, OrbitalBackground } from "@aaas/ui";
 import { getTrendingEntities } from "@/lib/entities";
 import { LeaderboardClient } from "./leaderboard-client";
 import { CollaborativeRecommendations } from "@/components/collaborative-recommendations";
@@ -17,6 +17,7 @@ export default async function LeaderboardPage() {
 
   return (
     <>
+      <OrbitalBackground minimal planetScale={0.7} offset={{ x: 30, y: -10 }} />
       <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
         <div className="absolute top-16 right-[10%] hidden lg:block pointer-events-none">
           <OrbitalOrb size={44} color="circuit" followMouse />

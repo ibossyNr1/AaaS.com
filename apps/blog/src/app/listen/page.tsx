@@ -1,4 +1,4 @@
-import { Container, Section, KineticBar, OrbitalOrb } from "@aaas/ui";
+import { Container, Section, KineticBar, OrbitalOrb, CircuitBackground } from "@aaas/ui";
 import {
   collection,
   getDocs,
@@ -36,6 +36,7 @@ export default async function ListenPage() {
 
   return (
     <>
+      <CircuitBackground />
       <Section className="relative pt-28 pb-8 hero-glow overflow-hidden">
         <div className="absolute top-20 right-[8%] hidden lg:block pointer-events-none">
           <OrbitalOrb size={36} color="red" followMouse />
