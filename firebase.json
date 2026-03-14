@@ -22,7 +22,8 @@
     {
       "target": "design",
       "public": "design",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "cleanUrls": true
     },
     {
       "target": "blog",
